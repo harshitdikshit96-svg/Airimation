@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #0b1220;
+  --navy-2: #0e1626;
+  --panel: #121b2c;
+  --panel-2: #0f1826;
+  --line: #243349;
+  --line-2: #1b2740;
+  --ink: #e9edf5;
+  --muted: #9aa7bd;
+  --dim: #6e7c93;
+  --amber: #e0a230;
+  --amber-soft: #f0c878;
+  --cyan: #2aa5b5;
+  --cyan-soft: #5cc6d3;
+  --brick: #bf5340;
+  --brick-soft: #d97c6c;
+  --green: #4fb07a;
+  --green-soft: #7ecba0;
+  --violet: #7c6bc4;
+  --violet-soft: #a99be0;
+}
+
+@theme inline {
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-cyan: var(--cyan);
+  --color-cyan-soft: var(--cyan-soft);
+  --color-brick: var(--brick);
+  --color-brick-soft: var(--brick-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--navy);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--amber) 35%, transparent);
+  color: #fff;
+}
+
+.ambient-field {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(224, 162, 48, 0.5), transparent),
+    radial-gradient(1px 1px at 78% 12%, rgba(92, 198, 211, 0.45), transparent),
+    radial-gradient(1px 1px at 34% 62%, rgba(255, 255, 255, 0.28), transparent),
+    radial-gradient(1px 1px at 62% 78%, rgba(224, 162, 48, 0.35), transparent),
+    radial-gradient(1px 1px at 88% 52%, rgba(255, 255, 255, 0.22), transparent),
+    radial-gradient(1px 1px at 22% 88%, rgba(92, 198, 211, 0.3), transparent),
+    radial-gradient(1px 1px at 45% 30%, rgba(255, 255, 255, 0.18), transparent),
+    radial-gradient(1px 1px at 95% 85%, rgba(224, 162, 48, 0.28), transparent);
+  background-attachment: fixed;
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 40px rgba(224, 162, 48, 0.35);
+}
+
+.panel-border {
+  border: 1px solid var(--line-2);
+}
+
+.grain-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-2) 20%,
+    var(--line-2) 80%,
+    transparent
+  );
+  height: 1px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 6px;
+}
