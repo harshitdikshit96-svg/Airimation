@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient, LeadSubmission } from "@/lib/supabase";
+import { getSql, LeadSubmission } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   let body: Partial<LeadSubmission>;
@@ -23,26 +23,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
   }
 
-  const supabase = getSupabaseServerClient();
+  const sql = getSql();
 
-  if (!supabase) {
+  if (!sql) {
     // No database configured yet — log so the lead isn't silently lost during
     // local development, and still confirm success to the visitor.
-    console.log("[contact] Supabase not configured — lead received:", body);
+    console.log("[contact] Neon not configured — lead received:", body);
     return NextResponse.json({ ok: true, stored: false });
   }
 
-  const { error } = await supabase.from("leads").insert({
-    name: body.name,
-    email: body.email,
-    phone: body.phone ?? null,
-    organization_type: body.organization_type,
-    event_date: body.event_date ?? null,
-    message: body.message,
-  });
-
-  if (error) {
-    console.error("[contact] Supabase insert failed:", error);
+  try {
+    await sql`
+      insert into leads (name, email, phone, organization_type, event_date, message)
+      values (
+        ${body.name},
+        ${body.email},
+        ${body.phone ?? null},
+        ${body.organization_type},
+        ${body.event_date ?? null},
+        ${body.message}
+      )
+    `;
+  } catch (error) {
+    console.error("[contact] Neon insert failed:", error);
     return NextResponse.json({ error: "Could not save your message. Please try again." }, { status: 500 });
   }
 

@@ -54,14 +54,14 @@ npm run lint    # eslint
 ## Contact form → database
 
 `/api/contact` accepts form submissions and, if configured, inserts them into
-a Supabase table called `leads`. Without Supabase configured it still works
-in development — it just logs the submission to the server console instead
-of erroring, so you can build and test without a database.
+a Neon (Postgres) table called `leads`. Without Neon configured it still
+works in development — it just logs the submission to the server console
+instead of erroring, so you can build and test without a database.
 
-### Setting up Supabase
+### Setting up Neon
 
-1. Create a free project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run:
+1. Create a free project at [neon.tech](https://neon.tech).
+2. In the Neon SQL editor, run:
 
    ```sql
    create table leads (
@@ -74,22 +74,22 @@ of erroring, so you can build and test without a database.
      event_date date,
      message text not null
    );
-
-   alter table leads enable row level security;
-   -- No public policies are added — all access goes through the
-   -- service-role key from the API route, never the browser.
    ```
 
 3. Copy `.env.example` to `.env.local` and fill in:
-   - `NEXT_PUBLIC_SUPABASE_URL` — Project Settings → API → Project URL
-   - `SUPABASE_SERVICE_ROLE_KEY` — Project Settings → API → `service_role` key
-     (keep this secret — it's only ever used server-side in `/api/contact`)
+   - `DATABASE_URL` — Dashboard → Connection Details → **Pooled connection**
+     string (keep this secret — it's only ever used server-side in
+     `/api/contact`, never exposed to the browser)
+
+The API route uses `@neondatabase/serverless`, Neon's HTTP-based driver —
+it works over fetch rather than a raw TCP connection, so it runs cleanly in
+serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 
 ## Before this goes live — checklist
 
 - [ ] Point `contactInfo.email` in `src/lib/content.ts` at your real
       Google Workspace address (currently a placeholder: `hello@airmation.in`).
-- [ ] Set up Supabase (above) so contact-form leads aren't lost.
+- [ ] Set up Neon (above) so contact-form leads aren't lost.
 - [ ] Have someone at Airmation review the `/investors` page — it includes
       figures from the business plan / pitch deck that were marked
       illustrative and assumption-based in the source documents.
