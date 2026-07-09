@@ -221,12 +221,14 @@ export const roadmap = [
 // public/team/ (see that folder's note for naming/sizing) and just fill in
 // the path here — no other code changes needed.
 export const founders = [
-    {
+  {
     name: "Madhuri Tripathi",
     role: "CEO",
-    background: "Senior Software Engineer, Google — ground control and fleet management.",
-    intro:
-      "Anshuman leads software at Airmation — ground control and fleet management. A former Senior Software Engineer at Google, he brings production-grade engineering discipline to the systems that keep hundreds of drones talking to each other mid-show.",
+    // TODO(Harshit): placeholder — the previous text here described a
+    // different person (Anshuman/Google) copied over by mistake. Send over
+    // Madhuri's real background and I'll drop it in.
+    background: "Bio pending.",
+    intro: "Bio pending — background and credentials to come.",
     photo: "/team/madhuri.png",
   },
   {
@@ -249,12 +251,14 @@ export const founders = [
   {
     name: "Sandeep Srivastava",
     role: "Mentor / Advisor — Drone Engineering, Safety, Compliance",
-    background: "Hardware engineering — drone build and manufacturing liaison.",
-    intro:
-      "Sandeep leads hardware engineering at Airmation — drone build quality and the manufacturing liaison work that keeps the fleet flightworthy show after show.",
+    // TODO(Harshit): placeholder — the previous text here described a
+    // different person (Anshuman, hands-on hardware lead) copied over by
+    // mistake. Send over Sandeep's real background as an advisor and I'll
+    // drop it in.
+    background: "Bio pending.",
+    intro: "Bio pending — background and credentials to come.",
     photo: "/team/sandeep.jpg",
   },
-
 ];
 
 export const orgTypes = [
