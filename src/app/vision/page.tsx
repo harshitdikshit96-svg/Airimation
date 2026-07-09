@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Vision | Airmation",
+  title: "Vision | Airimation",
   description:
-    "How Airmation grows from a drone-show operator into an indigenous UAV technology company — Biscope, Airmation Academy, and the UAV R&D division.",
+    "How Airimation grows from a drone-show operator into an indigenous UAV technology company — Biscope, Airimation Academy, and the UAV R&D division.",
 };
 
 const rdBeachheads = [
@@ -25,7 +25,7 @@ const rdBeachheads = [
   {
     title: "Industrial monitoring",
     detail:
-      "Construction-progress monitoring and site mapping, drawing on Airmation's existing real-estate relationships.",
+      "Construction-progress monitoring and site mapping, drawing on Airimation's existing real-estate relationships.",
   },
 ];
 
@@ -41,7 +41,7 @@ export default function VisionPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
               Every stage is built on the last. Biscope funds and proves the
-              team; Airmation Academy and the UAV R&amp;D division are earned,
+              team; Airimation Academy and the UAV R&amp;D division are earned,
               not assumed — each with a named buyer before a rupee is spent.
             </p>
           </Reveal>
@@ -67,12 +67,12 @@ export default function VisionPage() {
           <Reveal>
             <SectionLabel no="02">Year 2+</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl">
-              Airmation Academy
+              Airimation Academy
             </h2>
             <p className="mt-4 text-muted">
               India&apos;s basic pilot-training market is already saturated —
               hundreds of DGCA-approved training organisations compete on
-              price. Airmation&apos;s academy does not fight there. It is
+              price. Airimation&apos;s academy does not fight there. It is
               anchored on the advanced tier: swarm choreography, drone-show
               software, mission planning and collision detection — skills
               almost no one else can teach, because almost no one else
@@ -81,7 +81,7 @@ export default function VisionPage() {
             <p className="mt-4 text-muted">
               Delivered through corporate workshops and college partnerships,
               it is counter-seasonal to the show calendar and builds the
-              talent pipeline Airmation hires from.
+              talent pipeline Airimation hires from.
             </p>
           </Reveal>
         </div>

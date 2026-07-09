@@ -7,9 +7,9 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About | Airmation",
+  title: "About | Airimation",
   description:
-    "Airmation's mission, founding team and honest read on what the company is today versus where it is building toward.",
+    "Airimation's mission, founding team and honest read on what the company is today versus where it is building toward.",
 };
 
 export default function AboutPage() {
@@ -18,16 +18,20 @@ export default function AboutPage() {
       <section className="border-b border-line-2 px-6 py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal>
-            <SectionLabel>About Airmation</SectionLabel>
+            <SectionLabel>About Airimation</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               A regional drone-experience company, building toward an
               indigenous UAV technology company.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
-              Airmation&apos;s mission is to become a leading Indian UAV technology
+              Airimation&apos;s mission is to become a leading Indian UAV technology
               company — earned in stages, starting from a profitable,
               category-leading regional drone-show operation based in{" "}
               {site.base}.
+            </p>
+            <p className="mt-4 text-sm text-dim">
+              Airimation is a brand of {site.legalName}, the company&apos;s
+              registered legal entity.
             </p>
           </Reveal>
         </div>

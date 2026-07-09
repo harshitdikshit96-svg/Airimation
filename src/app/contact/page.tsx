@@ -1,14 +1,14 @@
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ContactForm from "@/components/ui/ContactForm";
-import { contactInfo } from "@/lib/content";
+import { contactInfo, site } from "@/lib/content";
 import { Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact | Airmation",
+  title: "Contact | Airimation",
   description:
-    "Get in touch with Airmation to book a Biscope drone-swarm light show, or to discuss partnership and investment.",
+    "Get in touch with Airimation to book a Biscope drone-swarm light show, or to discuss partnership and investment.",
 };
 
 export default function ContactPage() {
@@ -40,6 +40,10 @@ export default function ContactPage() {
                 {contactInfo.base}
               </div>
             </div>
+
+            <p className="mt-8 text-xs text-dim">
+              Airimation is a brand of {site.legalName}.
+            </p>
           </Reveal>
         </div>
 

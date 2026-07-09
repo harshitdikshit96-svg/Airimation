@@ -7,7 +7,7 @@ import { Check, X, RotateCcw, ArrowLeft } from "lucide-react";
 import clsx from "clsx";
 import { pickRandomQuestions, badgeForScore, type QuizQuestion } from "@/lib/academyContent";
 
-const STORAGE_KEY = "airmation-academy-best-score";
+const STORAGE_KEY = "airimation-academy-best-score";
 
 export default function QuizPage() {
   const [questions, setQuestions] = useState<QuizQuestion[]>(() => pickRandomQuestions());
@@ -105,7 +105,7 @@ export default function QuizPage() {
       </Link>
 
       <p className="mb-4 font-mono text-xs tracking-[0.28em] text-int-dim">
-        AIRMATION ACADEMY · KNOWLEDGE CHECK
+        AIRIMATION ACADEMY · KNOWLEDGE CHECK
       </p>
       <h1 className="mb-8 font-serif text-[clamp(28px,3.6vw,40px)] font-light leading-[1.15] text-int-ink">
         Prove it.

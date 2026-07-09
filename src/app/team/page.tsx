@@ -3,12 +3,12 @@ import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
 import FounderAvatar from "@/components/team/FounderAvatar";
 import { founders, site } from "@/lib/content";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Team | Airmation",
-  description: "The founding team behind Airmation and Biscope.",
+  title: "Team | Airimation",
+  description: "The founding team behind Airimation and Biscope.",
 };
 
 export default function TeamPage() {
@@ -19,7 +19,7 @@ export default function TeamPage() {
           <Reveal>
             <SectionLabel>The Team</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
-              The people building Airmation.
+              The people building Airimation.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
               Four founders, one flagship product. Based in {site.base}, building
@@ -47,6 +47,13 @@ export default function TeamPage() {
                       {founder.name}
                     </h2>
                     <p className="max-w-[62ch] leading-relaxed text-muted">{founder.intro}</p>
+                    <a
+                      href={`mailto:${founder.email}`}
+                      className="mt-4 inline-flex items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
+                    >
+                      <Mail size={14} className="text-cyan-soft" />
+                      {founder.email}
+                    </a>
                   </div>
                 </div>
               </Reveal>
@@ -63,7 +70,7 @@ export default function TeamPage() {
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
               <Button href="/about">
-                About Airmation <ArrowRight size={16} />
+                About Airimation <ArrowRight size={16} />
               </Button>
               <Button href="/contact" variant="ghost">
                 Get in Touch

@@ -17,7 +17,7 @@ export default function SwarmScienceChapter({
     <ChapterShell
       eyebrow="LEVEL 4 · ONE BECOMES MANY"
       title="From one drone to a choreographed swarm."
-      description="Flying one drone safely is a solved problem. Flying 300 of them a metre apart, on cue, without a single collision, is the actual engineering challenge Airmation sells."
+      description="Flying one drone safely is a solved problem. Flying 300 of them a metre apart, on cue, without a single collision, is the actual engineering challenge Airimation sells."
       onNext={onNext}
       onPrev={onPrev}
       nextLabel="Next: The business"

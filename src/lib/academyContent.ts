@@ -11,18 +11,18 @@
 // content much later.
 
 export const academyMeta = {
-  title: "Airmation Academy",
+  title: "Airimation Academy",
   subtitle: "The internal one — learn the business, the tech, and the sky, one level at a time.",
   tagline:
-    "Built for anyone joining Airmation, whatever your background. No drone experience required — just curiosity.",
+    "Built for anyone joining Airimation, whatever your background. No drone experience required — just curiosity.",
 };
 
 // ---------------------------------------------------------------------------
-// Chapter 1: What Airmation actually is, in the simplest possible terms.
+// Chapter 1: What Airimation actually is, in the simplest possible terms.
 // ---------------------------------------------------------------------------
 export const missionPrimer = {
   simple:
-    "Airmation is a company in New Delhi that flies hundreds of tiny flying robots — drones — in the night sky, together, in perfect formation, with colourful lights on them. From the ground it looks like a moving painting made of stars. That's a drone light show, and our version of it is called Biscope.",
+    "Airimation is a company in New Delhi that flies hundreds of tiny flying robots — drones — in the night sky, together, in perfect formation, with colourful lights on them. From the ground it looks like a moving painting made of stars. That's a drone light show, and our version of it is called Biscope.",
   whyItMatters: [
     {
       title: "It replaces fireworks",
@@ -75,7 +75,7 @@ export const historyTimeline: TimelineEvent[] = [
     year: "Oct 2024",
     title: "India enters the record books",
     detail:
-      "BotLab Dynamics, an IIT-Delhi-incubated Indian company, flew 5,500 indigenously built drones at the Amaravati Drone Summit in Andhra Pradesh — a 12-minute, seven-formation show that set five Guinness World Records in a single night. This is the single most important data point for Airmation: India can now compete at world-record scale, and the company doing it isn't based abroad.",
+      "BotLab Dynamics, an IIT-Delhi-incubated Indian company, flew 5,500 indigenously built drones at the Amaravati Drone Summit in Andhra Pradesh — a 12-minute, seven-formation show that set five Guinness World Records in a single night. This is the single most important data point for Airimation: India can now compete at world-record scale, and the company doing it isn't based abroad.",
     source: "BotLab Dynamics / Guinness World Records, Oct 2024",
   },
   {
@@ -330,12 +330,12 @@ export const opportunityPoints = [
   {
     title: "A calendar no outsider owns",
     detail:
-      "Airmation is close to one of India's richest religious-tourism calendars — Ayodhya, Varanasi, Mathura, the Kumbh — recurring, high-visibility events a nationally-scaled competitor isn't regionally rooted in.",
+      "Airimation is close to one of India's richest religious-tourism calendars — Ayodhya, Varanasi, Mathura, the Kumbh — recurring, high-visibility events a nationally-scaled competitor isn't regionally rooted in.",
   },
   {
     title: "It's a service business, not a drone-manufacturing business",
     detail:
-      "Airmation sells the choreographed experience (Biscope), the way an event production company sells a show — not the hardware. That keeps the business closer to storytelling and client relationships than to manufacturing margins.",
+      "Airimation sells the choreographed experience (Biscope), the way an event production company sells a show — not the hardware. That keeps the business closer to storytelling and client relationships than to manufacturing margins.",
   },
 ];
 
@@ -344,7 +344,7 @@ export const competitiveLandscape = {
   detail:
     "BotLab Dynamics (IIT-Delhi-incubated) is India's current drone-show scale leader: 5,500 drones and five Guinness World Records at the Amaravati Drone Summit (Oct 2024), plus a sixth record at Mysuru Dasara (2025, a 2,983-drone tiger formation). They're the reference point for \"what's possible in India right now,\" not a company to imitate move-for-move.",
   takeaway:
-    "Airmation's opening wedge isn't out-scaling the national leader on drone count — it's owning a regional calendar (UP's temple-towns, civic and wedding markets) with the same engineering discipline (Design → Validate → Permit → Perform) that any credible operator needs.",
+    "Airimation's opening wedge isn't out-scaling the national leader on drone count — it's owning a regional calendar (UP's temple-towns, civic and wedding markets) with the same engineering discipline (Design → Validate → Permit → Perform) that any credible operator needs.",
 };
 
 // roadmap, founders, and clientSegments are intentionally NOT duplicated here
@@ -443,7 +443,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q7",
     topic: "Business",
-    question: "What does Airmation primarily sell?",
+    question: "What does Airimation primarily sell?",
     options: [
       "Drones, to other companies",
       "A choreographed light-show experience for events (Biscope)",
@@ -490,7 +490,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q11",
     topic: "Business",
-    question: "Which of these is NOT one of Airmation's four core client segments?",
+    question: "Which of these is NOT one of Airimation's four core client segments?",
     options: [
       "Government & public celebrations",
       "Temple-town festivals",
@@ -506,12 +506,12 @@ export const quizQuestions: QuizQuestion[] = [
     question: "According to the 5-year roadmap, what major milestone is planned for Year 2?",
     options: [
       "The R&D division opens",
-      "Airmation Academy (the training line) goes live",
+      "Airimation Academy (the training line) goes live",
       "Net profit is reached",
       "1,000 drones in the fleet",
     ],
     correct: 1,
-    explain: "Year 2 is \"Prove & diversify\" — 250 drones, 24 shows, and Airmation Academy launching.",
+    explain: "Year 2 is \"Prove & diversify\" — 250 drones, 24 shows, and Airimation Academy launching.",
   },
   {
     id: "q13",
@@ -570,7 +570,7 @@ export const badgeTiers: BadgeTier[] = [
   {
     min: 14,
     name: "Chief Choreographer",
-    blurb: "Near-perfect. You could explain Airmation to a stranger, a client, or a curious 8-year-old, equally well.",
+    blurb: "Near-perfect. You could explain Airimation to a stranger, a client, or a curious 8-year-old, equally well.",
   },
 ];
 

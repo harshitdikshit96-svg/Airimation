@@ -1,24 +1,24 @@
-# Airmation Website
+# Airimation Website
 
-The marketing website for **Airmation** and its flagship product **Biscope**
+The marketing website for **Airimation** and its flagship product **Biscope**
 — synchronised LED drone-swarm light shows for government, festival, wedding
 and corporate events, based in New Delhi.
 
 Built with Next.js (App Router, TypeScript), Tailwind CSS v4, and Framer
-Motion. Content is drawn from the Airmation business plan, Biscope blueprint,
+Motion. Content is drawn from the Airimation business plan, Biscope blueprint,
 pitch deck and products blueprint — see `src/lib/content.ts` for every fact
 used on the site and where to update it.
 
 ## Design direction
 
-Matches the visual language already used across Airmation's business
+Matches the visual language already used across Airimation's business
 collateral (business plan, blueprint docs): a dark navy base with amber/cyan
 accent colours, IBM Plex Sans / Serif / Mono typography, and a starfield
 ambient background. Fonts are self-hosted via `@fontsource` (no external
 Google Fonts request at runtime).
 
 The hero and gallery visuals are canvas-based particle simulations — a swarm
-of points that assembles into formations (a lotus, the Airmation monogram,
+of points that assembles into formations (a lotus, the Airimation monogram,
 concentric rings, a flight chevron). **These are concept renders, not real
 show footage** — Biscope's first live shows are still in preparation, and
 the site says so plainly rather than implying otherwise. Swap in real
@@ -47,7 +47,7 @@ npm run lint    # eslint
 | `/biscope` | The flagship product in depth |
 | `/about` | Company mission, honest positioning, founding team |
 | `/team` | Full founder bios and photos |
-| `/vision` | Airmation Academy (Year 2+) and UAV R&D (Year 4+) |
+| `/vision` | Airimation Academy (Year 2+) and UAV R&D (Year 4+) |
 | `/gallery` | Concept formation renders |
 | `/contact` | Contact form (posts to `/api/contact`) |
 
@@ -88,7 +88,7 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 ## Before this goes live — checklist
 
 - [ ] Point `contactInfo.email` in `src/lib/content.ts` at your real
-      Google Workspace address (currently a placeholder: `hello@airmation.in`).
+      Google Workspace address (currently a placeholder: `hello@airimation.in`).
 - [ ] Set up Neon (above) so contact-form leads aren't lost.
 - [ ] Replace concept formation renders on `/gallery` with real photography
       or footage once Biscope's first shows are delivered.
@@ -96,7 +96,7 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
       founder's `photo` path in `src/lib/content.ts` (see `public/team/README.md`).
       Until then, `/` and `/team` show initials placeholders instead of photos.
 - [ ] Update `metadataBase` in `src/app/layout.tsx` if the production domain
-      differs from `airmation.in`.
+      differs from `airimation.in`.
 - [ ] Deploy (Vercel is the path of least resistance for Next.js) and add the
       `DATABASE_URL` env var there too.
 

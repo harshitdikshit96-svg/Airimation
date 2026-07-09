@@ -30,7 +30,7 @@ type Particle = {
  * Fixed full-viewport canvas that renders the swarm as a set of glowing
  * points, morphing between formations based on how far the visitor has
  * scrolled through the page. Pairs with the small phase indicator in the
- * bottom-right corner. Ported from the "Airmation Home v2" design export —
+ * bottom-right corner. Ported from the "Airimation Home v2" design export —
  * see src/lib/homeFormations.ts for the point-cloud generators.
  *
  * Two perf/feel choices worth noting:

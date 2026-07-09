@@ -12,9 +12,9 @@ import { ArrowRight, Radio, Satellite, Lightbulb } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Biscope | Airmation",
+  title: "Biscope | Airimation",
   description:
-    "Biscope is Airmation's flagship drone-swarm light show — synchronised LED drones choreographed for government, festival, wedding and corporate events.",
+    "Biscope is Airimation's flagship drone-swarm light show — synchronised LED drones choreographed for government, festival, wedding and corporate events.",
 };
 
 const specIcons = [Satellite, Radio, Lightbulb];

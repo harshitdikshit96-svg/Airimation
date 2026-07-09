@@ -1,16 +1,20 @@
-// Central content store for the Airmation website.
-// Pulled from the Airmation business plan, Biscope blueprint, pitch deck and
+// Central content store for the Airimation website.
+// Pulled from the Airimation business plan, Biscope blueprint, pitch deck and
 // products blueprint. Figures are illustrative / assumption-based per those
 // source documents and should be reviewed before any investor-facing use.
 
 export const site = {
-  name: "Airmation",
+  name: "Airimation",
+  // The full registered legal entity name. Used anywhere a site needs to
+  // state who legally operates it: footer, contact info, structured data —
+  // not in casual brand copy (which just uses `name` above).
+  legalName: "Airimation Technologies Private Limited",
   flagship: "Biscope",
   base: "New Delhi",
   tagline:
     "Synchronised drone-swarm light shows for the moments a state, a city or a family will remember.",
   shortDescription:
-    "Airmation designs and performs Biscope: choreographed LED drone-swarm shows for government celebrations, temple-town festivals, weddings and corporate events — a fast-growing, eco-friendly alternative to fireworks.",
+    "Airimation designs and performs Biscope: choreographed LED drone-swarm shows for government celebrations, temple-town festivals, weddings and corporate events — a fast-growing, eco-friendly alternative to fireworks.",
 };
 
 // Copy for the cinematic, scroll-driven homepage ("Home v2"). Kept separate
@@ -193,7 +197,7 @@ export const roadmap = [
     year: "Year 2",
     heading: "Prove & diversify",
     fleet: "250 drones · 24 shows",
-    detail: "Airmation Academy — our advanced training line — goes live.",
+    detail: "Airimation Academy — our advanced training line — goes live.",
   },
   {
     year: "Year 3",
@@ -227,18 +231,20 @@ export const founders = [
     background:
       "PhD in Graph Neural Networks and UAV research; turns complex engineering challenges into aerial spectacle.",
     intro:
-      "Madhuri leads Airmation as CEO. Driven by deep expertise and a PhD in Graph Neural Networks and UAV research, she transforms complex technical challenges into breathtaking aerial spectacles — her leadership bridges the gap between sophisticated engineering and artistic excellence.",
+      "Madhuri leads Airimation as CEO. Driven by deep expertise and a PhD in Graph Neural Networks and UAV research, she transforms complex technical challenges into breathtaking aerial spectacles — her leadership bridges the gap between sophisticated engineering and artistic excellence.",
     photo: "/team/madhuri.png",
+    email: "madhuri@airimation.in",
   },
- 
+
   {
     name: "Harshit Dixit",
     role: "CAIO / COO — AI Governance & Operations",
     background:
       "BTech (IIIT Lucknow); bridges AI governance with creative direction across global operations.",
     intro:
-      "Harshit bridges AI governance with cutting-edge animation as Airmation's CAIO/COO, orchestrating global operations so every performance is as technically robust as it is visually extraordinary. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airmation.",
+      "Harshit bridges AI governance with cutting-edge animation as Airimation's CAIO/COO, orchestrating global operations so every performance is as technically robust as it is visually extraordinary. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airimation.",
     photo: "/team/harshit.jpg",
+    email: "harshit@airimation.in",
   },
    {
     name: "Dr. Gaurav Tripathi",
@@ -246,16 +252,18 @@ export const founders = [
     background:
       "PhD in IoT, drones and machine learning (IIIT Lucknow); founding member of GE Vernova.",
     intro:
-      "Dr. Gaurav Tripathi engineers Airmation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
+      "Dr. Gaurav Tripathi engineers Airimation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
     photo: "/team/gaurav.jpg",
+    email: "gaurav@airimation.in",
   },
   {
     name: "Sandeep Srivastava",
     role: "Advisor — Infrastructure & Security",
-    background: "PhD in Blockchain; secures Airmation's infrastructure and data transmissions.",
+    background: "PhD in Blockchain; secures Airimation's infrastructure and data transmissions.",
     intro:
-      "Sandeep advises Airmation as a seasoned industry leader with a PhD in Blockchain, fortifying the company's infrastructure against interference. His strategic oversight guarantees the secure, encrypted data transmissions essential for flawless mission execution.",
+      "Sandeep advises Airimation as a seasoned industry leader with a PhD in Blockchain, fortifying the company's infrastructure against interference. His strategic oversight guarantees the secure, encrypted data transmissions essential for flawless mission execution.",
     photo: "/team/sandeep.jpg",
+    email: "sandeep@airimation.in",
   },
 ];
 
@@ -269,7 +277,7 @@ export const orgTypes = [
 ];
 
 export const contactInfo = {
-  // TODO: point this at your Google Workspace address once set up (e.g. hello@airmation.in)
-  email: "hello@airmation.in",
+  // TODO: point this at your Google Workspace address once set up (e.g. hello@airimation.in)
+  email: "hello@airimation.in",
   base: "New Delhi, India",
 };

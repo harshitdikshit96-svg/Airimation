@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gallery | Airmation",
+  title: "Gallery | Airimation",
   description:
-    "Concept formations from Biscope's design pipeline — Airmation's first live shows are in preparation.",
+    "Concept formations from Biscope's design pipeline — Airimation's first live shows are in preparation.",
 };
 
 const formations: {
@@ -44,7 +44,7 @@ const formations: {
   {
     key: "monogram",
     title: "Mark",
-    caption: "The Airmation monogram, assembled by the swarm as a closing formation.",
+    caption: "The Airimation monogram, assembled by the swarm as a closing formation.",
   },
 ];
 

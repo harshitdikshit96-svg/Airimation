@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { navLinks, contactInfo } from "@/lib/content";
+import { navLinks, contactInfo, site } from "@/lib/content";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -32,6 +32,11 @@ export default function Footer() {
                 ? "The internal learning game — the business, the tech, and the roadmap, gamified."
                 : `Drone-swarm light shows, designed and performed under our flagship, Biscope. Based in ${contactInfo.base}.`}
             </p>
+            {!isInternal && (
+              <p className="mt-2 max-w-xs text-xs text-dim">
+                Airimation is a brand of {site.legalName}.
+              </p>
+            )}
           </div>
 
           <div>
@@ -106,7 +111,7 @@ export default function Footer() {
             isInternal ? "border-int-line text-int-dim" : "border-line-2 text-dim"
           )}
         >
-          <span>© {new Date().getFullYear()} Airmation. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</span>
           <span>
             {isInternal
               ? "Internal use only — not for external distribution."

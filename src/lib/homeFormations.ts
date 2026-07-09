@@ -1,5 +1,5 @@
 // The formation sequence for the homepage's scroll-linked swarm canvas.
-// Ported from the "Airmation Home v2" design export — each phase is a point
+// Ported from the "Airimation Home v2" design export — each phase is a point
 // cloud in normalized (0..1) space, and the canvas blends between adjacent
 // phases based on overall page scroll progress.
 //

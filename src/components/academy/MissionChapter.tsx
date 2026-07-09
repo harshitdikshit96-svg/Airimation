@@ -14,7 +14,7 @@ export default function MissionChapter({
   return (
     <ChapterShell
       eyebrow="LEVEL 1 · THE 30-SECOND VERSION"
-      title="What is Airmation, actually?"
+      title="What is Airimation, actually?"
       description={missionPrimer.simple}
       onNext={onNext}
       nextLabel="Next: History & world records"

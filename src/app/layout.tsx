@@ -14,29 +14,43 @@ import "@fontsource/ibm-plex-mono/600.css";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { site } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Airmation | Biscope Drone-Swarm Light Shows — New Delhi",
+  title: "Airimation | Biscope Drone-Swarm Light Shows — New Delhi",
   description:
-    "Airmation designs and performs synchronised LED drone-swarm light shows for government celebrations, festivals, weddings and corporate events across North India. Biscope is our flagship experience.",
+    "Airimation designs and performs synchronised LED drone-swarm light shows for government celebrations, festivals, weddings and corporate events across North India. Biscope is our flagship experience.",
   keywords: [
     "drone show India",
     "drone light show New Delhi",
     "Biscope",
-    "Airmation",
+    "Airimation",
     "drone swarm Uttar Pradesh",
     "wedding drone show",
     "government drone show",
   ],
-  metadataBase: new URL("https://airmation.in"),
+  metadataBase: new URL("https://airimation.in"),
   openGraph: {
-    title: "Airmation | Biscope Drone-Swarm Light Shows",
+    title: "Airimation | Biscope Drone-Swarm Light Shows",
     description:
       "Synchronised LED drone-swarm light shows for government, festival, wedding and corporate events. Based in New Delhi, serving Uttar Pradesh's festival and civic calendar.",
-    siteName: "Airmation",
+    siteName: "Airimation",
     locale: "en_IN",
     type: "website",
   },
+};
+
+// Organization structured data — declares the registered legal entity
+// (`legalName`) distinctly from the public-facing brand (`name`), the way
+// search engines expect when the two differ. See site.legalName in
+// content.ts for the single source of truth.
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  legalName: site.legalName,
+  url: "https://airimation.in",
+  areaServed: "IN",
 };
 
 export default function RootLayout({
@@ -47,6 +61,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-navy text-ink ambient-field">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

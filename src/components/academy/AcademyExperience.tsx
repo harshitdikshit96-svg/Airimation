@@ -23,8 +23,8 @@ const CHAPTERS: AcademyChapterMeta[] = [
   { id: "roadmap", label: "Roadmap", num: 6 },
 ];
 
-const PROGRESS_KEY = "airmation-academy-completed";
-const FACTS_KEY = "airmation-academy-facts";
+const PROGRESS_KEY = "airimation-academy-completed";
+const FACTS_KEY = "airimation-academy-facts";
 
 // Read once at module scope so both lazy initializers below share the same
 // "are we on the client" check without duplicating the try/catch.
