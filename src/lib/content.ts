@@ -230,15 +230,7 @@ export const founders = [
       "Madhuri leads Airmation as CEO. Driven by deep expertise and a PhD in Graph Neural Networks and UAV research, she transforms complex technical challenges into breathtaking aerial spectacles — her leadership bridges the gap between sophisticated engineering and artistic excellence.",
     photo: "/team/madhuri.png",
   },
-  {
-    name: "Dr. Gaurav Tripathi",
-    role: "CPO / CTO — Autonomous Systems & Engineering",
-    background:
-      "PhD in IoT, drones and machine learning (IIIT Lucknow); founding member of GE Vernova.",
-    intro:
-      "Dr. Gaurav Tripathi engineers Airmation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
-    photo: "/team/gaurav.jpg",
-  },
+ 
   {
     name: "Harshit Dixit",
     role: "CAIO / COO — AI Governance & Operations",
@@ -247,6 +239,15 @@ export const founders = [
     intro:
       "Harshit bridges AI governance with cutting-edge animation as Airmation's CAIO/COO, orchestrating global operations so every performance is as technically robust as it is visually extraordinary. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airmation.",
     photo: "/team/harshit.jpg",
+  },
+   {
+    name: "Dr. Gaurav Tripathi",
+    role: "CPO / CTO — Autonomous Systems & Engineering",
+    background:
+      "PhD in IoT, drones and machine learning (IIIT Lucknow); founding member of GE Vernova.",
+    intro:
+      "Dr. Gaurav Tripathi engineers Airmation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
+    photo: "/team/gaurav.jpg",
   },
   {
     name: "Sandeep Srivastava",
