@@ -224,39 +224,36 @@ export const founders = [
   {
     name: "Madhuri Tripathi",
     role: "CEO",
-    // TODO(Harshit): placeholder — the previous text here described a
-    // different person (Anshuman/Google) copied over by mistake. Send over
-    // Madhuri's real background and I'll drop it in.
-    background: "Bio pending.",
-    intro: "Bio pending — background and credentials to come.",
+    background:
+      "PhD in Graph Neural Networks and UAV research; turns complex engineering challenges into aerial spectacle.",
+    intro:
+      "Madhuri leads Airmation as CEO. Driven by deep expertise and a PhD in Graph Neural Networks and UAV research, she transforms complex technical challenges into breathtaking aerial spectacles — her leadership bridges the gap between sophisticated engineering and artistic excellence.",
     photo: "/team/madhuri.png",
   },
   {
-    name: "Gaurav Tripathi",
-    role: "CPO / COO — Technology, R&D, Grant Strategy",
+    name: "Dr. Gaurav Tripathi",
+    role: "CPO / CTO — Autonomous Systems & Engineering",
     background:
-      "PhD in IoT, drones and machine learning (IIIT Lucknow); previously built an agricultural drone.",
+      "PhD in IoT, drones and machine learning (IIIT Lucknow); founding member of GE Vernova.",
     intro:
-      "Gaurav leads technology, R&D and grant strategy at Airmation. He holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and built an agricultural drone before this — the same instinct for turning research into a working machine now drives Biscope's choreography and flight-control stack.",
+      "Dr. Gaurav Tripathi engineers Airmation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
     photo: "/team/gaurav.jpg",
   },
   {
     name: "Harshit Dixit",
-    role: "COO — Operations, Business, Partnerships",
-    background: "BTech (IIIT Lucknow); left a senior role at Tata to found Airmation.",
+    role: "CAIO / COO — AI Governance & Operations",
+    background:
+      "BTech (IIIT Lucknow); bridges AI governance with creative direction across global operations.",
     intro:
-      "Harshit leads operations, business and partnerships. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airmation — trading a stable corporate career for the harder, more interesting problem of building a regional drone-show company from the ground up.",
+      "Harshit bridges AI governance with cutting-edge animation as Airmation's CAIO/COO, orchestrating global operations so every performance is as technically robust as it is visually extraordinary. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airmation.",
     photo: "/team/harshit.jpg",
   },
   {
     name: "Sandeep Srivastava",
-    role: "Mentor / Advisor — Drone Engineering, Safety, Compliance",
-    // TODO(Harshit): placeholder — the previous text here described a
-    // different person (Anshuman, hands-on hardware lead) copied over by
-    // mistake. Send over Sandeep's real background as an advisor and I'll
-    // drop it in.
-    background: "Bio pending.",
-    intro: "Bio pending — background and credentials to come.",
+    role: "Advisor — Infrastructure & Security",
+    background: "PhD in Blockchain; secures Airmation's infrastructure and data transmissions.",
+    intro:
+      "Sandeep advises Airmation as a seasoned industry leader with a PhD in Blockchain, fortifying the company's infrastructure against interference. His strategic oversight guarantees the secure, encrypted data transmissions essential for flawless mission execution.",
     photo: "/team/sandeep.jpg",
   },
 ];
