@@ -97,6 +97,36 @@ export const safetyHighlightsCompact = [
   "Third-party and public-liability insurance on every show; a dedicated safety officer monitors the swarm for the full performance.",
 ];
 
+// Short brand-pillar statements for the /biscope hero — three quick, punchy
+// claims about how Biscope works, not a factual/statistical claim (kept
+// deliberately free of numbers we can't back up pre-first-show).
+export const biscopePillars = [
+  {
+    title: "Engineered precision",
+    description:
+      "RTK-GNSS positioning and validated flight paths, so every formation holds its shape exactly as designed.",
+  },
+  {
+    title: "Storytelling in the sky",
+    description:
+      "Every show is built around your moment — a name, a symbol, a message — not a stock formation reel.",
+  },
+  {
+    title: "A safer, reusable spectacle",
+    description:
+      "The same visual impact as fireworks, without the debris, smoke or one-time cost.",
+  },
+];
+
+// Teaser copy linking /biscope to the longer-term roadmap on /vision —
+// Biscope (the show business) funds and leads into the Academy and UAV R&D
+// stages already described in full on /vision; this just cross-links them.
+export const beyondBiscope = {
+  eyebrow: "Beyond Biscope",
+  title: "Biscope is where this starts, not where it ends.",
+  body: "The show business builds the cash, the crew and the credibility for what comes next — an in-house training academy, and eventually, an indigenous UAV technology company.",
+};
+
 export const navLinks = [
   { href: "/biscope", label: "Biscope" },
   { href: "/about", label: "About" },
