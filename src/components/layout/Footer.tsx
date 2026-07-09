@@ -3,7 +3,7 @@ import { navLinks, contactInfo } from "@/lib/content";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line-2 bg-navy-2/60">
+    <footer className="relative z-10 border-t border-line-2 bg-navy-2">
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
           <div>

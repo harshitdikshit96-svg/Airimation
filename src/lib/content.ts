@@ -13,19 +13,92 @@ export const site = {
     "Airmation designs and performs Biscope: choreographed LED drone-swarm shows for government celebrations, temple-town festivals, weddings and corporate events — a fast-growing, eco-friendly alternative to fireworks.",
 };
 
+// Copy for the cinematic, scroll-driven homepage ("Home v2"). Kept separate
+// from the longer-form copy above (used on /biscope, /about, etc.) because
+// this page is a tighter, teaser-length narrative — the deep-dive pages
+// remain the place for the fuller explanation.
+export const homeHero = {
+  eyebrow: "LUCKNOW, UTTAR PRADESH · DRONE-SWARM LIGHT SHOWS",
+  title: "The night sky, choreographed.",
+  subtitle:
+    "Hundreds of synchronised LED drones lift off, form, and dissolve — a light show for the moments a city, a festival or a family will remember. Scroll, and watch the swarm fly.",
+};
+
+export const homeChapters = [
+  {
+    id: "lift-off",
+    index: "01 · LIFT-OFF",
+    title: "Every show starts on the ground.",
+    body: "Each drone is placed by hand, checked, and cleared. Then, on cue, the whole fleet rises together — silent, reusable, and leaving nothing behind but a memory. An eco-friendly answer to fireworks.",
+  },
+  {
+    id: "open-sky",
+    index: "02 · OPEN SKY",
+    title: "A swarm that thinks as one.",
+    body: "RTK GNSS positioning gives every aircraft centimetre accuracy. A dedicated telemetry link feeds live battery, GPS and health data to the ground station — hundreds of drones holding tight, safe formation.",
+  },
+];
+
+// Shorter phrasing of the same four-step process as `processSteps`, sized
+// for the compact homepage grid. /biscope keeps the longer version.
+export const biscopeStepsCompact = [
+  {
+    step: "01",
+    title: "Design",
+    description:
+      "Storyboard, 3D animation, then formation choreography — formations, transitions, colour and music synced into a single show file.",
+  },
+  {
+    step: "02",
+    title: "Validate",
+    description:
+      "Collision-free paths, minimum separation and battery margin verified in simulation before a single drone leaves the ground. Never skipped.",
+  },
+  {
+    step: "03",
+    title: "Permit",
+    description:
+      "Digital Sky flight permission, airspace segregation, night and swarm clearances — plus police, district and venue NOCs for the specific mission.",
+  },
+  {
+    step: "04",
+    title: "Perform",
+    description:
+      "The swarm flies live to layered safety SOPs: geofencing, auto return-to-launch, a manual kill-switch, and a dedicated safety officer throughout.",
+  },
+];
+
+// Compact three-up version of `clientSegments`, for the homepage strip.
+export const homeSegments = [
+  {
+    label: "Civic & public celebrations",
+    sub: "City functions and public milestones",
+  },
+  {
+    label: "Temple-town festivals",
+    sub: "Ayodhya · Varanasi · Mathura · the Kumbh",
+  },
+  {
+    label: "Weddings & launches",
+    sub: "Premium venues, brands and agencies",
+  },
+];
+
+// Four-item condensed version of `safetyPoints`, for the homepage grid
+// (merges the insurance and safety-officer lines from the full list).
+export const safetyHighlightsCompact = [
+  "Operations under the Drone Rules, 2021, via the DGCA Digital Sky Platform, with NPNT-compliant geofencing on every aircraft.",
+  "Audiences are always kept at a cordoned lateral standoff — Biscope shows never fly over a crowd.",
+  "Automatic return-to-launch on link loss or low battery, geofence auto-containment, and a manual all-land kill-switch on standby.",
+  "Third-party and public-liability insurance on every show; a dedicated safety officer monitors the swarm for the full performance.",
+];
+
 export const navLinks = [
   { href: "/biscope", label: "Biscope" },
   { href: "/about", label: "About" },
   { href: "/vision", label: "Vision" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/investors", label: "Investors" },
   { href: "/contact", label: "Contact" },
-];
-
-export const heroStats = [
-  { value: "100 → 1,300", label: "Planned drone fleet, Year 1 to Year 5" },
-  { value: "18%", label: "Share of global drone shows bought by governments — our core buyer" },
-  { value: "Year 4", label: "Targeted EBITDA-positive milestone" },
 ];
 
 export const clientSegments = [
@@ -141,30 +214,6 @@ export const roadmap = [
   },
 ];
 
-export const productLines = [
-  {
-    tag: "Core · Year 1+",
-    title: "Biscope",
-    description:
-      "Drone-swarm light shows for government, festival, wedding and corporate events. The revenue engine, and the reason Airmation exists.",
-    href: "/biscope",
-  },
-  {
-    tag: "Year 2+",
-    title: "Airmation Academy",
-    description:
-      "A specialised academy for the advanced swarm-choreography and drone-show skills almost no one else can teach — built on what Biscope proves in the field.",
-    href: "/vision",
-  },
-  {
-    tag: "Year 4+",
-    title: "UAV R&D",
-    description:
-      "Civilian drone-as-a-service and dual-use research — infrastructure inspection, government and smart-city work — funded largely by non-dilutive grants.",
-    href: "/vision",
-  },
-];
-
 export const founders = [
   {
     name: "Gaurav Tripathi",
@@ -187,50 +236,6 @@ export const founders = [
     role: "Software Lead",
     background: "Senior Software Engineer, Google — ground control and fleet management.",
   },
-];
-
-export const positioning = {
-  incumbent: {
-    name: "BotLab Dynamics",
-    points: [
-      "$14.3M raised, 10,000+ drones in the fleet",
-      "500+ shows across 200+ cities and 15 countries",
-      "Multiple Guinness World Records; largely in-house technology stack",
-      "Wins national, scale- and record-driven contracts",
-    ],
-  },
-  airmation: {
-    points: [
-      "Rooted in Uttar Pradesh, where no national player is based",
-      "Wins the 100–500-drone regional event — government, temple-town, wedding, corporate",
-      "Competes on presence, responsiveness and relationships, not on price",
-      "Existing wedding-venue relationships act as a ready sales channel",
-    ],
-  },
-  summary:
-    "We do not fight BotLab Dynamics for national, record-driven contracts — we would lose that game. We win the regional, relationship-driven market in Uttar Pradesh that a Delhi-based national operator structurally cannot serve as well.",
-};
-
-export const marketFacts = [
-  {
-    stat: "18%",
-    label: "of all drone shows worldwide are bought by city and local governments — the single largest customer segment, and Airmation's core buyer.",
-  },
-  {
-    stat: "3.28 lakh",
-    label: "villages already drone-surveyed under India's SVAMITVA scheme — a signal of how deep government drone adoption already runs.",
-  },
-  {
-    stat: "₹100–250 cr",
-    label: "estimated size of India's drone-show market today, on a path toward ₹300–500 cr by 2030.",
-  },
-];
-
-export const investorHighlights = [
-  { value: "₹15.4 cr", label: "Projected Year-5 revenue (base case)" },
-  { value: "Year 4", label: "Targeted EBITDA-positive" },
-  { value: "Year 6", label: "Targeted net-profit-positive" },
-  { value: "100 → 1,300", label: "Fleet ramp, Year 1 to Year 5" },
 ];
 
 export const orgTypes = [

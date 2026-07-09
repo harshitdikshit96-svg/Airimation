@@ -43,12 +43,11 @@ npm run lint    # eslint
 
 | Route | Purpose |
 |---|---|
-| `/` | Home — hero, process, audiences, positioning, roadmap, safety |
+| `/` | Home — cinematic scroll-driven experience, swarm canvas tied to scroll position |
 | `/biscope` | The flagship product in depth |
 | `/about` | Company mission, honest positioning, founding team |
 | `/vision` | Airmation Academy (Year 2+) and UAV R&D (Year 4+) |
 | `/gallery` | Concept formation renders |
-| `/investors` | Curated, PR-safe figures for investors/grant partners |
 | `/contact` | Contact form (posts to `/api/contact`) |
 
 ## Contact form → database
@@ -90,9 +89,6 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 - [ ] Point `contactInfo.email` in `src/lib/content.ts` at your real
       Google Workspace address (currently a placeholder: `hello@airmation.in`).
 - [ ] Set up Neon (above) so contact-form leads aren't lost.
-- [ ] Have someone at Airmation review the `/investors` page — it includes
-      figures from the business plan / pitch deck that were marked
-      illustrative and assumption-based in the source documents.
 - [ ] Replace concept formation renders on `/gallery` with real photography
       or footage once Biscope's first shows are delivered.
 - [ ] Add a real founder headshot / team photo section if desired (currently
@@ -100,7 +96,7 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 - [ ] Update `metadataBase` in `src/app/layout.tsx` if the production domain
       differs from `airmation.in`.
 - [ ] Deploy (Vercel is the path of least resistance for Next.js) and add the
-      Supabase env vars there too.
+      `DATABASE_URL` env var there too.
 
 ## Replacing the visuals
 

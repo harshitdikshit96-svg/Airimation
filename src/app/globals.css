@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #0b1220;
-  --navy-2: #0e1626;
-  --panel: #121b2c;
-  --panel-2: #0f1826;
-  --line: #243349;
-  --line-2: #1b2740;
-  --ink: #e9edf5;
-  --muted: #9aa7bd;
-  --dim: #6e7c93;
+  /* True black/charcoal base — deliberately neutral, no blue undertone. */
+  --navy: #060607;
+  --navy-2: #0a0a0b;
+  --panel: #111113;
+  --panel-2: #0d0d0e;
+  --line: #262627;
+  --line-2: #1c1c1d;
+  --ink: #f2f2f0;
+  --muted: #a8a8a5;
+  --dim: #7a7a78;
   --amber: #e0a230;
   --amber-soft: #f0c878;
   --cyan: #2aa5b5;
@@ -20,6 +21,7 @@
   --green-soft: #7ecba0;
   --violet: #7c6bc4;
   --violet-soft: #a99be0;
+  --black: #000000;
 }
 
 @theme inline {
@@ -42,7 +44,7 @@
   --color-green-soft: var(--green-soft);
   --color-violet: var(--violet);
   --color-violet-soft: var(--violet-soft);
-
+  --color-black: var(--black);
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-serif: "IBM Plex Serif", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -58,7 +60,7 @@ html {
 
 body {
   background: var(--navy);
-  color: var(--ink);
+  color: var(--black);
   font-family: var(--font-sans), system-ui, sans-serif;
   line-height: 1.6;
 }

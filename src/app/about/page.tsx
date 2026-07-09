@@ -83,7 +83,7 @@ export default function AboutPage() {
           <Reveal>
             <SectionLabel no="02">The founding team</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
-              A PhD-led team with directly relevant depth
+              A founding team with the depth to build this
             </h2>
           </Reveal>
 
@@ -116,11 +116,11 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
-              Want the full picture — team, roadmap, and the numbers?
+              Want the full picture — the roadmap and what&apos;s next?
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <Button href="/investors">
-                Visit Investors <ArrowRight size={16} />
+              <Button href="/vision">
+                Visit Vision <ArrowRight size={16} />
               </Button>
               <Button href="/contact" variant="ghost">
                 Get in Touch

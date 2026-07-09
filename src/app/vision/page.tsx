@@ -135,11 +135,8 @@ export default function VisionPage() {
               Building toward this with us — as a client, partner or investor?
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <Button href="/investors">
-                Visit Investors <ArrowRight size={16} />
-              </Button>
-              <Button href="/contact" variant="ghost">
-                Get in Touch
+              <Button href="/contact">
+                Get in Touch <ArrowRight size={16} />
               </Button>
             </div>
           </Reveal>

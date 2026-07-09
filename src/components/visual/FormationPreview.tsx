@@ -7,14 +7,18 @@ import {
   monogramPoints,
   ringPoints,
   wavePoints,
+  heartPoints,
+  snowflakePoints,
   Point,
 } from "@/lib/swarmShapes";
 
-const generators: Record<string, (n: number) => Point[]> = {
+const generators: Record<string, (n: number, aspect?: number) => Point[]> = {
   lotus: lotusPoints,
   monogram: monogramPoints,
   ring: ringPoints,
   wave: wavePoints,
+  heart: heartPoints,
+  snowflake: snowflakePoints,
 };
 
 function lerp(a: number, b: number, t: number) {
@@ -27,11 +31,9 @@ function easeInOutCubic(t: number) {
 export default function FormationPreview({
   formation,
   particleCount = 110,
-  accent = "#e0a230",
 }: {
-  formation: "lotus" | "monogram" | "ring" | "wave";
+  formation: "lotus" | "monogram" | "ring" | "wave" | "heart" | "snowflake";
   particleCount?: number;
-  accent?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -42,17 +44,26 @@ export default function FormationPreview({
     if (!ctx) return;
 
     const n = particleCount;
-    const shape = generators[formation](n);
+    // Aspect-correct circular/symmetric shapes (lotus, ring, heart, snowflake)
+    // for this card's actual width/height so they render as true circles
+    // rather than squashed ellipses.
+    const parentEl = canvas.parentElement;
+    const aspect =
+      parentEl && parentEl.clientHeight
+        ? parentEl.clientWidth / parentEl.clientHeight
+        : 4 / 3;
+    const shape = generators[formation](n, aspect);
     const scatter = scatterPoints(n);
     const formations = [scatter, shape];
-    const colors = [accent, "#5cc6d3", "#f0c878"];
 
+    // Single colour (white), small and tight size range — matches the
+    // homepage swarm's fix for the same "uneven bokeh" problem: real
+    // drone-show photography reads as crisp, uniform points of light.
     const particles = Array.from({ length: n }, (_, i) => ({
       from: formations[0][i],
       to: formations[0][i],
       current: { ...formations[0][i] },
-      color: colors[i % colors.length],
-      size: 1 + Math.random() * 1.4,
+      size: 1.2 + Math.random() * 0.3,
     }));
 
     let idx = 0;
@@ -108,16 +119,19 @@ export default function FormationPreview({
       particles.forEach((p) => {
         const px = p.current.x * w;
         const py = p.current.y * h;
+
+        // Two flat-alpha white layers (soft halo + bright core) instead of
+        // shadowBlur — crisp, no per-particle colour or size variance.
         ctx.beginPath();
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.8;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 6;
-        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.16)";
+        ctx.arc(px, py, p.size * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,255,255,0.95)";
+        ctx.arc(px, py, p.size * 0.85, 0, Math.PI * 2);
         ctx.fill();
       });
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
       raf = requestAnimationFrame(draw);
     }
     raf = requestAnimationFrame(draw);
@@ -126,7 +140,7 @@ export default function FormationPreview({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", setSize);
     };
-  }, [formation, particleCount, accent]);
+  }, [formation, particleCount]);
 
   return <canvas ref={canvasRef} className="h-full w-full" aria-hidden="true" />;
 }

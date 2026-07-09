@@ -12,34 +12,39 @@ export const metadata: Metadata = {
 };
 
 const formations: {
-  key: "lotus" | "monogram" | "ring" | "wave";
+  key: "lotus" | "monogram" | "ring" | "wave" | "heart" | "snowflake";
   title: string;
   caption: string;
-  accent: string;
 }[] = [
   {
     key: "lotus",
     title: "Bloom",
     caption: "A layered lotus formation, designed for heritage and temple-town venues.",
-    accent: "#e0a230",
-  },
-  {
-    key: "monogram",
-    title: "Mark",
-    caption: "The Airmation monogram, assembled by the swarm as a closing formation.",
-    accent: "#5cc6d3",
   },
   {
     key: "ring",
     title: "Salute",
     caption: "Concentric rings — a formal opening formation for government events.",
-    accent: "#7c6bc4",
   },
   {
     key: "wave",
     title: "Flight",
     caption: "A rising chevron, evoking the swarm in transit between formations.",
-    accent: "#4fb07a",
+  },
+  {
+    key: "heart",
+    title: "Devotion",
+    caption: "A heart formation — a warm closing note for weddings and anniversaries.",
+  },
+  {
+    key: "snowflake",
+    title: "Frost",
+    caption: "A six-armed snowflake, for winter festivals and year-end celebrations.",
+  },
+  {
+    key: "monogram",
+    title: "Mark",
+    caption: "The Airmation monogram, assembled by the swarm as a closing formation.",
   },
 ];
 
@@ -70,7 +75,7 @@ export default function GalleryPage() {
               <Reveal key={f.key} delay={i * 0.08}>
                 <div className="panel-border overflow-hidden rounded-2xl bg-panel/40">
                   <div className="aspect-[4/3] bg-navy-2">
-                    <FormationPreview formation={f.key} accent={f.accent} />
+                    <FormationPreview formation={f.key} />
                   </div>
                   <div className="p-6">
                     <h3 className="font-serif text-lg font-semibold text-ink">
