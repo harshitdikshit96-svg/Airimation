@@ -22,6 +22,20 @@
   --violet: #7c6bc4;
   --violet-soft: #a99be0;
   --black: #000000;
+
+  /* Internal-only theme: light pink + yellow. Used exclusively under
+     /internal — the public marketing site never references these. */
+  --int-bg: #fff0f6;
+  --int-bg-2: #fff8e1;
+  --int-panel: #ffffff;
+  --int-line: #f6cfe0;
+  --int-ink: #3a1f2b;
+  --int-muted: #8a5d6d;
+  --int-dim: #b98a9a;
+  --int-pink: #ec6f9c;
+  --int-pink-soft: #f7a8c4;
+  --int-yellow: #f2b430;
+  --int-yellow-soft: #ffd873;
 }
 
 @theme inline {
@@ -45,6 +59,17 @@
   --color-violet: var(--violet);
   --color-violet-soft: var(--violet-soft);
   --color-black: var(--black);
+  --color-int-bg: var(--int-bg);
+  --color-int-bg-2: var(--int-bg-2);
+  --color-int-panel: var(--int-panel);
+  --color-int-line: var(--int-line);
+  --color-int-ink: var(--int-ink);
+  --color-int-muted: var(--int-muted);
+  --color-int-dim: var(--int-dim);
+  --color-int-pink: var(--int-pink);
+  --color-int-pink-soft: var(--int-pink-soft);
+  --color-int-yellow: var(--int-yellow);
+  --color-int-yellow-soft: var(--int-yellow-soft);
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-serif: "IBM Plex Serif", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;

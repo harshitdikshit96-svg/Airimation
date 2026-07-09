@@ -6,7 +6,7 @@
 export const site = {
   name: "Airmation",
   flagship: "Biscope",
-  base: "Lucknow, Uttar Pradesh",
+  base: "New Delhi",
   tagline:
     "Synchronised drone-swarm light shows for the moments a state, a city or a family will remember.",
   shortDescription:
@@ -250,5 +250,5 @@ export const orgTypes = [
 export const contactInfo = {
   // TODO: point this at your Google Workspace address once set up (e.g. hello@airmation.in)
   email: "hello@airmation.in",
-  base: "Lucknow, Uttar Pradesh, India",
+  base: "New Delhi, India",
 };

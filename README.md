@@ -2,7 +2,7 @@
 
 The marketing website for **Airmation** and its flagship product **Biscope**
 — synchronised LED drone-swarm light shows for government, festival, wedding
-and corporate events, based in Lucknow, Uttar Pradesh.
+and corporate events, based in New Delhi.
 
 Built with Next.js (App Router, TypeScript), Tailwind CSS v4, and Framer
 Motion. Content is drawn from the Airmation business plan, Biscope blueprint,

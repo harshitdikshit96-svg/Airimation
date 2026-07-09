@@ -113,7 +113,7 @@ export default function Home() {
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.28em] text-dim">04 · THE TEAM</p>
             <h2 className="mb-12 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
-              Built in Lucknow, by people who fly.
+              Built in New Delhi, by people who fly.
             </h2>
           </Reveal>
 

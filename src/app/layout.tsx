@@ -16,12 +16,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Airmation | Biscope Drone-Swarm Light Shows — Lucknow, Uttar Pradesh",
+  title: "Airmation | Biscope Drone-Swarm Light Shows — New Delhi",
   description:
-    "Airmation designs and performs synchronised LED drone-swarm light shows for government celebrations, festivals, weddings and corporate events across Uttar Pradesh. Biscope is our flagship experience.",
+    "Airmation designs and performs synchronised LED drone-swarm light shows for government celebrations, festivals, weddings and corporate events across North India. Biscope is our flagship experience.",
   keywords: [
     "drone show India",
-    "drone light show Lucknow",
+    "drone light show New Delhi",
     "Biscope",
     "Airmation",
     "drone swarm Uttar Pradesh",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Airmation | Biscope Drone-Swarm Light Shows",
     description:
-      "Synchronised LED drone-swarm light shows for government, festival, wedding and corporate events. Rooted in Uttar Pradesh.",
+      "Synchronised LED drone-swarm light shows for government, festival, wedding and corporate events. Based in New Delhi, serving Uttar Pradesh's festival and civic calendar.",
     siteName: "Airmation",
     locale: "en_IN",
     type: "website",

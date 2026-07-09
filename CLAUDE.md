@@ -21,8 +21,8 @@ stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 
 ## Architecture
 
-This is the marketing website for **Airmation** (a Lucknow, Uttar
-Pradesh drone-swarm light-show company) and its flagship product
+This is the marketing website for **Airmation** (a New Delhi-based
+drone-swarm light-show company) and its flagship product
 **Biscope**. Next.js App Router, TypeScript, Tailwind CSS v4.
 
 **Content lives in one place.** `src/lib/content.ts` is the single source of

@@ -70,9 +70,9 @@ export default function AboutPage() {
               religious-tourism calendars — from Ayodhya and the Kumbh to
               Varanasi and Mathura — alongside a dense state-government events
               calendar. No competitor, not even the national market leader, is
-              based here. Our moat is regional density and relationships,
-              which is hard for a Delhi-based operator to copy from a
-              distance.
+              rooted here. Our moat is proximity, regional density and
+              relationships built market by market, which is hard for a
+              distant, generalist operator to replicate.
             </p>
           </Reveal>
         </div>
