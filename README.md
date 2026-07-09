@@ -46,6 +46,7 @@ npm run lint    # eslint
 | `/` | Home — cinematic scroll-driven experience, swarm canvas tied to scroll position |
 | `/biscope` | The flagship product in depth |
 | `/about` | Company mission, honest positioning, founding team |
+| `/team` | Full founder bios and photos |
 | `/vision` | Airmation Academy (Year 2+) and UAV R&D (Year 4+) |
 | `/gallery` | Concept formation renders |
 | `/contact` | Contact form (posts to `/api/contact`) |
@@ -91,8 +92,9 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 - [ ] Set up Neon (above) so contact-form leads aren't lost.
 - [ ] Replace concept formation renders on `/gallery` with real photography
       or footage once Biscope's first shows are delivered.
-- [ ] Add a real founder headshot / team photo section if desired (currently
-      text-only initials avatars).
+- [ ] Add real founder headshots: drop files in `public/team/` and set each
+      founder's `photo` path in `src/lib/content.ts` (see `public/team/README.md`).
+      Until then, `/` and `/team` show initials placeholders instead of photos.
 - [ ] Update `metadataBase` in `src/app/layout.tsx` if the production domain
       differs from `airmation.in`.
 - [ ] Deploy (Vercel is the path of least resistance for Next.js) and add the

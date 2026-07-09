@@ -1,6 +1,9 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import ContactForm from "@/components/ui/ContactForm";
 import ScrollSwarmCanvas from "@/components/home/ScrollSwarmCanvas";
+import FounderAvatar from "@/components/team/FounderAvatar";
 import {
   homeHero,
   homeChapters,
@@ -120,7 +123,8 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-4">
             {founders.map((founder, i) => (
               <Reveal key={founder.name} delay={i * 0.06}>
-                <div>
+                <div className="group">
+                  <FounderAvatar name={founder.name} photo={founder.photo} className="mb-4" />
                   <h3 className="mb-1 text-[17px] font-medium text-ink">{founder.name}</h3>
                   <p className="mb-3 font-mono text-[11px] tracking-[0.08em] text-dim">
                     {founder.role}
@@ -130,6 +134,15 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={0.2}>
+            <Link
+              href="/team"
+              className="mt-10 inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] text-dim transition-colors hover:text-ink"
+            >
+              Meet the full team <ArrowRight size={13} />
+            </Link>
+          </Reveal>
         </section>
 
         {/* SAFETY */}

@@ -18,7 +18,7 @@ export const site = {
 // this page is a tighter, teaser-length narrative — the deep-dive pages
 // remain the place for the fuller explanation.
 export const homeHero = {
-  eyebrow: "LUCKNOW, UTTAR PRADESH · DRONE-SWARM LIGHT SHOWS",
+  eyebrow: "NEW DELHI, INDIA · DRONE-SWARM LIGHT SHOWS",
   title: "The night sky, choreographed.",
   subtitle:
     "Hundreds of synchronised LED drones lift off, form, and dissolve — a light show for the moments a city, a festival or a family will remember. Scroll, and watch the swarm fly.",
@@ -96,6 +96,7 @@ export const safetyHighlightsCompact = [
 export const navLinks = [
   { href: "/biscope", label: "Biscope" },
   { href: "/about", label: "About" },
+  { href: "/team", label: "Team" },
   { href: "/vision", label: "Vision" },
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
@@ -214,28 +215,46 @@ export const roadmap = [
   },
 ];
 
+// `photo` is a path under /public — e.g. "/team/gaurav-tripathi.jpg". Leave it
+// unset until a real headshot is added; FounderAvatar falls back to an
+// initials placeholder so nothing breaks in the meantime. Drop new photos in
+// public/team/ (see that folder's note for naming/sizing) and just fill in
+// the path here — no other code changes needed.
 export const founders = [
+    {
+    name: "Madhuri Tripathi",
+    role: "CEO",
+    background: "Senior Software Engineer, Google — ground control and fleet management.",
+    intro:
+      "Anshuman leads software at Airmation — ground control and fleet management. A former Senior Software Engineer at Google, he brings production-grade engineering discipline to the systems that keep hundreds of drones talking to each other mid-show.",
+    photo: "/team/madhuri.png",
+  },
   {
     name: "Gaurav Tripathi",
-    role: "CEO / CTO — Technology, R&D, Grant Strategy",
+    role: "CPO / COO — Technology, R&D, Grant Strategy",
     background:
       "PhD in IoT, drones and machine learning (IIIT Lucknow); previously built an agricultural drone.",
+    intro:
+      "Gaurav leads technology, R&D and grant strategy at Airmation. He holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and built an agricultural drone before this — the same instinct for turning research into a working machine now drives Biscope's choreography and flight-control stack.",
+    photo: "/team/gaurav.jpg",
   },
   {
     name: "Harshit Dixit",
     role: "COO — Operations, Business, Partnerships",
     background: "BTech (IIIT Lucknow); left a senior role at Tata to found Airmation.",
+    intro:
+      "Harshit leads operations, business and partnerships. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airmation — trading a stable corporate career for the harder, more interesting problem of building a regional drone-show company from the ground up.",
+    photo: "/team/harshit.jpg",
   },
   {
-    name: "Anshuman",
-    role: "Hardware Lead",
+    name: "Sandeep Srivastava",
+    role: "Mentor / Advisor — Drone Engineering, Safety, Compliance",
     background: "Hardware engineering — drone build and manufacturing liaison.",
+    intro:
+      "Sandeep leads hardware engineering at Airmation — drone build quality and the manufacturing liaison work that keeps the fleet flightworthy show after show.",
+    photo: "/team/sandeep.jpg",
   },
-  {
-    name: "Adarsh Shukla",
-    role: "Software Lead",
-    background: "Senior Software Engineer, Google — ground control and fleet management.",
-  },
+
 ];
 
 export const orgTypes = [

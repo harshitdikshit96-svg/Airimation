@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
@@ -109,6 +110,15 @@ export default function AboutPage() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={0.2}>
+            <Link
+              href="/team"
+              className="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-dim transition-colors hover:text-ink"
+            >
+              See full bios <ArrowRight size={14} />
+            </Link>
+          </Reveal>
         </div>
       </section>
 
