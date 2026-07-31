@@ -10,7 +10,11 @@
   --line-2: #1c1c1d;
   --ink: #f2f2f0;
   --muted: #a8a8a5;
-  --dim: #7a7a78;
+  /* Raised from #7a7a78 — the old value cleared AA (4.5:1) against the
+     near-black page background but fell just short (~4.4:1) against the
+     lighter --panel surface cards/inputs sit on. This clears both with
+     margin (~5.9:1 on --panel, ~6.3:1 on --navy). */
+  --dim: #949491;
   --amber: #e0a230;
   --amber-soft: #f0c878;
   --cyan: #2aa5b5;
@@ -151,4 +155,20 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--line);
   border-radius: 6px;
+}
+
+/* Global reduced-motion guard. Catches every CSS animation/transition on the
+   site (fade-ups, hover transitions, the nav-panel slide, etc.) in one place
+   so individual components don't each need their own escape hatch. Canvas-
+   based animation (the scroll swarm) is handled separately in JS, since it
+   isn't CSS-driven. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

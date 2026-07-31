@@ -25,7 +25,7 @@ export default function Footer() {
                 isInternal ? "text-int-ink" : "text-ink"
               )}
             >
-              Air<span className={isInternal ? "text-int-pink" : "text-amber-soft"}>mation</span>
+              Air<span className={isInternal ? "text-int-pink" : "text-amber-soft"}>imation</span>
             </span>
             <p className={clsx("mt-3 max-w-xs text-sm", isInternal ? "text-int-muted" : "text-muted")}>
               {isInternal

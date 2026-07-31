@@ -26,7 +26,7 @@ export default function Home() {
           className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 pb-20 pt-36"
         >
           <Reveal>
-            <p className="mb-7 font-mono text-xs tracking-[0.28em] text-dim">
+            <p className="mb-7 font-mono text-xs tracking-[0.2em] text-dim">
               {homeHero.eyebrow}
             </p>
             <h1 className="max-w-[15ch] font-serif text-[clamp(42px,6.4vw,84px)] font-light leading-[1.08] text-ink">
@@ -37,7 +37,7 @@ export default function Home() {
             </p>
             <div className="mt-16 flex items-center gap-3">
               <span className="h-11 w-px bg-gradient-to-b from-white/25 to-transparent" />
-              <span className="font-mono text-[11px] tracking-[0.22em] text-dim">
+              <span className="font-mono text-xs tracking-[0.18em] text-dim">
                 SCROLL TO BEGIN THE SHOW
               </span>
             </div>
@@ -54,7 +54,7 @@ export default function Home() {
           >
             <Reveal>
               <div className={`max-w-[46ch] ${i % 2 === 1 ? "text-left" : ""}`}>
-                <p className="mb-5 font-mono text-xs tracking-[0.28em] text-dim">
+                <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
                   {chapter.index}
                 </p>
                 <h2 className="max-w-[20ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
@@ -72,7 +72,7 @@ export default function Home() {
           className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 py-24"
         >
           <Reveal>
-            <p className="mb-5 font-mono text-xs tracking-[0.28em] text-dim">03 · THE FLAGSHIP</p>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">03 · THE FLAGSHIP</p>
             <h2 className="mb-4 font-serif text-[clamp(34px,4.4vw,58px)] font-light leading-[1.12] text-ink">
               Biscope.
             </h2>
@@ -114,7 +114,7 @@ export default function Home() {
           className="mx-auto flex min-h-[90vh] max-w-[1100px] flex-col justify-center px-6 py-24"
         >
           <Reveal>
-            <p className="mb-5 font-mono text-xs tracking-[0.28em] text-dim">04 · THE TEAM</p>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">04 · THE TEAM</p>
             <h2 className="mb-12 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
               Built in New Delhi, by people who fly.
             </h2>
@@ -126,7 +126,7 @@ export default function Home() {
                 <div className="group">
                   <FounderAvatar name={founder.name} photo={founder.photo} className="mb-4" />
                   <h3 className="mb-1 text-[17px] font-medium text-ink">{founder.name}</h3>
-                  <p className="mb-3 font-mono text-[11px] tracking-[0.08em] text-dim">
+                  <p className="mb-3 font-mono text-xs tracking-[0.08em] text-dim">
                     {founder.role}
                   </p>
                   <p className="text-[13.5px] font-light text-muted">{founder.background}</p>
@@ -148,7 +148,7 @@ export default function Home() {
         {/* SAFETY */}
         <section className="mx-auto max-w-[1100px] px-6 py-20">
           <Reveal>
-            <p className="mb-6 font-mono text-xs tracking-[0.28em] text-dim">
+            <p className="mb-6 font-mono text-xs tracking-[0.2em] text-dim">
               SAFETY &amp; COMPLIANCE
             </p>
             <div className="grid grid-cols-1 gap-x-10 gap-y-5 sm:grid-cols-2">
@@ -168,7 +168,7 @@ export default function Home() {
         >
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
-              <p className="mb-5 font-mono text-xs tracking-[0.28em] text-dim">05 · CONTACT</p>
+              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">05 · CONTACT</p>
               <h2 className="mb-5 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                 Put a show in your sky.
               </h2>

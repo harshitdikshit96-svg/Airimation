@@ -6,7 +6,7 @@ export default function SectionLabel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.28em] text-cyan-soft">
+    <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-cyan-soft">
       {no && <span className="text-dim">{no}</span>}
       <span>{children}</span>
     </div>

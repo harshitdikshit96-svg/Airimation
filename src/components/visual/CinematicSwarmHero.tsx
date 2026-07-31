@@ -42,6 +42,10 @@ export default function CinematicSwarmHero({ className }: { className?: string }
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     let w = 0;
     let h = 0;
 
@@ -86,32 +90,34 @@ export default function CinematicSwarmHero({ className }: { className?: string }
       if (!ctx) return;
       ctx.clearRect(0, 0, w, h);
 
-      if (phase === "hold" && now - start > holdMs) {
-        const next = (idx + 1) % formations.length;
-        particles.forEach((p, i) => {
-          p.from = { ...p.current };
-          p.to = formations[next][i];
-        });
-        idx = next;
-        phase = "moving";
-        start = now;
-      } else if (phase === "moving") {
-        const t = Math.min(1, (now - start) / transitionMs);
-        const e = ease(t);
-        particles.forEach((p) => {
-          p.current.x = p.from.x + (p.to.x - p.from.x) * e;
-          p.current.y = p.from.y + (p.to.y - p.from.y) * e;
-        });
-        if (t >= 1) {
-          phase = "hold";
+      if (!reduceMotion) {
+        if (phase === "hold" && now - start > holdMs) {
+          const next = (idx + 1) % formations.length;
+          particles.forEach((p, i) => {
+            p.from = { ...p.current };
+            p.to = formations[next][i];
+          });
+          idx = next;
+          phase = "moving";
           start = now;
+        } else if (phase === "moving") {
+          const t = Math.min(1, (now - start) / transitionMs);
+          const e = ease(t);
+          particles.forEach((p) => {
+            p.current.x = p.from.x + (p.to.x - p.from.x) * e;
+            p.current.y = p.from.y + (p.to.y - p.from.y) * e;
+          });
+          if (t >= 1) {
+            phase = "hold";
+            start = now;
+          }
         }
       }
 
       particles.forEach((p) => {
         const px = p.current.x * w;
         const py = p.current.y * h;
-        const twinkle = 0.8 + 0.2 * Math.sin(now / 900 + p.tw);
+        const twinkle = reduceMotion ? 1 : 0.8 + 0.2 * Math.sin(now / 900 + p.tw);
 
         ctx.beginPath();
         ctx.fillStyle = "rgba(255,255,255,0.14)";
@@ -124,7 +130,11 @@ export default function CinematicSwarmHero({ className }: { className?: string }
         ctx.fill();
       });
 
-      raf = requestAnimationFrame(draw);
+      // Reduced motion: render one representative static formation and stop
+      // — no ongoing morph loop.
+      if (!reduceMotion) {
+        raf = requestAnimationFrame(draw);
+      }
     }
     raf = requestAnimationFrame(draw);
 

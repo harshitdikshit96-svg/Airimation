@@ -39,7 +39,6 @@ export default function SwarmCanvas({ particleCount = 240 }: { particleCount?: n
 
     let formationIndex = 0;
     let transitionStart = performance.now();
-    const holdMs = reduceMotion ? 100000 : 2600;
     const transitionMs = 2200;
     let phase: "hold" | "moving" = "hold";
     let raf = 0;
@@ -77,25 +76,29 @@ export default function SwarmCanvas({ particleCount = 240 }: { particleCount?: n
       const h = canvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
 
-      if (phase === "hold" && now - transitionStart > holdMs) {
-        advanceFormation(now);
-      } else if (phase === "moving") {
-        const t = Math.min(1, (now - transitionStart) / transitionMs);
-        const eased = easeInOutCubic(t);
-        particles.forEach((p) => {
-          p.current.x = lerp(p.from.x, p.to.x, eased);
-          p.current.y = lerp(p.from.y, p.to.y, eased);
-        });
-        if (t >= 1) {
-          phase = "hold";
-          transitionStart = now;
+      if (!reduceMotion) {
+        if (phase === "hold" && now - transitionStart > 2600) {
+          advanceFormation(now);
+        } else if (phase === "moving") {
+          const t = Math.min(1, (now - transitionStart) / transitionMs);
+          const eased = easeInOutCubic(t);
+          particles.forEach((p) => {
+            p.current.x = lerp(p.from.x, p.to.x, eased);
+            p.current.y = lerp(p.from.y, p.to.y, eased);
+          });
+          if (t >= 1) {
+            phase = "hold";
+            transitionStart = now;
+          }
         }
       }
 
       particles.forEach((p) => {
         const px = p.current.x * w;
         const py = p.current.y * h;
-        const twinkle = 0.55 + 0.45 * Math.sin(now / 600 + p.twinkle);
+        // A representative fixed brightness, no shimmer, when motion is
+        // reduced — otherwise a gentle per-particle twinkle.
+        const twinkle = reduceMotion ? 1 : 0.55 + 0.45 * Math.sin(now / 600 + p.twinkle);
         ctx.beginPath();
         ctx.fillStyle = p.color;
         ctx.globalAlpha = 0.55 * twinkle + 0.25;
@@ -107,7 +110,12 @@ export default function SwarmCanvas({ particleCount = 240 }: { particleCount?: n
       ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
 
-      raf = requestAnimationFrame(draw);
+      // With reduced motion, render this single static frame and stop —
+      // no continuing rAF loop, matching the "static representative frame"
+      // fallback used across the site's other canvases.
+      if (!reduceMotion) {
+        raf = requestAnimationFrame(draw);
+      }
     }
 
     raf = requestAnimationFrame(draw);

@@ -99,6 +99,44 @@ export default function ScrollSwarmCanvas() {
       prevY: null,
     }));
 
+    // Reduced motion: skip the scroll-driven, frame-by-frame morph entirely.
+    // Render one representative static formation (a mid-sequence phase, so
+    // it reads as "a show", not an empty or half-formed frame) once, then
+    // stop — no rAF loop, no per-frame scroll reads.
+    if (reduceMotion) {
+      const staticPhase = Math.floor((formations.length - 1) / 2);
+      const frame = formations[staticPhase];
+      if (captionRef.current) captionRef.current.textContent = phaseNames[staticPhase];
+      if (dotRef.current) dotRef.current.classList.remove("animate-pulse");
+
+      function drawStatic() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, w, h);
+        for (let i = 0; i < DRONE_COUNT; i++) {
+          const pt = particles[i];
+          const px = frame[i].x * w;
+          const py = frame[i].y * h;
+          ctx.beginPath();
+          ctx.fillStyle = "rgba(255,255,255,0.16)";
+          ctx.arc(px, py, pt.size * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.fillStyle = "rgba(255,255,255,0.95)";
+          ctx.arc(px, py, pt.size * 0.85, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      drawStatic();
+      function handleResize() {
+        setSize();
+        drawStatic();
+      }
+      window.removeEventListener("resize", setSize);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+
     function draw(now: number) {
       if (!ctx) return;
       if (w !== window.innerWidth || h !== window.innerHeight) setSize();
@@ -231,7 +269,7 @@ export default function ScrollSwarmCanvas() {
         />
         <span
           ref={captionRef}
-          className="font-mono text-[11px] tracking-[0.22em] text-dim"
+          className="font-mono text-xs tracking-[0.18em] text-dim"
         >
           GROUND HOLD
         </span>

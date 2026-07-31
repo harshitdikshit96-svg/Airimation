@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 import { navLinks } from "@/lib/content";
+
+const PANEL_ID = "mobile-nav-panel";
+const MOBILE_QUERY = "(max-width: 767px)";
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /**
  * The nav is hidden by default so every page opens on a clean, full-bleed
@@ -14,12 +19,19 @@ import { navLinks } from "@/lib/content";
  * screen slides a nav panel in from the left; it hides again a moment after
  * the pointer leaves. Touch devices (no hover) get a small persistent tab at
  * the same edge to tap instead, since they can't trigger a hover zone.
+ *
+ * Below `md`, opening the panel (via the tap tab) behaves like a proper
+ * mobile menu: it traps focus, closes on Escape, closes on link click, and
+ * locks body scroll while open. Desktop's hover-triggered panel is left
+ * exactly as before — hover is transient and shouldn't fight the page.
  */
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isInternal = pathname?.startsWith("/internal") ?? false;
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const panelRef = useRef<HTMLElement | null>(null);
+  const tapTabRef = useRef<HTMLButtonElement | null>(null);
 
   function show() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -29,6 +41,49 @@ export default function Header() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => setOpen(false), 400);
   }
+
+  // Mobile-only behaviors: body scroll lock, Escape to close, and a focus
+  // trap inside the panel. Gated on the md breakpoint so desktop's
+  // hover-to-peek panel keeps working unmodified.
+  useEffect(() => {
+    if (!open) return;
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia(MOBILE_QUERY).matches) return;
+
+    const panel = panelRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusable = panel
+      ? Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+      : [];
+    focusable[0]?.focus();
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        tapTabRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab" || focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   return (
     <>
@@ -41,8 +96,11 @@ export default function Header() {
 
       {/* Persistent tap tab for touch devices, which have no hover state. */}
       <button
+        ref={tapTabRef}
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        aria-controls={PANEL_ID}
         onClick={() => setOpen((v) => !v)}
         className={clsx(
           "fixed left-0 top-1/2 z-50 -translate-y-1/2 rounded-r-md border border-l-0 px-1.5 py-3 backdrop-blur-sm transition-colors md:hidden",
@@ -54,7 +112,22 @@ export default function Header() {
         {open ? <X size={16} /> : <Menu size={16} />}
       </button>
 
+      {/* Backdrop, mobile only — gives the open panel a modal feel and is
+          also clickable to dismiss it. */}
+      {open && (
+        <div
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+        />
+      )}
+
       <aside
+        id={PANEL_ID}
+        ref={panelRef}
+        role="dialog"
+        aria-modal={open}
+        aria-label="Site navigation"
         onMouseEnter={show}
         onMouseLeave={scheduleHide}
         className={clsx(
@@ -76,7 +149,7 @@ export default function Header() {
               )}
             >
               Air
-              <span className={isInternal ? "text-int-pink" : "text-amber-soft"}>mation</span>
+              <span className={isInternal ? "text-int-pink" : "text-amber-soft"}>imation</span>
             </span>
           </Link>
 
