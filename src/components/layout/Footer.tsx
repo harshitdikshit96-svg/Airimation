@@ -118,6 +118,26 @@ export default function Footer() {
               : "Show visuals are concept renders — Biscope's first shows are in preparation."}
           </span>
         </div>
+
+        <div
+          className={clsx(
+            "mt-4 text-center text-xs",
+            isInternal ? "text-int-dim" : "text-dim"
+          )}
+        >
+          Designed &amp; Developed by{" "}
+          <a
+            href="https://harshitcreates.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={clsx(
+              "underline transition-colors",
+              isInternal ? "hover:text-int-ink" : "hover:text-ink"
+            )}
+          >
+            harshitcreates.in
+          </a>
+        </div>
       </div>
     </footer>
   );
