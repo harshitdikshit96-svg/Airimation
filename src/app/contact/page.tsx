@@ -1,7 +1,7 @@
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ContactForm from "@/components/ui/ContactForm";
-import { contactInfo, site } from "@/lib/content";
+import { company, contactInfo, credentials } from "@/lib/content";
 import { Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -27,6 +27,45 @@ export default function ContactPage() {
               — tell us the details and we&apos;ll respond directly.
             </p>
 
+            {/* Company information — the details a district office, a venue
+                or a corporate procurement team will ask for. Plain text,
+                no government badges; see content.ts for why. */}
+            <div className="mt-10 border-t border-line-2 pt-8">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-dim">
+                Company information
+              </p>
+              <dl className="mt-5 space-y-4">
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+                    Registered name
+                  </dt>
+                  <dd className="mt-1 text-sm text-muted">{company.legalName}</dd>
+                </div>
+                {credentials.map((item) => (
+                  <div key={item.label}>
+                    <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+                      {item.label}
+                    </dt>
+                    <dd className="mt-1 font-mono text-sm text-muted">{item.value}</dd>
+                  </div>
+                ))}
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+                    Registered office
+                  </dt>
+                  <dd className="mt-1 text-sm leading-relaxed text-muted">
+                    {company.registeredOffice}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-6 text-xs leading-relaxed text-dim">
+                Recognised as a startup by the Department for Promotion of Industry
+                and Internal Trade, Government of India, and registered as an MSME
+                under Udyam. Incorporated {company.incorporatedOn} under the
+                Companies Act, 2013.
+              </p>
+            </div>
+
             <div className="mt-10 space-y-4">
               <a
                 href={`mailto:${contactInfo.email}`}
@@ -42,7 +81,7 @@ export default function ContactPage() {
             </div>
 
             <p className="mt-8 text-xs text-dim">
-              Airimation is a brand of {site.legalName}.
+              Airimation is a brand of {company.legalName}.
             </p>
           </Reveal>
         </div>

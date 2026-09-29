@@ -5,9 +5,8 @@
 
 export const site = {
   name: "Airimation",
-  // The full registered legal entity name. Used anywhere a site needs to
-  // state who legally operates it: footer, contact info, structured data —
-  // not in casual brand copy (which just uses `name` above).
+  // Deprecated: use `company.legalName`. Kept so older references keep
+  // compiling; `company` is the single source of truth for statutory detail.
   legalName: "Airimation Technologies Private Limited",
   flagship: "Biscope",
   base: "New Delhi",
@@ -91,6 +90,11 @@ export const homeSegments = [
 // Four-item condensed version of `safetyPoints`, for the homepage grid
 // (merges the insurance and safety-officer lines from the full list).
 export const safetyHighlightsCompact = [
+  // Statutory identity stated in words only — the registration numbers
+  // themselves live in the footer and on /contact. The Drone Rules /
+  // Digital Sky clause is deliberately left to the next line so this one
+  // does not repeat it.
+  "Airimation Technologies Private Limited is a DPIIT-recognised startup and a registered Udyam (MSME) enterprise.",
   "Operations under the Drone Rules, 2021, via the DGCA Digital Sky Platform, with NPNT-compliant geofencing on every aircraft.",
   "Audiences are always kept at a cordoned lateral standoff — Biscope shows never fly over a crowd.",
   "Automatic return-to-launch on link loss or low battery, geofence auto-containment, and a manual all-land kill-switch on standby.",
@@ -127,8 +131,15 @@ export const beyondBiscope = {
   body: "The show business builds the cash, the crew and the credibility for what comes next — an in-house training academy, and eventually, an indigenous UAV technology company.",
 };
 
-export const navLinks = [
-  { href: "/design-your-show", label: "Design a Show" },
+export type NavLink = {
+  href: string;
+  label: string;
+  /** Rendered in amber — one entry at most, or it stops being a highlight. */
+  highlight?: boolean;
+};
+
+export const navLinks: NavLink[] = [
+  { href: "/design-your-show", label: "Design a Show", highlight: true },
   { href: "/biscope", label: "Biscope" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },
@@ -393,6 +404,49 @@ export const orgTypes = [
   "Corporate / Agency",
   "Investor / Partner",
   "Other",
+];
+
+/**
+ * Statutory identity.
+ *
+ * These are STATEMENTS OF FACT, published as plain text. We deliberately do
+ * not display the Startup India, MSME/Udyam or Government of India logos:
+ *  - the Startup India mark is DPIIT-owned and recognition alone grants no
+ *    right to use it; private use needs prior written approval,
+ *  - the MSME mark needs Ministry approval and is promotional/non-commercial
+ *    only,
+ *  - both, and the Udyam certificate itself, carry the State Emblem, whose
+ *    reproduction is restricted by the State Emblem of India (Prohibition of
+ *    Improper Use) Act, 2005.
+ * Quoting the registration numbers is lawful, verifiable, and more useful to
+ * a procurement officer than a badge.
+ *
+ * ⚠️ VERIFY `cin` AGAINST THE CERTIFICATE OF INCORPORATION BEFORE PUBLISHING.
+ * The state code reads "UW", and there is no such Indian state code — Uttar
+ * Pradesh is "UP", which is consistent with the GSTIN's 09 prefix and the
+ * Udyam number's UP. Left exactly as supplied rather than silently corrected,
+ * because this is a legal identifier.
+ */
+export const company = {
+  legalName: "Airimation Technologies Private Limited",
+  cin: "U82300UW2026PTC257648",
+  incorporatedOn: "22 August 2026",
+  gstin: "09ABGCA5420J1ZN",
+  udyam: "UDYAM-UP-28-0243960",
+  dpiit: "DIPP285551",
+  registeredOffice:
+    "CF-132G, Ansal Golf Links, Pari Chowk, Knowledge Park-I, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh 201310, India",
+  /** Short form, for places where the full address is too much. */
+  registeredOfficeShort: "Greater Noida, Uttar Pradesh",
+  email: "teamairimation@gmail.com",
+};
+
+/** Credential lines for the footer strip, in display order. */
+export const credentials = [
+  { label: "CIN", value: company.cin },
+  { label: "GSTIN", value: company.gstin },
+  { label: "Udyam (MSME)", value: company.udyam },
+  { label: "DPIIT Startup", value: company.dpiit },
 ];
 
 export const contactInfo = {

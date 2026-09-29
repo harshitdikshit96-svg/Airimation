@@ -14,7 +14,7 @@ import "@fontsource/ibm-plex-mono/600.css";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { site } from "@/lib/content";
+import { company, site } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Airimation | Biscope Drone-Swarm Light Shows — New Delhi",
@@ -42,15 +42,33 @@ export const metadata: Metadata = {
 
 // Organization structured data — declares the registered legal entity
 // (`legalName`) distinctly from the public-facing brand (`name`), the way
-// search engines expect when the two differ. See site.legalName in
-// content.ts for the single source of truth.
+// search engines expect when the two differ. Statutory detail — legal
+// name, CIN, GSTIN, Udyam, DPIIT — lives on `company` in content.ts.
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: site.name,
-  legalName: site.legalName,
+  legalName: company.legalName,
   url: "https://airimation.in",
+  email: company.email,
+  foundingDate: "2026-08-22",
   areaServed: "IN",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "CF-132G, Ansal Golf Links, Pari Chowk, Knowledge Park-I",
+    addressLocality: "Greater Noida",
+    addressRegion: "Uttar Pradesh",
+    postalCode: "201310",
+    addressCountry: "IN",
+  },
+  // Statutory identifiers, so the legal entity is machine-readable and
+  // verifiable rather than merely asserted.
+  identifier: [
+    { "@type": "PropertyValue", propertyID: "CIN", value: company.cin },
+    { "@type": "PropertyValue", propertyID: "GSTIN", value: company.gstin },
+    { "@type": "PropertyValue", propertyID: "Udyam", value: company.udyam },
+    { "@type": "PropertyValue", propertyID: "DPIIT", value: company.dpiit },
+  ],
 };
 
 export default function RootLayout({

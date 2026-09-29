@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { navLinks, contactInfo, site } from "@/lib/content";
+import { navLinks, contactInfo, credentials, company, site } from "@/lib/content";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -105,13 +105,35 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Statutory credentials, as plain text.
+            No Startup India / MSME / emblem badges — see the note on
+            `company` in content.ts for why. */}
+        {!isInternal && (
+          <div className="mt-12 border-t border-line-2 pt-6">
+            <dl className="flex flex-wrap gap-x-8 gap-y-3">
+              {credentials.map((item) => (
+                <div key={item.label}>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+                    {item.label}
+                  </dt>
+                  <dd className="mt-1 font-mono text-xs text-muted">{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-4 max-w-2xl text-xs leading-relaxed text-dim">
+              {company.legalName} · Incorporated {company.incorporatedOn} under the
+              Companies Act, 2013. Registered office: {company.registeredOffice}
+            </p>
+          </div>
+        )}
+
         <div
           className={clsx(
-            "mt-12 flex flex-col gap-3 border-t pt-6 text-xs sm:flex-row sm:items-center sm:justify-between",
+            "mt-8 flex flex-col gap-3 border-t pt-6 text-xs sm:flex-row sm:items-center sm:justify-between",
             isInternal ? "border-int-line text-int-dim" : "border-line-2 text-dim"
           )}
         >
-          <span>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {company.legalName}. All rights reserved.</span>
           <span>
             {isInternal
               ? "Internal use only — not for external distribution."

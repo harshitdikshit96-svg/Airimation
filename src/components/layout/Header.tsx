@@ -104,9 +104,15 @@ export default function Header() {
                     ? active
                       ? "text-int-ink"
                       : "text-int-muted hover:text-int-ink"
-                    : active
-                      ? "text-ink"
-                      : "text-muted hover:text-ink"
+                    : link.highlight
+                      // The configurator is the one thing on the site a
+                      // visitor can actually play with, so it gets the
+                      // brand amber to pull the eye. Exactly one link
+                      // carries this; a second would cancel the first out.
+                      ? "font-medium text-amber hover:text-amber-soft"
+                      : active
+                        ? "text-ink"
+                        : "text-muted hover:text-ink"
                 )}
               >
                 {link.label}
@@ -152,7 +158,9 @@ export default function Header() {
                   "border-b py-3 text-sm last:border-b-0",
                   isInternal
                     ? "border-int-line/60 text-int-muted"
-                    : "border-line-2/60 text-muted"
+                    : link.highlight
+                      ? "border-line-2/60 font-medium text-amber"
+                      : "border-line-2/60 text-muted"
                 )}
               >
                 {link.label}
