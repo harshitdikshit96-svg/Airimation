@@ -21,7 +21,12 @@ centered headshot with some room above the shoulders works best.
 rajeev.jpg, deepak.jpg, vishal.jpg (advisors) and neeraj.jpg, madhuri.png,
 harshit.jpg, gaurav.jpg (core team).
 
-The four added on 2026-09-29 were supplied at low resolution (216–591px) and
+rajeev.jpg and vishal.jpg were replaced on 2026-09-29 (evening) with better
+source images: rajeev.jpg is cropped to 4:5 from a conference photo, with the
+bottom nameplate band deliberately cropped out; vishal.jpg is a centre crop of
+a square headshot. Both were upscaled modestly (2.2x and 1.8x).
+
+The other two added on 2026-09-29 were supplied at low resolution (216–591px) and
 have been cropped to 4:5 and upscaled modestly — capped at 2.2x, because
 pushing them further only invents soft pixels. They are noticeably softer
 than madhuri.png and harshit.jpg. Replace them with originals from each
