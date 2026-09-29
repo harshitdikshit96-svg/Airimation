@@ -1,27 +1,40 @@
-// The horizon silhouette.
+// The horizon: ground, treeline and crowd.
 //
-// This exists for ONE reason: scale. Against a pure black sky a swarm has no
-// reference — 50 drones and 200 drones look nearly identical, because the
-// viewer can orbit closer or further and nothing anchors the size. Since the
-// entire purpose of this tool is to help someone judge how many drones they
-// need, an empty background would defeat it.
+// This exists for ONE reason — SCALE. Against an empty sky a swarm has no
+// reference: 50 drones and 200 drones look identical, because the viewer can
+// orbit closer or further and nothing anchors the size. Since the whole
+// purpose of this tool is helping someone judge how many drones they need,
+// an empty background would defeat it.
 //
-// So: a treeline of known height and a crowd of human-scale figures. It is a
-// measuring stick dressed as scenery, and it must stay dark enough never to
+// So everything here is a measuring stick dressed as scenery: trees of known
+// height, people of known height, and a ground plane that recedes. It has to
+// be visible enough to read at a glance and restrained enough never to
 // compete with the swarm.
+//
+// A first version was almost invisible — near-black shapes against a
+// near-black sky. The fix is not brighter silhouettes (real ones ARE black)
+// but a LIT BACKGROUND for them to sit against: a sky that lifts toward the
+// horizon and a ground that catches that light. That is also how a real
+// night field looks.
 
 import * as THREE from "three";
 
-const TREELINE_RADIUS = 250;
-const TREE_MIN_HEIGHT = 11;
-const TREE_MAX_HEIGHT = 28;
-const TREELINE_SEGMENTS = 220;
+const GROUND_RADIUS = 1600;
 
-const PERSON_HEIGHT = 1.7;
-const PERSON_WIDTH = 0.55;
-const CROWD_COUNT = 260;
-const CROWD_INNER = 70;
-const CROWD_OUTER = 160;
+// The treeline must sit OUTSIDE the camera's furthest orbit (CAMERA.maxDistance,
+// currently 380m). An earlier ring at 195–255m put the default camera position
+// literally inside the trees, and a canopy a few metres from the lens filled
+// half the frame with a black polygon.
+const TREE_RING_INNER = 440;
+const TREE_RING_OUTER = 560;
+const TREE_COUNT = 260;
+const TREE_MIN_HEIGHT = 14;
+const TREE_MAX_HEIGHT = 34;
+
+const PERSON_HEIGHT = 1.72;
+const CROWD_COUNT = 420;
+const CROWD_INNER = 38;
+const CROWD_OUTER = 145;
 
 function rand(seed: number): () => number {
   let s = seed % 2147483647;
@@ -29,58 +42,73 @@ function rand(seed: number): () => number {
   return () => (s = (s * 16807) % 2147483647) / 2147483647;
 }
 
+/** Two perpendicular quads, so a flat silhouette reads from any orbit angle. */
+function pushCross(
+  out: number[],
+  cx: number,
+  cz: number,
+  halfWidth: number,
+  bottom: number,
+  top: number
+) {
+  out.push(cx - halfWidth, bottom, cz, cx + halfWidth, bottom, cz, cx + halfWidth, top, cz);
+  out.push(cx - halfWidth, bottom, cz, cx + halfWidth, top, cz, cx - halfWidth, top, cz);
+  out.push(cx, bottom, cz - halfWidth, cx, bottom, cz + halfWidth, cx, top, cz + halfWidth);
+  out.push(cx, bottom, cz - halfWidth, cx, top, cz + halfWidth, cx, top, cz - halfWidth);
+}
+
 /**
- * A closed band of silhouette around the show, so it reads correctly from
- * any orbit angle rather than only head-on. Height varies with angle to
- * suggest trees and low buildings.
+ * A treeline of individual trees — trunk plus a rounded canopy.
+ *
+ * Deliberately not a smooth noise ridge: a ridge reads as distant hills of
+ * unknown size, where a tree is something everyone can size instinctively.
+ * That instinct is the entire point.
  */
-function buildTreeline(): THREE.Mesh {
+function buildTrees(): THREE.Mesh {
   const positions: number[] = [];
-  const random = rand(20260929);
+  const random = rand(90210);
 
-  const heightAt = (i: number) => {
-    const a = (i / TREELINE_SEGMENTS) * Math.PI * 2;
-    const base =
-      0.5 +
-      0.28 * Math.sin(a * 3.1) +
-      0.18 * Math.sin(a * 7.3 + 1.2) +
-      0.12 * Math.sin(a * 13.7 + 0.4);
-    const jitter = random() * 0.22 - 0.11;
-    return TREE_MIN_HEIGHT + (TREE_MAX_HEIGHT - TREE_MIN_HEIGHT) * Math.max(0, Math.min(1, base + jitter));
-  };
+  for (let i = 0; i < TREE_COUNT; i++) {
+    const angle = (i / TREE_COUNT) * Math.PI * 2 + (random() - 0.5) * 0.06;
+    const radius = TREE_RING_INNER + random() * (TREE_RING_OUTER - TREE_RING_INNER);
+    const cx = Math.cos(angle) * radius;
+    const cz = Math.sin(angle) * radius;
 
-  const heights: number[] = [];
-  for (let i = 0; i <= TREELINE_SEGMENTS; i++) heights.push(heightAt(i));
-  heights[TREELINE_SEGMENTS] = heights[0]; // close the loop seamlessly
+    const height = TREE_MIN_HEIGHT + random() * (TREE_MAX_HEIGHT - TREE_MIN_HEIGHT);
+    const canopyRadius = height * (0.3 + random() * 0.14);
+    const trunkHeight = height * (0.3 + random() * 0.12);
 
-  for (let i = 0; i < TREELINE_SEGMENTS; i++) {
-    const a0 = (i / TREELINE_SEGMENTS) * Math.PI * 2;
-    const a1 = ((i + 1) / TREELINE_SEGMENTS) * Math.PI * 2;
-    const x0 = Math.cos(a0) * TREELINE_RADIUS;
-    const z0 = Math.sin(a0) * TREELINE_RADIUS;
-    const x1 = Math.cos(a1) * TREELINE_RADIUS;
-    const z1 = Math.sin(a1) * TREELINE_RADIUS;
-    const h0 = heights[i];
-    const h1 = heights[i + 1];
+    // Trunk.
+    pushCross(positions, cx, cz, height * 0.035, 0, trunkHeight + canopyRadius * 0.4);
 
-    positions.push(x0, 0, z0, x1, 0, z1, x1, h1, z1);
-    positions.push(x0, 0, z0, x1, h1, z1, x0, h0, z0);
+    // Canopy, as a pair of crossed polygons approximating a rounded mass.
+    const segments = 9;
+    const canopyCentre = trunkHeight + canopyRadius;
+    for (let s = 0; s < segments; s++) {
+      const a0 = (s / segments) * Math.PI * 2;
+      const a1 = ((s + 1) / segments) * Math.PI * 2;
+      const squash = 1.12;
+      const x0 = Math.cos(a0) * canopyRadius;
+      const y0 = Math.sin(a0) * canopyRadius * squash;
+      const x1 = Math.cos(a1) * canopyRadius;
+      const y1 = Math.sin(a1) * canopyRadius * squash;
+
+      positions.push(cx, canopyCentre, cz, cx + x0, canopyCentre + y0, cz, cx + x1, canopyCentre + y1, cz);
+      positions.push(cx, canopyCentre, cz, cx, canopyCentre + y0, cz + x0, cx, canopyCentre + y1, cz + x1);
+    }
   }
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    side: THREE.DoubleSide,
-    depthWrite: true,
-  });
-  return new THREE.Mesh(geometry, material);
+  return new THREE.Mesh(
+    geometry,
+    new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide, fog: false })
+  );
 }
 
 /**
- * A scattered crowd of human-height figures. At 1.7m each they are the
- * finest scale reference in the scene — the thing that makes a 90-metre-wide
- * formation legible as ninety metres wide.
+ * The crowd. At 1.72m each these are the finest scale reference in the
+ * scene — what makes a 90-metre formation legible as ninety metres.
  */
 function buildCrowd(): THREE.Mesh {
   const positions: number[] = [];
@@ -88,58 +116,79 @@ function buildCrowd(): THREE.Mesh {
 
   for (let i = 0; i < CROWD_COUNT; i++) {
     const angle = random() * Math.PI * 2;
-    const radius = CROWD_INNER + random() * (CROWD_OUTER - CROWD_INNER);
+    // Bias toward the near side, where an audience would actually stand.
+    const spread = Math.pow(random(), 0.7);
+    const radius = CROWD_INNER + spread * (CROWD_OUTER - CROWD_INNER);
     const cx = Math.cos(angle) * radius;
     const cz = Math.sin(angle) * radius;
-    const h = PERSON_HEIGHT * (0.85 + random() * 0.3);
-    const w = PERSON_WIDTH;
-
-    // Cross-billboard: two perpendicular quads, so a figure reads as a
-    // silhouette from any orbit angle without per-frame billboarding.
-    positions.push(cx - w / 2, 0, cz, cx + w / 2, 0, cz, cx + w / 2, h, cz);
-    positions.push(cx - w / 2, 0, cz, cx + w / 2, h, cz, cx - w / 2, h, cz);
-    positions.push(cx, 0, cz - w / 2, cx, 0, cz + w / 2, cx, h, cz + w / 2);
-    positions.push(cx, 0, cz - w / 2, cx, h, cz + w / 2, cx, h, cz - w / 2);
+    const height = PERSON_HEIGHT * (0.86 + random() * 0.28);
+    pushCross(positions, cx, cz, 0.3, 0, height);
   }
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x020305,
-    side: THREE.DoubleSide,
-  });
-  return new THREE.Mesh(geometry, material);
+  return new THREE.Mesh(
+    geometry,
+    new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide, fog: false })
+  );
 }
 
+/**
+ * Ground that brightens with distance, as a real field does under a lifted
+ * night sky. Without this the silhouettes standing on it have nothing to be
+ * silhouettes against.
+ */
 function buildGround(): THREE.Mesh {
-  const geometry = new THREE.CircleGeometry(TREELINE_RADIUS, 64);
+  const geometry = new THREE.CircleGeometry(GROUND_RADIUS, 128);
   geometry.rotateX(-Math.PI / 2);
-  const material = new THREE.MeshBasicMaterial({ color: 0x030407 });
+
+  const material = new THREE.ShaderMaterial({
+    fog: false,
+    uniforms: {
+      uNear: { value: new THREE.Color(0x0b111c) },
+      uFar: { value: new THREE.Color(0x222d45) },
+      uRadius: { value: GROUND_RADIUS },
+    },
+    vertexShader: /* glsl */ `
+      varying float vDistance;
+      void main() {
+        vDistance = length(position.xz);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uNear;
+      uniform vec3 uFar;
+      uniform float uRadius;
+      varying float vDistance;
+      void main() {
+        // Most of the lift happens close in, where the crowd stands.
+        float t = pow(clamp(vDistance / (uRadius * 0.25), 0.0, 1.0), 0.6);
+        gl_FragColor = vec4(mix(uNear, uFar, t), 1.0);
+      }
+    `,
+  });
+
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = -0.1;
+  mesh.position.y = -0.15;
   return mesh;
 }
 
-
 /**
- * A very dark sky gradient.
+ * The sky.
  *
- * WHY THIS IS NOT PURE BLACK: a silhouette needs something to be a
- * silhouette *against*. With a black sky and a black treeline, the scale
- * reference is invisible — which is exactly what the first render showed.
- * Real night skies are not pure black near the horizon either; ground light
- * lifts them slightly. So the dome stays black overhead and lifts to a very
- * dark blue-grey at the horizon, which is both truthful and makes the
- * treeline and crowd readable.
+ * Black overhead, lifting to a dark blue-grey at the horizon. Real night
+ * skies are lifted this way by ground light, and it is what makes every
+ * silhouette below it readable.
  */
 function buildSky(): THREE.Mesh {
-  const geometry = new THREE.SphereGeometry(900, 32, 16);
+  const geometry = new THREE.SphereGeometry(2400, 48, 40);
   const material = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,
     fog: false,
     uniforms: {
-      uHorizon: { value: new THREE.Color(0x1d2433) },
+      uHorizon: { value: new THREE.Color(0x2b3550) },
       uZenith: { value: new THREE.Color(0x000000) },
     },
     vertexShader: /* glsl */ `
@@ -154,10 +203,16 @@ function buildSky(): THREE.Mesh {
       uniform vec3 uZenith;
       varying float vAltitude;
       void main() {
-        // Concentrate the lift in the lowest part of the sky.
-        float t = clamp(vAltitude, 0.0, 1.0);
-        float mixAmount = pow(1.0 - t, 2.6);
-        gl_FragColor = vec4(mix(uZenith, uHorizon, mixAmount), 1.0);
+        // Above the horizon: black overhead lifting to blue-grey at the rim.
+        float above = clamp(vAltitude, 0.0, 1.0);
+        vec3 sky = mix(uZenith, uHorizon, pow(1.0 - above, 2.0));
+
+        // BELOW the horizon the dome must go dark. The ground plane cannot
+        // cover every sight line at every orbit distance, and leaving this
+        // at full horizon brightness produced a glowing band beyond the
+        // ground's edge that read as a wall of light.
+        float below = clamp(-vAltitude * 14.0, 0.0, 1.0);
+        gl_FragColor = vec4(mix(sky, uZenith, below), 1.0);
       }
     `,
   });
@@ -170,7 +225,7 @@ export function buildHorizon(): THREE.Group {
   const group = new THREE.Group();
   group.add(buildSky());
   group.add(buildGround());
-  group.add(buildTreeline());
+  group.add(buildTrees());
   group.add(buildCrowd());
   return group;
 }

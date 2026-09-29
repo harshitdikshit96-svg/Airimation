@@ -9,9 +9,11 @@ import {
   homeChapters,
   biscopeStepsCompact,
   homeSegments,
-  founders,
+  advisors,
+  coreTeam,
   safetyHighlightsCompact,
   contactInfo,
+  designTeaser,
 } from "@/lib/content";
 
 export default function Home() {
@@ -108,28 +110,80 @@ export default function Home() {
           </div>
         </section>
 
+        {/* DESIGN A SHOW — the configurator CTA */}
+        <section
+          id="design"
+          className="mx-auto max-w-[1100px] px-6 py-24"
+        >
+          <Reveal>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
+              {designTeaser.eyebrow}
+            </p>
+            <h2 className="mb-5 max-w-[20ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+              {designTeaser.title}
+            </h2>
+            <p className="mb-8 max-w-[52ch] text-base font-light leading-relaxed text-muted">
+              {designTeaser.body}
+            </p>
+            <Link
+              href="/design-your-show"
+              className="group inline-flex items-center gap-2 border-b border-amber pb-1 font-mono text-sm text-amber transition hover:gap-3"
+            >
+              {designTeaser.cta}
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Reveal>
+        </section>
+
         {/* TEAM */}
         <section
           id="team"
           className="mx-auto flex min-h-[90vh] max-w-[1100px] flex-col justify-center px-6 py-24"
         >
           <Reveal>
-            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">04 · THE TEAM</p>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">05 · THE TEAM</p>
             <h2 className="mb-12 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
               Built in New Delhi, by people who fly.
             </h2>
           </Reveal>
 
-          <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-4">
-            {founders.map((founder, i) => (
-              <Reveal key={founder.name} delay={i * 0.06}>
-                <div className="group">
-                  <FounderAvatar name={founder.name} photo={founder.photo} className="mb-4" />
-                  <h3 className="mb-1 text-[17px] font-medium text-ink">{founder.name}</h3>
+          {/* Advisors lead — pre-first-show, the bench is the strongest
+              credibility signal the company has. */}
+          <Reveal>
+            <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+              Advisors
+            </p>
+          </Reveal>
+          <div className="mb-14 grid grid-cols-1 gap-9 sm:grid-cols-3">
+            {advisors.map((member, i) => (
+              <Reveal key={member.name} delay={i * 0.06}>
+                <div>
+                  <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                  <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
                   <p className="mb-3 font-mono text-xs tracking-[0.08em] text-dim">
-                    {founder.role}
+                    {member.role}
                   </p>
-                  <p className="text-[13.5px] font-light text-muted">{founder.background}</p>
+                  <p className="text-[13.5px] font-light text-muted">{member.background}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal>
+            <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+              Core team
+            </p>
+          </Reveal>
+          <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-4">
+            {coreTeam.map((member, i) => (
+              <Reveal key={member.name} delay={i * 0.06}>
+                <div>
+                  <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                  <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
+                  <p className="mb-3 font-mono text-xs tracking-[0.08em] text-dim">
+                    {member.role}
+                  </p>
+                  <p className="text-[13.5px] font-light text-muted">{member.background}</p>
                 </div>
               </Reveal>
             ))}
@@ -168,7 +222,7 @@ export default function Home() {
         >
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
-              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">05 · CONTACT</p>
+              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">06 · CONTACT</p>
               <h2 className="mb-5 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                 Put a show in your sky.
               </h2>

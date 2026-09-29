@@ -1,26 +1,33 @@
 // Point shaders for the drone swarm.
 //
-// Drones are drawn as two overlaid THREE.Points layers sharing one position
-// buffer: a large soft halo and a small bright core, both additively
-// blended. This is the two-layer treatment already validated on the site's
-// 2D canvas, lifted into 3D.
+// Two overlaid THREE.Points layers share one position buffer AND one colour
+// buffer: a large soft halo and a small bright core, both additively blended.
 //
-// No bloom post-processing. Additive blending produces the glow directly at
-// zero full-screen cost, and bloom is the most likely cause of frame drops
-// on the mid-range Android phones a real prospect will be using. If the
-// result ever looks flat, revisit bloom as a measured enhancement — never
-// as a default.
+// COLOUR NOTE: the site's 2D swarm work ended on a strict white-only rule,
+// because an earlier multi-colour version read as "blurry bokeh" rather than
+// a drone show. That diagnosis was really about two things — a ~7x size
+// spread and four-colour-per-phase confetti — not about colour itself. Real
+// LED drones are vividly coloured. So colour is back, but under discipline:
+// tight uniform point sizes, and one coherent palette per formation rather
+// than per-drone randomness.
 //
-// No texture either: the fragment shader draws a soft disc procedurally
-// from gl_PointCoord, so there is no image to load or cache.
+// No bloom post-processing: additive blending produces the glow at zero
+// full-screen cost, which matters on the mid-range Android phones a real
+// prospect will be holding.
 
 export const pointVertexShader = /* glsl */ `
+  attribute vec3 aColor;
+
   uniform float uSize;
   uniform float uPixelRatio;
   uniform float uMinPixels;
   uniform float uMaxPixels;
 
+  varying vec3 vColor;
+
   void main() {
+    vColor = aColor;
+
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mv;
 
@@ -32,9 +39,10 @@ export const pointVertexShader = /* glsl */ `
 `;
 
 export const pointFragmentShader = /* glsl */ `
-  uniform vec3 uColor;
   uniform float uOpacity;
   uniform float uSoftness;
+
+  varying vec3 vColor;
 
   void main() {
     vec2 offset = gl_PointCoord - vec2(0.5);
@@ -43,6 +51,6 @@ export const pointFragmentShader = /* glsl */ `
 
     // uSoftness 0 = hard-edged core, 1 = wide soft halo.
     float falloff = pow(1.0 - d, mix(0.9, 3.2, uSoftness));
-    gl_FragColor = vec4(uColor, falloff * uOpacity);
+    gl_FragColor = vec4(vColor, falloff * uOpacity);
   }
 `;

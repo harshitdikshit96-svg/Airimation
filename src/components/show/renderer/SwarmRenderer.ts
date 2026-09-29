@@ -15,6 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { ShowPlan } from "@/lib/show/types";
 import { CAMERA, TIMING } from "@/lib/show/constants";
 import { buildHorizon } from "./horizon";
+import { patternFor, type ColorPattern } from "./palette";
 import { pointFragmentShader, pointVertexShader } from "./shaders";
 
 /**
@@ -24,7 +25,7 @@ import { pointFragmentShader, pointVertexShader } from "./shaders";
  * feel instant. That comparison is the product's core value, so it gets the
  * allocation strategy built around it.
  */
-const MAX_DRONES = 200;
+const MAX_DRONES = 500;
 
 export type RendererCallbacks = {
   onStageChange?: (label: string, index: number) => void;
@@ -42,6 +43,13 @@ export class SwarmRenderer {
   private controls: OrbitControls;
 
   private positions = new Float32Array(MAX_DRONES * 3);
+  private colors = new Float32Array(MAX_DRONES * 3);
+  /** Stable per-drone random value, used by colour patterns. */
+  private noise = new Float32Array(MAX_DRONES);
+  /** Vertical extent of the current stage, for height-based colour ramps. */
+  private stageMinY = 0;
+  private stageSpanY = 1;
+  private colorPattern: ColorPattern = patternFor("__ground");
   private geometry: THREE.BufferGeometry;
   private halo: THREE.Points;
   private core: THREE.Points;
@@ -73,11 +81,15 @@ export class SwarmRenderer {
     this.renderer.setClearColor(0x000000, 1);
 
     this.scene = new THREE.Scene();
-    // Far enough out that the treeline at 250m is not fogged into
-    // invisibility — the silhouette is load-bearing, not decoration.
-    this.scene.fog = new THREE.Fog(0x05070c, 420, 1100);
+    // No scene fog. The horizon elements are the scale reference and must
+    // stay crisp at 200m+; fog was quietly dissolving exactly the thing they
+    // exist to provide. Depth cueing comes from point-size attenuation.
+    this.scene.fog = null;
 
-    this.camera = new THREE.PerspectiveCamera(CAMERA.fov, 1, 1, 2000);
+    // Far plane must clear the sky dome (radius 2400) and the ground disc,
+    // or the dome gets clipped and the hole reads as a black rounded
+    // rectangle hanging over the scene.
+    this.camera = new THREE.PerspectiveCamera(CAMERA.fov, 1, 1, 6000);
     this.camera.position.set(0, CAMERA.eyeHeight, CAMERA.distance);
 
     this.controls = new OrbitControls(this.camera, canvas);
@@ -88,13 +100,14 @@ export class SwarmRenderer {
     this.controls.minDistance = CAMERA.minDistance;
     this.controls.maxDistance = CAMERA.maxDistance;
     this.controls.minPolarAngle = THREE.MathUtils.degToRad(CAMERA.minPolarAngleDeg);
-    this.controls.maxPolarAngle = THREE.MathUtils.degToRad(CAMERA.maxPolarAngleDeg);
+    // maxPolarAngle is recomputed every frame — see clampOrbit().
     this.controls.update();
 
     this.scene.add(buildHorizon());
 
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute("position", new THREE.BufferAttribute(this.positions, 3));
+    this.geometry.setAttribute("aColor", new THREE.BufferAttribute(this.colors, 3));
     this.geometry.setDrawRange(0, 0);
 
     this.halo = new THREE.Points(this.geometry, this.makeMaterial(26, 0.34, 1.0, 2, 26));
@@ -106,11 +119,37 @@ export class SwarmRenderer {
     // instead of snapping as one rigid block.
     for (let i = 0; i < MAX_DRONES; i++) {
       this.stagger[i] = ((Math.sin(i * 12.9898) * 43758.5453) % 1 + 1) % 1;
+      this.noise[i] = ((Math.sin(i * 78.233 + 4.1) * 24634.6345) % 1 + 1) % 1;
+      // Start white so the very first frame is never black.
+      this.colors[i * 3] = 1;
+      this.colors[i * 3 + 1] = 1;
+      this.colors[i * 3 + 2] = 1;
     }
 
     this.resize();
     this.loop = this.loop.bind(this);
     this.frameHandle = requestAnimationFrame(this.loop);
+  }
+
+  /**
+   * Keep the camera above ground by adjusting the POLAR LIMIT, not by moving
+   * the camera afterwards.
+   *
+   * The previous version clamped `camera.position.y` after
+   * `controls.update()`, which fought OrbitControls' own state: the controls
+   * kept trying to go lower, the clamp kept pushing back, and the orbit
+   * felt locked and sticky near the bottom of its range. Expressing the
+   * constraint as a limit the controls themselves respect removes the
+   * conflict — and because the limit depends on how far out you are zoomed,
+   * it has to be recomputed rather than fixed at one angle.
+   *
+   *   camera.y = targetY + radius * cos(polar)
+   *   so the lowest legal polar is acos((minEye - targetY) / radius)
+   */
+  private clampOrbit() {
+    const radius = this.camera.position.distanceTo(this.controls.target);
+    const ratio = (CAMERA.minEyeHeight - this.controls.target.y) / Math.max(radius, 1);
+    this.controls.maxPolarAngle = Math.acos(THREE.MathUtils.clamp(ratio, -1, 1));
   }
 
   /** color white; softness 1 = wide halo, 0 = hard core. */
@@ -127,10 +166,6 @@ export class SwarmRenderer {
         uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
         uMinPixels: { value: minPixels },
         uMaxPixels: { value: maxPixels },
-        // Single white. Real drone LEDs read as uniform points of light;
-        // the multi-coloured version was explicitly rejected on this site
-        // for looking like bokeh rather than a drone show.
-        uColor: { value: new THREE.Color(0xffffff) },
         uOpacity: { value: opacity },
         uSoftness: { value: softness },
       },
@@ -211,12 +246,8 @@ export class SwarmRenderer {
     this.lastFrame = now;
 
     this.updatePositions();
+    this.clampOrbit();
     this.controls.update();
-    // OrbitControls has no ground constraint of its own, and polar limits
-    // alone cannot express "never below 2 metres" at every orbit distance.
-    if (this.camera.position.y < CAMERA.minEyeHeight) {
-      this.camera.position.y = CAMERA.minEyeHeight;
-    }
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -242,6 +273,19 @@ export class SwarmRenderer {
 
     if (index !== this.lastStageIndex) {
       this.lastStageIndex = index;
+      this.colorPattern = patternFor(stage.id);
+      // Vertical extent of this formation, so height-based colour ramps
+      // (petal tip vs. base, flame vs. bowl) land in the right places
+      // regardless of how tall the formation happens to be.
+      let min = Infinity;
+      let max = -Infinity;
+      for (let i = 1; i < this.droneCount * 3; i += 3) {
+        const y = stage.targets[i];
+        if (y < min) min = y;
+        if (y > max) max = y;
+      }
+      this.stageMinY = min;
+      this.stageSpanY = Math.max(max - min, 1);
       this.callbacks.onStageChange?.(stage.label, index);
     }
     this.callbacks.onProgress?.(this.timeMs / plan.totalDurationMs);
@@ -251,6 +295,7 @@ export class SwarmRenderer {
     if (!assembling) {
       this.positions.set(stage.targets.subarray(0, n * 3));
       (this.geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      this.updateColors();
       return;
     }
 
@@ -279,5 +324,38 @@ export class SwarmRenderer {
     }
 
     (this.geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+    this.updateColors();
+  }
+
+  /**
+   * Recompute LED colour for every drone. Runs each frame so patterns can
+   * animate — sweeps, flicker, a slow hue drift. At 200 drones this is 200
+   * cheap function calls, which is nothing next to the render itself.
+   */
+  private updateColors() {
+    const n = this.droneCount;
+    const seconds = this.timeMs / 1000;
+
+    for (let i = 0; i < n; i++) {
+      const o = i * 3;
+      const x = this.positions[o];
+      const y = this.positions[o + 1];
+      const z = this.positions[o + 2];
+      const [r, g, b] = this.colorPattern({
+        i,
+        n,
+        x,
+        y,
+        z,
+        t: seconds,
+        r: this.noise[i],
+        h: Math.max(0, Math.min(1, (y - this.stageMinY) / this.stageSpanY)),
+      });
+      this.colors[o] = r;
+      this.colors[o + 1] = g;
+      this.colors[o + 2] = b;
+    }
+
+    (this.geometry.attributes.aColor as THREE.BufferAttribute).needsUpdate = true;
   }
 }

@@ -16,7 +16,9 @@
 import type { FormationDef } from "../types";
 import { ring, spiral, wave, cube, starburst } from "./geometric";
 import { lotus, diya, om } from "./cultural";
+
 import { heart, text } from "./personal";
+import { atom, diamond, globe, helix, knot, pyramid } from "./playful";
 
 export const LIBRARY_VERSION = 1;
 
@@ -26,12 +28,40 @@ const V1: FormationDef[] = [
   wave,
   cube,
   starburst,
+  globe,
+  diamond,
+  knot,
+  helix,
+  atom,
+  pyramid,
   lotus,
   diya,
   om,
   heart,
   text,
 ];
+
+// The SVG-sampled formations (iconic.ts) are all unregistered.
+//
+// `temple` and `bloom` were tried and removed: the temple read as a flat
+// stepped diagram and the lotus as a wobbly outline — both fine as pictures,
+// both weak as light shows next to a wireframe that has real depth.
+//
+// `ganesha` never read at all: six arms, a trident, a crown and jewellery
+// competing for the same handful of drones. It needs a far larger fleet or a
+// radically simpler silhouette (head, trunk and ears only).
+//
+// The sampling pipeline itself works and is kept for when better artwork
+// arrives — see SHOW_CONFIGURATOR.md.
+//
+// `ganesha` in ./iconic is working code, but the figure is too complex to
+// read at 100–200 points of light: six arms, a trident, a crown and
+// jewellery all compete for the same handful of drones. It needs either a
+// far larger fleet or a much simpler silhouette (head, trunk and ears only).
+//
+// `omIcon` is likewise unregistered: the supplied path is a hand-drawn
+// approximation, while the font-sampled `om` is the real Unicode glyph and
+// is simply more accurate.
 
 const VERSIONS: Record<number, FormationDef[]> = {
   1: V1,
@@ -51,4 +81,4 @@ export function formationIds(version: number = LIBRARY_VERSION): string[] {
 }
 
 /** What a first-time visitor sees before touching anything. */
-export const DEFAULT_SEQUENCE = ["ring", "lotus", "spiral", "heart"];
+export const DEFAULT_SEQUENCE = ["ring", "globe", "spiral", "diamond", "heart"];

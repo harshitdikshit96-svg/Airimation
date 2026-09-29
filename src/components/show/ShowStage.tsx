@@ -9,6 +9,12 @@ type Props = {
   playing: boolean;
   className?: string;
   onStageChange?: (label: string) => void;
+  /**
+   * Ask the renderer to jump to a formation. `nonce` exists so that asking
+   * for the SAME stage twice still fires — a bare index would be an
+   * unchanged prop the effect ignores.
+   */
+  seekRequest?: { index: number; nonce: number } | null;
 };
 
 /**
@@ -50,7 +56,13 @@ const serverSnapshot = () => true;
  * only what a human changes. Nothing that updates at 60fps enters React
  * state.
  */
-export default function ShowStage({ plan, playing, className, onStageChange }: Props) {
+export default function ShowStage({
+  plan,
+  playing,
+  className,
+  onStageChange,
+  seekRequest,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rendererRef = useRef<SwarmRenderer | null>(null);
   const stageCallbackRef = useRef(onStageChange);
@@ -97,6 +109,11 @@ export default function ShowStage({ plan, playing, className, onStageChange }: P
     if (playing) renderer.play();
     else renderer.pause();
   }, [playing]);
+
+  useEffect(() => {
+    if (!seekRequest) return;
+    rendererRef.current?.seekToStage(seekRequest.index);
+  }, [seekRequest]);
 
   if (!supported) {
     return (

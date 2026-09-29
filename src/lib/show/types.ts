@@ -11,12 +11,14 @@ export type Vec3 = { x: number; y: number; z: number };
  * Drone counts offered to the visitor.
  *
  * Airimation's Year-1 fleet is 100 drones, so 100 is the default and the
- * honest centre of the range. 200 is offered for larger events and is
- * labelled as arranged in advance — see `COUNT_NOTES` in constants.ts.
+ * honest centre of the range. 200 and 500 are offered for larger events and
+ * are labelled as arranged in advance — see `COUNT_NOTES` in constants.ts.
+ * 500 also shows what detailed formations need, which is a useful thing for
+ * a buyer to see even if they do not book it.
  * Deliberately a fixed set, not free numeric entry: the point is comparison
  * between meaningfully different scales, not fine-tuning.
  */
-export const DRONE_COUNTS = [50, 100, 200] as const;
+export const DRONE_COUNTS = [50, 100, 200, 500] as const;
 export type DroneCount = (typeof DRONE_COUNTS)[number];
 
 export type FormationCategory = "geometric" | "cultural" | "personal";
@@ -43,6 +45,15 @@ export type Recipe = {
 export type BuildContext = {
   /** Characteristic size of the show volume in metres. */
   scale: number;
+  /**
+   * How many drones this show actually has.
+   *
+   * Generators may use it to SIMPLIFY themselves: a lotus with 24 petals
+   * gives each petal eight drones at a 200-drone show, and eight points
+   * read as noise. Fewer, bolder elements at low counts is what real shows
+   * do, and it is the difference between a bloom and a scatter.
+   */
+  droneCount: number;
   /** Visitor-supplied text, for personalising formations. */
   text?: string;
   /** Seeded PRNG. Never use Math.random() in a generator — determinism. */

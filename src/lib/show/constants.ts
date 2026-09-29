@@ -47,10 +47,9 @@ export const CAMERA = {
    * audience stands on the ground and looks up. An earlier 88-degree cap
    * silently clamped the camera above the target and wrecked the framing.
    */
-  minPolarAngleDeg: 22,
-  maxPolarAngleDeg: 104,
+  minPolarAngleDeg: 6,
   /** Hard floor so orbiting can never put the eye underground. */
-  minEyeHeight: 2,
+  minEyeHeight: 2.5,
 };
 
 /** Timing, in milliseconds. */
@@ -82,4 +81,5 @@ export const COUNT_NOTES: Record<number, string> = {
   50: "Intimate events and smaller venues",
   100: "Our standard fleet — most events",
   200: "Large public events, arranged in advance",
+  500: "Flagship scale — full detail, arranged well in advance",
 };

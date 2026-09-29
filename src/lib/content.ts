@@ -128,6 +128,7 @@ export const beyondBiscope = {
 };
 
 export const navLinks = [
+  { href: "/design-your-show", label: "Design a Show" },
   { href: "/biscope", label: "Biscope" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },
@@ -135,6 +136,37 @@ export const navLinks = [
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
+
+// Copy for /design-your-show. Kept here with everything else — this file is
+// the single source of truth for site copy.
+export const designYourShow = {
+  eyebrow: "DESIGN A SHOW",
+  title: "See it in the sky before you book it.",
+  intro:
+    "Most people have never stood under a drone show, so the hardest question to answer is the simplest one: how many drones do you actually need? Choose a fleet size and a few formations, and watch it play out over a night sky. Switch between fleet sizes while it runs — the difference is what you are really deciding.",
+  notes: [
+    {
+      title: "It is a simulation",
+      body: "These are simulated formations, not footage of a past show, and not a flight plan. The real choreography is designed and safety-validated after booking.",
+    },
+    {
+      title: "Fleet size changes everything",
+      body: "A hundred drones draws bold, clean shapes. More drones mean finer detail and larger formations. Our standard fleet is a hundred; larger shows are arranged in advance.",
+    },
+    {
+      title: "Your show is yours",
+      body: "The library here is a starting point. A real Biscope show is built around your occasion — a name, a deity, an emblem, a message — rather than assembled from stock formations.",
+    },
+  ],
+};
+
+// Home-page teaser pointing at the configurator.
+export const designTeaser = {
+  eyebrow: "04 · DESIGN A SHOW",
+  title: "How many drones does your sky need?",
+  body: "Pick a fleet size and a few formations, and watch a show play out over a night sky — then send the link to whoever else is deciding.",
+  cta: "Design your show",
+};
 
 export const clientSegments = [
   {
@@ -249,53 +281,110 @@ export const roadmap = [
   },
 ];
 
-// `photo` is a path under /public — e.g. "/team/gaurav-tripathi.jpg". Leave it
-// unset until a real headshot is added; FounderAvatar falls back to an
-// initials placeholder so nothing breaks in the meantime. Drop new photos in
-// public/team/ (see that folder's note for naming/sizing) and just fill in
-// the path here — no other code changes needed.
-export const founders = [
+// TEAM
+//
+// Ordered ADVISORS FIRST, then the core team — the advisory bench is the
+// strongest credibility signal Airimation has pre-first-show, so it leads.
+//
+// `photo` is a path under /public — e.g. "/team/gaurav.jpg". Leave it unset
+// until a real headshot exists; FounderAvatar falls back to initials so
+// nothing breaks. Drop new photos in public/team/ (see that folder's note
+// for naming and sizing) and fill in the path here — no other code changes
+// needed.
+
+export type TeamMember = {
+  name: string;
+  role: string;
+  /** One compact line, for cards. */
+  background: string;
+  /** A fuller paragraph, for the /team page. */
+  intro: string;
+  photo?: string;
+  email?: string;
+  /** Public profile, for verification. */
+  profile?: string;
+};
+
+export const advisors: TeamMember[] = [
   {
-    name: "Madhuri Tripathi",
-    role: "CEO",
+    name: "Prof. Rajeev Tripathi",
+    role: "Chief Advisor",
     background:
-      "PhD in Graph Neural Networks and UAV research; turns complex engineering challenges into aerial spectacle.",
+      "Professor of Electronics & Communication Engineering, MNNIT Allahabad; former Director of MNNIT Allahabad and former Vice Chancellor of RGPV Bhopal.",
     intro:
-      "Madhuri leads Airimation as CEO. Driven by deep expertise and a PhD in Graph Neural Networks and UAV research, she transforms complex technical challenges into breathtaking aerial spectacles — her leadership bridges the gap between sophisticated engineering and artistic excellence.",
+      "Prof. Rajeev Tripathi chairs Airimation's advisory bench. A Professor of Electronics & Communication Engineering at MNNIT Allahabad, he has served as the institute's Director and as Vice Chancellor of RGPV Bhopal, bringing more than three decades in wireless communications, academic leadership and institutional governance.",
+    photo: "/team/rajeev.jpg",
+    profile: "https://www.linkedin.com/in/rajeev-tripathi-67a4953/",
+  },
+  {
+    name: "Dr. Deepak Kumar Singh",
+    role: "Advisor — Drone R&D and Government Relations",
+    background:
+      "PhD (IIT Kanpur); Dean at IIIT Lucknow; member of the UPTEC advisory board, Government of Uttar Pradesh.",
+    intro:
+      "Dr. Deepak Kumar Singh advises Airimation on drone research and on working with government. He holds a PhD from IIT Kanpur, serves as Dean at IIIT Lucknow, and sits on the advisory board of UPTEC under the Government of Uttar Pradesh — the intersection of research and public-sector delivery that this business depends on.",
+    photo: "/team/deepak.jpg",
+    profile: "https://www.linkedin.com/in/deepaksingh001/",
+  },
+  {
+    name: "Dr. Vishal Krishna Singh",
+    role: "Advisor — Flight Software and Real-Time Systems",
+    background:
+      "Lecturer, School of Computer Science and Electronic Engineering, University of Essex, UK; 10+ years in IoT and real-time systems.",
+    intro:
+      "Dr. Vishal Krishna Singh advises on flight software and real-time systems. A Lecturer in the School of Computer Science and Electronic Engineering at the University of Essex, his research spans the Internet of Things, machine learning and wireless sensor networks — the disciplines a swarm holding formation actually runs on.",
+    photo: "/team/vishal.jpg",
+    profile: "https://www.essex.ac.uk/people/SINGH43901/Vishal%20Krishna-Singh",
+  },
+];
+
+export const coreTeam: TeamMember[] = [
+  {
+    name: "Madhuri Mishra",
+    role: "Co-founder and Director — Business Strategy and Expansion",
+    background: "PhD, IIIT Lucknow; Assistant Professor at UPES Dehradun.",
+    intro:
+      "Madhuri Mishra co-founded Airimation and leads business strategy and expansion. She holds a PhD from IIIT Lucknow and is an Assistant Professor at UPES Dehradun, and sets the direction for where the company flies next and who it flies for.",
     photo: "/team/madhuri.png",
     email: "madhuri@airimation.in",
   },
-
   {
     name: "Harshit Dixit",
-    role: "CAIO / COO — AI Governance & Operations",
-    background:
-      "BTech (IIIT Lucknow); bridges AI governance with creative direction across global operations.",
+    role: "Co-founder and Chief Technology Officer — Show Design and Animation",
+    background: "BTech, IIIT Lucknow; 5+ years of industry experience.",
     intro:
-      "Harshit bridges AI governance with cutting-edge animation as Airimation's CAIO/COO, orchestrating global operations so every performance is as technically robust as it is visually extraordinary. A BTech from IIIT Lucknow, he left a senior role at Tata to found Airimation.",
+      "Harshit Dixit co-founded Airimation and leads technology, show design and animation. A BTech from IIIT Lucknow with five years of industry engineering behind him, he builds the pipeline that turns a client's occasion into a choreographed show file.",
     photo: "/team/harshit.jpg",
     email: "harshit@airimation.in",
   },
-   {
+  {
     name: "Dr. Gaurav Tripathi",
-    role: "CPO / CTO — Autonomous Systems & Engineering",
-    background:
-      "PhD in IoT, drones and machine learning (IIIT Lucknow); founding member of GE Vernova.",
+    role: "Operations, Compliance and Client Relations",
+    background: "PhD, IIIT Lucknow; Assistant Professor at Bennett University.",
     intro:
-      "Dr. Gaurav Tripathi engineers Airimation's proprietary autonomous swarm technology — the reliable navigation and precise synchronisation that make high-stakes flight possible. A founding member of GE Vernova, he holds a PhD in IoT, drones and machine learning from IIIT Lucknow, and previously built an agricultural drone.",
+      "Dr. Gaurav Tripathi runs operations, compliance and client relations — the permissions, the safety case and the relationships that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
     photo: "/team/gaurav.jpg",
     email: "gaurav@airimation.in",
   },
   {
-    name: "Sandeep Srivastava",
-    role: "Advisor — Infrastructure & Security",
-    background: "PhD in Blockchain; secures Airimation's infrastructure and data transmissions.",
+    name: "Dr. Neeraj Jain",
+    role: "RF and Communication Systems Lead, 3D Printing Lead",
+    background:
+      "Associate Professor at Bennett University; 10+ years in drone technology and AI.",
     intro:
-      "Sandeep advises Airimation as a seasoned industry leader with a PhD in Blockchain, fortifying the company's infrastructure against interference. His strategic oversight guarantees the secure, encrypted data transmissions essential for flawless mission execution.",
-    photo: "/team/sandeep.jpg",
-    email: "sandeep@airimation.in",
+      "Dr. Neeraj Jain leads RF and communication systems, and 3D printing. An Associate Professor at Bennett University with over a decade in drone technology and AI, he owns the radio link that keeps hundreds of aircraft talking to the ground station through a live show.",
+    photo: "/team/neeraj.jpg",
+    profile: "https://www.bennett.edu.in/faculties/dr-neeraj-jain/",
   },
 ];
+
+/**
+ * Advisors first, then the core team — the order used everywhere the whole
+ * group is listed. `founders` is kept as an alias for the operating team so
+ * existing imports keep working.
+ */
+export const team: TeamMember[] = [...advisors, ...coreTeam];
+export const founders = coreTeam;
 
 export const orgTypes = [
   "Government / District Administration",

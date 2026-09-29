@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import clsx from "clsx";
-import { roadmap, founders } from "@/lib/content";
+import { roadmap, coreTeam } from "@/lib/content";
 import ChapterShell from "./ChapterShell";
 
 export default function RoadmapExplorer({
@@ -80,7 +80,7 @@ export default function RoadmapExplorer({
         Who&apos;s building this
       </p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {founders.map((f) => (
+        {coreTeam.map((f) => (
           <div key={f.name}>
             <h4 className="mb-1 text-[15px] font-medium text-int-ink">{f.name}</h4>
             <p className="mb-2 font-mono text-[10px] tracking-[0.08em] text-int-dim">{f.role}</p>

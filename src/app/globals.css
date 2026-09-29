@@ -172,3 +172,22 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+
+/*
+ * First-visit hint over the show canvas. Breathes gently so it reads as an
+ * invitation rather than a warning, and disappears the moment the visitor
+ * drags, scrolls or taps the scene.
+ */
+@keyframes show-hint-breathe {
+  0%, 100% { opacity: 0.86; transform: translateY(0); }
+  50%      { opacity: 1;    transform: translateY(-3px); }
+}
+
+.show-hint {
+  animation: show-hint-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .show-hint { animation: none; }
+}

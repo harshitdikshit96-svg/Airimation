@@ -87,6 +87,7 @@ export function generateShow(recipe: Recipe): ShowPlan {
 
     const ctx = {
       scale: SHOW_SCALE,
+      droneCount: n,
       text: recipe.t,
       rand: makeRand(hashSeed(`${def.id}:${n}:${recipe.v}`)),
     };
@@ -95,10 +96,31 @@ export function generateShow(recipe: Recipe): ShowPlan {
     if (canonical.length === 0) continue; // e.g. text formation with no text
 
     const taken = clampAltitude(canonical.slice(0, n));
-    // If a generator returned fewer than n points, pad from the start so the
-    // drone count is still honoured rather than silently reduced.
+    // If a generator returned fewer than n points, the surplus drones have
+    // to go somewhere. They must NOT be placed at coordinates that already
+    // exist: identical positions stack drones on top of each other, and
+    // additive blending turns each stack into a bright blob. That is what
+    // made a stroked name read as clumps rather than letters.
+    //
+    // Instead each extra drone is nudged off its source point along a
+    // deterministic direction, so it reads as a slightly thicker stroke
+    // rather than a hotspot.
     const available = taken.length;
-    while (taken.length < n) taken.push(taken[taken.length % available]);
+    if (available > 0) {
+      let extra = 0;
+      while (taken.length < n) {
+        const src = taken[extra % available];
+        const angle = extra * 2.399963; // golden angle — spreads evenly
+        const ring = 1 + Math.floor(extra / available);
+        const offset = ring * 1.1; // metres
+        taken.push({
+          x: src.x + Math.cos(angle) * offset,
+          y: src.y + Math.sin(angle) * offset,
+          z: src.z,
+        });
+        extra++;
+      }
+    }
 
     const ordered = reorderByAssignment(previous, taken);
 
