@@ -150,7 +150,7 @@ export default function ShowConfigurator() {
           playing={playing}
           onStageChange={setStage}
           seekRequest={seekRequest}
-          className="block h-[62vh] min-h-[420px] w-full"
+          className="block h-[58vh] min-h-[380px] w-full sm:h-[62vh] sm:min-h-[420px]"
         />
 
         <div className="pointer-events-none absolute left-4 top-4 flex flex-col gap-1">
@@ -180,12 +180,12 @@ export default function ShowConfigurator() {
           </div>
         )}
 
-        <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 bg-gradient-to-t from-black/85 to-transparent px-4 pb-4 pt-10">
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 bg-gradient-to-t from-black/85 to-transparent px-4 pb-4 pt-10 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPlaying((p) => !p)}
               aria-label={playing ? "Pause" : "Play"}
-              className="rounded-full border border-line-2 p-2 text-ink transition hover:border-amber"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-2 text-ink transition hover:border-amber"
             >
               {playing ? <Pause size={16} /> : <Play size={16} />}
             </button>
@@ -196,13 +196,13 @@ export default function ShowConfigurator() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted">Compare fleet size</span>
+            <span className="shrink-0 text-xs text-muted">Compare fleet size</span>
             {DRONE_COUNTS.map((count) => (
               <button
                 key={count}
                 onClick={() => setCount(count)}
                 title={COUNT_NOTES[count]}
-                className={`rounded px-3 py-1.5 font-mono text-sm transition ${
+                className={`min-h-10 min-w-11 rounded px-3 font-mono text-sm transition ${
                   count === draft.d
                     ? "bg-amber text-navy"
                     : "border border-line-2 text-muted hover:text-ink"
@@ -257,7 +257,7 @@ export default function ShowConfigurator() {
                   </span>
                   <button
                     onClick={() => jumpTo(id)}
-                    className="flex-1 text-left text-sm text-ink transition hover:text-amber-soft"
+                    className="flex min-h-9 flex-1 items-center text-left text-sm text-ink transition hover:text-amber-soft"
                     title="Jump to this formation"
                   >
                     {labelFor(id)}
@@ -271,7 +271,7 @@ export default function ShowConfigurator() {
                     onClick={() => move(index, -1)}
                     disabled={index === 0}
                     aria-label="Move earlier"
-                    className="p-1 text-dim transition enabled:hover:text-ink disabled:opacity-30"
+                    className="inline-flex h-9 w-9 items-center justify-center text-dim transition enabled:hover:text-ink disabled:opacity-30"
                   >
                     <ChevronUp size={15} />
                   </button>
@@ -279,7 +279,7 @@ export default function ShowConfigurator() {
                     onClick={() => move(index, 1)}
                     disabled={index === draft.s.length - 1}
                     aria-label="Move later"
-                    className="p-1 text-dim transition enabled:hover:text-ink disabled:opacity-30"
+                    className="inline-flex h-9 w-9 items-center justify-center text-dim transition enabled:hover:text-ink disabled:opacity-30"
                   >
                     <ChevronDown size={15} />
                   </button>
@@ -287,7 +287,7 @@ export default function ShowConfigurator() {
                     onClick={() => removeFormation(index)}
                     disabled={draft.s.length <= MIN_SEQUENCE}
                     aria-label="Remove"
-                    className="p-1 text-dim transition enabled:hover:text-ink disabled:opacity-30"
+                    className="inline-flex h-9 w-9 items-center justify-center text-dim transition enabled:hover:text-ink disabled:opacity-30"
                   >
                     <X size={15} />
                   </button>
@@ -309,7 +309,7 @@ export default function ShowConfigurator() {
                   <button
                     key={formation.id}
                     onClick={() => addFormation(formation.id)}
-                    className="flex items-center gap-1.5 rounded-full border border-line-2 px-4 py-2 text-sm text-muted transition hover:border-line hover:text-ink"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line-2 px-4 text-sm text-muted transition hover:border-line hover:text-ink"
                   >
                     <Plus size={13} />
                     {formation.label}

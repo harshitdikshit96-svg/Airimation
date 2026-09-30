@@ -52,7 +52,7 @@ export default function QuizPage() {
   if (done) {
     const tier = badgeForScore(score, total);
     return (
-      <div className="mx-auto max-w-2xl px-6 py-20">
+      <div className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
         <Link
           href="/internal"
           className="mb-10 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-int-dim transition-colors hover:text-int-ink"
@@ -96,7 +96,7 @@ export default function QuizPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-20">
+    <div className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
       <Link
         href="/internal"
         className="mb-10 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-int-dim transition-colors hover:text-int-ink"

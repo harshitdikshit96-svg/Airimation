@@ -12,31 +12,53 @@ export const metadata: Metadata = {
     "The advisory bench and operating team behind Airimation and its flagship drone light show, Biscope.",
 };
 
-function MemberRow({ member, index }: { member: TeamMember; index: number }) {
-  const flipped = index % 2 === 1;
+/**
+ * One person, one row — the SAME shape for everybody.
+ *
+ * This used to alternate sides on every second row by flipping the grid
+ * ORDER inside a `[220px_1fr]` template. Order does not move the column
+ * WIDTHS, so the flipped rows put the photo in the 1fr column: every other
+ * headshot rendered several times larger than its neighbours and the bio
+ * beside it was squeezed into 220px. A fixed photo column, same on every
+ * row, is the whole fix — and the page reads calmer for it.
+ *
+ * On phones the photo stays beside the name at 96px rather than becoming a
+ * full-width tile — seven full-bleed 4:5 portraits made the page an endless
+ * scroll — and the bio drops underneath it at full width.
+ */
+function MemberRow({ member }: { member: TeamMember }) {
   return (
-    <div className="py-14 first:pt-0">
+    <div className="py-10 first:pt-0 sm:py-14">
       <Reveal>
-        <div className="grid grid-cols-1 items-center gap-10 sm:grid-cols-[220px_1fr]">
-          <div className={flipped ? "sm:order-2" : ""}>
+        <div className="grid grid-cols-[96px_1fr] items-start gap-x-5 gap-y-4 sm:grid-cols-[200px_1fr] sm:gap-x-10">
+          <div className="sm:row-span-2">
             <FounderAvatar name={member.name} photo={member.photo} size="lg" />
           </div>
-          <div className={flipped ? "sm:order-1" : ""}>
-            <p className="mb-2 font-mono text-xs uppercase tracking-[0.16em] text-cyan-soft">
+
+          {/* Name and role sit BESIDE the photo; the bio drops below it and
+              runs the full width. On a phone a bio squeezed into the 230px
+              left over next to a portrait wraps every three or four words. */}
+          <div>
+            <p className="mb-1.5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-cyan-soft sm:text-xs">
               {member.role}
             </p>
-            <h3 className="mb-4 font-serif text-2xl font-semibold text-ink sm:text-3xl">
+            <h3 className="font-serif text-xl font-semibold text-ink sm:text-3xl">
               {member.name}
             </h3>
-            <p className="max-w-[62ch] leading-relaxed text-muted">{member.intro}</p>
+          </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="col-span-2 sm:col-span-1 sm:col-start-2">
+            <p className="max-w-[62ch] text-sm leading-relaxed text-muted sm:text-base">
+              {member.intro}
+            </p>
+
+            <div className="mt-3 flex flex-wrap items-center gap-x-6 sm:mt-4">
               {member.email && (
                 <a
                   href={`mailto:${member.email}`}
-                  className="inline-flex items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
+                  className="inline-flex min-h-11 items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
                 >
-                  <Mail size={14} className="text-cyan-soft" />
+                  <Mail size={14} className="shrink-0 text-cyan-soft" />
                   {member.email}
                 </a>
               )}
@@ -45,9 +67,9 @@ function MemberRow({ member, index }: { member: TeamMember; index: number }) {
                   href={member.profile}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
+                  className="inline-flex min-h-11 items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
                 >
-                  <ExternalLink size={14} className="text-cyan-soft" />
+                  <ExternalLink size={14} className="shrink-0 text-cyan-soft" />
                   Profile
                 </a>
               )}
@@ -62,7 +84,7 @@ function MemberRow({ member, index }: { member: TeamMember; index: number }) {
 export default function TeamPage() {
   return (
     <>
-      <section className="border-b border-line-2 px-6 py-24">
+      <section className="border-b border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel>The Team</SectionLabel>
@@ -87,8 +109,8 @@ export default function TeamPage() {
             <SectionLabel>Advisors</SectionLabel>
           </Reveal>
           <div className="mt-10 divide-y divide-line-2">
-            {advisors.map((member, i) => (
-              <MemberRow key={member.name} member={member} index={i} />
+            {advisors.map((member) => (
+              <MemberRow key={member.name} member={member} />
             ))}
           </div>
         </div>
@@ -100,14 +122,14 @@ export default function TeamPage() {
             <SectionLabel>Core Team</SectionLabel>
           </Reveal>
           <div className="mt-10 divide-y divide-line-2">
-            {coreTeam.map((member, i) => (
-              <MemberRow key={member.name} member={member} index={i} />
+            {coreTeam.map((member) => (
+              <MemberRow key={member.name} member={member} />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-line-2 px-6 py-20">
+      <section className="border-t border-line-2 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">

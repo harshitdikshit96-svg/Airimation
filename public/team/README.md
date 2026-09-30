@@ -32,5 +32,3 @@ pushing them further only invents soft pixels. They are noticeably softer
 than madhuri.png and harshit.jpg. Replace them with originals from each
 person when available; drop the file here and update the `photo` path in
 src/lib/content.ts, nothing else changes.
-
-sandeep.jpg is no longer referenced and can be deleted.

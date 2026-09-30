@@ -78,7 +78,7 @@ export default function BiscopePage() {
       </section>
 
       {/* SPECS / BENEFITS */}
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <SectionLabel no="01">On every drone</SectionLabel>
@@ -107,7 +107,7 @@ export default function BiscopePage() {
       </section>
 
       {/* PROCESS */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <SectionLabel no="02">The process</SectionLabel>
@@ -140,7 +140,7 @@ export default function BiscopePage() {
       </section>
 
       {/* COVERAGE / SHOW TYPES */}
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <Reveal>
             <SectionLabel no="03">Where Biscope performs</SectionLabel>
@@ -164,7 +164,7 @@ export default function BiscopePage() {
       </section>
 
       {/* BEYOND BISCOPE */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <div className="panel-border rounded-3xl bg-panel/30 p-8 sm:p-12">
@@ -184,7 +184,7 @@ export default function BiscopePage() {
       </section>
 
       {/* SAFETY */}
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel no="04">Safety, named plainly</SectionLabel>
@@ -207,7 +207,7 @@ export default function BiscopePage() {
       </section>
 
       {/* CTA */}
-      <section className="px-6 py-24">
+      <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <div className="panel-border rounded-3xl bg-gradient-to-br from-panel to-panel-2 px-8 py-16">

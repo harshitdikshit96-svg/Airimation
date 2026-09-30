@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <section className="px-6 py-24">
+    <section className="px-6 py-16 sm:py-24">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-16 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Reveal>
@@ -69,7 +69,7 @@ export default function ContactPage() {
             <div className="mt-10 space-y-4">
               <a
                 href={`mailto:${contactInfo.email}`}
-                className="flex items-center gap-3 text-sm text-muted transition-colors hover:text-ink"
+                className="flex min-h-11 items-center gap-3 text-sm text-muted transition-colors hover:text-ink"
               >
                 <Mail size={18} className="text-cyan-soft" />
                 {contactInfo.email}

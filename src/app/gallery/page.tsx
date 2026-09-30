@@ -51,7 +51,7 @@ const formations: {
 export default function GalleryPage() {
   return (
     <>
-      <section className="border-b border-line-2 px-6 py-24">
+      <section className="border-b border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel>Concept Gallery</SectionLabel>
@@ -68,7 +68,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             {formations.map((f, i) => (
@@ -90,7 +90,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-3xl text-center">
           <Reveal>
             <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">

@@ -71,7 +71,7 @@ export default function Home() {
         {/* BISCOPE */}
         <section
           id="biscope"
-          className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 py-24"
+          className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 py-16 sm:py-24"
         >
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">03 · THE FLAGSHIP</p>
@@ -113,7 +113,7 @@ export default function Home() {
         {/* DESIGN A SHOW — the configurator CTA */}
         <section
           id="design"
-          className="mx-auto max-w-[1100px] px-6 py-24"
+          className="mx-auto max-w-[1100px] px-6 py-16 sm:py-24"
         >
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
@@ -138,7 +138,7 @@ export default function Home() {
         {/* TEAM */}
         <section
           id="team"
-          className="mx-auto flex min-h-[90vh] max-w-[1100px] flex-col justify-center px-6 py-24"
+          className="mx-auto flex min-h-[90vh] max-w-[1100px] flex-col justify-center px-6 py-16 sm:py-24"
         >
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">05 · THE TEAM</p>
@@ -154,13 +154,13 @@ export default function Home() {
               Advisors
             </p>
           </Reveal>
-          <div className="mb-14 grid grid-cols-1 gap-9 sm:grid-cols-3">
+          <div className="mb-14 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 sm:gap-9">
             {advisors.map((member, i) => (
               <Reveal key={member.name} delay={i * 0.06}>
                 <div>
                   <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
                   <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
-                  <p className="mb-3 font-mono text-xs tracking-[0.08em] text-dim">
+                  <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
                     {member.role}
                   </p>
                   <p className="text-[13.5px] font-light text-muted">{member.background}</p>
@@ -174,13 +174,13 @@ export default function Home() {
               Core team
             </p>
           </Reveal>
-          <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-9 sm:gap-9 lg:grid-cols-4">
             {coreTeam.map((member, i) => (
               <Reveal key={member.name} delay={i * 0.06}>
                 <div>
                   <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
                   <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
-                  <p className="mb-3 font-mono text-xs tracking-[0.08em] text-dim">
+                  <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
                     {member.role}
                   </p>
                   <p className="text-[13.5px] font-light text-muted">{member.background}</p>
@@ -192,7 +192,7 @@ export default function Home() {
           <Reveal delay={0.2}>
             <Link
               href="/team"
-              className="mt-10 inline-flex items-center gap-2 font-mono text-xs tracking-[0.16em] text-dim transition-colors hover:text-ink"
+              className="mt-10 inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-[0.16em] text-dim transition-colors hover:text-ink"
             >
               Meet the full team <ArrowRight size={13} />
             </Link>
@@ -200,7 +200,7 @@ export default function Home() {
         </section>
 
         {/* SAFETY */}
-        <section className="mx-auto max-w-[1100px] px-6 py-20">
+        <section className="mx-auto max-w-[1100px] px-6 py-14 sm:py-20">
           <Reveal>
             <p className="mb-6 font-mono text-xs tracking-[0.2em] text-dim">
               SAFETY &amp; COMPLIANCE

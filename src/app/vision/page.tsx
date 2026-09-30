@@ -32,7 +32,7 @@ const rdBeachheads = [
 export default function VisionPage() {
   return (
     <>
-      <section className="border-b border-line-2 px-6 py-24">
+      <section className="border-b border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel>Beyond Biscope</SectionLabel>
@@ -48,7 +48,7 @@ export default function VisionPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <SectionLabel no="01">The five-year path</SectionLabel>
@@ -62,7 +62,7 @@ export default function VisionPage() {
         </div>
       </section>
 
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel no="02">Year 2+</SectionLabel>
@@ -87,7 +87,7 @@ export default function VisionPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <SectionLabel no="03">Year 4+</SectionLabel>
@@ -128,7 +128,7 @@ export default function VisionPage() {
         </div>
       </section>
 
-      <section className="border-t border-line-2 px-6 py-24">
+      <section className="border-t border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">

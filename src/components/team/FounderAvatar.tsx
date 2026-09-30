@@ -37,7 +37,10 @@ export default function FounderAvatar({
           src={photo}
           alt={name}
           fill
-          sizes={size === "lg" ? "(min-width: 1024px) 320px, 50vw" : "(min-width: 1024px) 220px, 40vw"}
+          // The tiles are small and fixed-width now, so ask for small files:
+          // "lg" is a 200px column (96px on phones), "md" a grid cell that is
+          // roughly half the viewport on phones.
+          sizes={size === "lg" ? "(min-width: 640px) 200px, 96px" : "(min-width: 1024px) 220px, 45vw"}
           className="object-cover grayscale-[40%] contrast-[1.05] transition-all duration-500 group-hover:grayscale-0"
         />
       </div>

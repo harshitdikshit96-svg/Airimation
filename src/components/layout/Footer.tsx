@@ -48,7 +48,7 @@ export default function Footer() {
             >
               {isInternal ? "Academy" : "Site"}
             </div>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-2 space-y-1">
               {(isInternal
                 ? [
                     { href: "/internal", label: "Chapters" },
@@ -61,7 +61,9 @@ export default function Footer() {
                   <Link
                     href={link.href}
                     className={clsx(
-                      "text-sm transition-colors",
+                      // inline-flex + min height so the link is a real touch
+                      // target on a phone, not an 18px sliver of text.
+                      "inline-flex min-h-9 items-center text-sm transition-colors",
                       isInternal
                         ? "text-int-muted hover:text-int-ink"
                         : "text-muted hover:text-ink"
@@ -93,7 +95,7 @@ export default function Footer() {
                 <a
                   href={`mailto:${contactInfo.email}`}
                   className={clsx(
-                    "transition-colors",
+                    "inline-flex min-h-9 items-center transition-colors",
                     isInternal ? "hover:text-int-ink" : "hover:text-ink"
                   )}
                 >
@@ -110,7 +112,7 @@ export default function Footer() {
             `company` in content.ts for why. */}
         {!isInternal && (
           <div className="mt-12 border-t border-line-2 pt-6">
-            <dl className="flex flex-wrap gap-x-8 gap-y-3">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-3">
               {credentials.map((item) => (
                 <div key={item.label}>
                   <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">

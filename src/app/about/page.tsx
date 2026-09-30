@@ -39,7 +39,7 @@ function MemberCard({ member, delay }: { member: TeamMember; delay: number }) {
 export default function AboutPage() {
   return (
     <>
-      <section className="border-b border-line-2 px-6 py-24">
+      <section className="border-b border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel>About Airimation</SectionLabel>
@@ -61,7 +61,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <div className="panel-border rounded-2xl bg-panel/40 p-8 sm:p-10">
@@ -87,7 +87,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-20">
+      <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <SectionLabel no="01">Why Uttar Pradesh</SectionLabel>
@@ -107,7 +107,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <SectionLabel no="02">The founding team</SectionLabel>
@@ -137,7 +137,7 @@ export default function AboutPage() {
           <Reveal delay={0.2}>
             <Link
               href="/team"
-              className="mt-8 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-dim transition-colors hover:text-ink"
+              className="mt-8 inline-flex min-h-11 items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-dim transition-colors hover:text-ink"
             >
               See full bios <ArrowRight size={14} />
             </Link>
@@ -145,7 +145,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-line-2 px-6 py-20">
+      <section className="border-t border-line-2 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">

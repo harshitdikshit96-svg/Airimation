@@ -130,11 +130,13 @@ export default function Header() {
           aria-controls={PANEL_ID}
           onClick={() => setOpen((v) => !v)}
           className={clsx(
-            "-mr-1 p-1.5 transition-colors md:hidden",
+            // 44px square: the minimum comfortable touch target. At p-1.5
+            // this was a 32px hit area and easy to miss with a thumb.
+            "-mr-2 inline-flex h-11 w-11 items-center justify-center transition-colors md:hidden",
             isInternal ? "text-int-muted hover:text-int-ink" : "text-muted hover:text-ink"
           )}
         >
-          {open ? <X size={20} /> : <Menu size={20} />}
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
@@ -155,7 +157,7 @@ export default function Header() {
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className={clsx(
-                  "border-b py-3 text-sm last:border-b-0",
+                  "flex min-h-12 items-center border-b text-sm last:border-b-0",
                   isInternal
                     ? "border-int-line/60 text-int-muted"
                     : link.highlight
