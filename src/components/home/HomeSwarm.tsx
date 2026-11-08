@@ -123,6 +123,7 @@ function Scene({
   const [wordmark, setWordmark] = useState<Float32Array | null>(null);
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
+  const tall = size.width / size.height < 0.8;
   const invalidate = useThree((s) => s.invalidate);
 
   // The wordmark is sampled from the site's own serif, which must be
@@ -133,12 +134,14 @@ function Scene({
       .load(`600 220px "IBM Plex Serif"`)
       .catch(() => undefined)
       .then(() => {
-        if (!cancelled) setWordmark(fromText("BISCOPE", n, { width: 190, bow: 12, letterSpacing: 10, seed: 7, altitude: 96 }));
+        // Narrower on portrait screens, or the outer letters fall off the edges.
+        const width = tall ? 104 : 190;
+        if (!cancelled) setWordmark(fromText("BISCOPE", n, { width, bow: tall ? 6 : 12, letterSpacing: 10, seed: 7, altitude: tall ? 100 : 96 }));
       });
     return () => {
       cancelled = true;
     };
-  }, [n]);
+  }, [n, tall]);
 
   const beats = useMemo(() => buildBeats(n, wordmark), [n, wordmark]);
   const current = useRef({ k: -1, beats: null as Beats | null, lastBeat: 0, motion: 0 });
@@ -179,7 +182,8 @@ function Scene({
       c.beats = beats;
     }
 
-    u.uProgress.value = reduced ? 1 : t;
+    // Reduced motion holds the lotus: the start of the lotus -> wordmark beat.
+    u.uProgress.value = reduced ? 0 : t;
     u.uTime.value = state.clock.elapsedTime;
     u.uLit.value = reduced ? 1 : story.lit;
     u.uDissolve.value = reduced ? 0 : story.dissolve;

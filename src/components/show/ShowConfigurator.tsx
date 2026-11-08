@@ -181,7 +181,7 @@ export default function ShowConfigurator({ initialCode }: { initialCode?: string
 
         <div className="absolute right-4 top-4 flex items-center gap-2">
           <span className="pointer-events-none rounded bg-black/50 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
-            Simulation · concept render
+            Simulation<span className="hidden sm:inline"> · concept render</span>
           </span>
           <SoundToggle />
         </div>
