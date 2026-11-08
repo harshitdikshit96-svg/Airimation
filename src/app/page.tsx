@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import ContactForm from "@/components/ui/ContactForm";
-import ScrollSwarmCanvas from "@/components/home/ScrollSwarmCanvas";
+import HomeSwarmLoader from "@/components/home/HomeSwarmLoader";
 import FounderAvatar from "@/components/team/FounderAvatar";
 import {
   homeHero,
@@ -19,7 +19,7 @@ import {
 export default function Home() {
   return (
     <>
-      <ScrollSwarmCanvas />
+      <HomeSwarmLoader />
 
       <div className="relative z-[1]">
         {/* HERO */}
@@ -51,6 +51,7 @@ export default function Home() {
         {homeChapters.map((chapter, i) => (
           <section
             key={chapter.id}
+            id={chapter.id}
             className={`mx-auto flex min-h-[90vh] max-w-[1100px] items-center px-6 ${
               i % 2 === 1 ? "justify-end" : ""
             }`}

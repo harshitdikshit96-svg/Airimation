@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw generated 3D sources (rebuild: node scripts/build-skyline.mjs)
+/assets/src/

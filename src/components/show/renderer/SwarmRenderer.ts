@@ -15,7 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { ShowPlan } from "@/lib/show/types";
 import { CAMERA, TIMING } from "@/lib/show/constants";
 import { buildHorizon } from "./horizon";
-import { patternFor, type ColorPattern } from "./palette";
+import { patternFor, type ColorPattern } from "@/components/swarm/patterns";
 import { pointFragmentShader, pointVertexShader } from "./shaders";
 
 /**
