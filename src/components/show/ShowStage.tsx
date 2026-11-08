@@ -163,8 +163,8 @@ export default function ShowStage({ className, ...props }: Props) {
 
   if (!supported || failed) {
     return (
-      <div className={className}>
-        <p className="p-6 text-sm">
+      <div className={`${className ?? ""} bg-cover bg-center`} style={{ backgroundImage: "url(/posters/show.jpg)" }}>
+        <p className="m-4 inline-block rounded bg-black/60 p-3 text-sm">
           This browser can&apos;t run the 3D preview. Everything else on the page still
           works, and we can send you a recording instead.
         </p>

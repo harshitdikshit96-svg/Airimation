@@ -12,9 +12,14 @@ import dynamic from "next/dynamic";
  */
 const ShowConfigurator = dynamic(() => import("./ShowConfigurator"), {
   ssr: false,
+  // Same footprint as the live stage (no layout shift), showing a frame
+  // pre-rendered from it by scripts/render-poster.mjs.
   loading: () => (
-    <div className="mt-10 flex h-[62vh] min-h-[420px] items-center justify-center rounded-xl border border-line bg-black">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-dim">
+    <div
+      className="relative mt-10 flex h-[58vh] min-h-[380px] items-center justify-center overflow-hidden rounded-xl border border-line bg-black bg-cover bg-center sm:h-[62vh] sm:min-h-[420px]"
+      style={{ backgroundImage: "url(/posters/show.jpg)" }}
+    >
+      <p className="rounded bg-black/50 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-dim">
         Preparing the sky…
       </p>
     </div>

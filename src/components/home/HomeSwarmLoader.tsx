@@ -11,7 +11,8 @@ import SoundToggle from "@/components/swarm/SoundToggle";
 // competes with the hero text for bandwidth or main-thread time.
 const HomeSwarm = dynamic(() => import("./HomeSwarm"), { ssr: false });
 
-export const HOME_POSTER = "/posters/home.webp";
+export const HOME_POSTER = "/posters/home.jpg";
+const HOME_POSTER_PORTRAIT = "/posters/home-portrait.jpg";
 
 const noopSubscribe = () => () => {};
 
@@ -99,16 +100,19 @@ export default function HomeSwarmLoader() {
   return (
     <>
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 bg-[#03040b]">
-        {/* eslint-disable-next-line @next/next/no-img-element -- a fixed backdrop, sized by CSS; next/image adds nothing here */}
-        <img
-          src={HOME_POSTER}
-          alt=""
-          fetchPriority="low"
-          decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-            live && ready ? "opacity-0" : "opacity-100"
-          }`}
-        />
+        {/* Pre-rendered by scripts/render-poster.mjs from the live scene. */}
+        <picture>
+          <source media="(max-aspect-ratio: 4/5)" srcSet={HOME_POSTER_PORTRAIT} />
+          <img
+            src={HOME_POSTER}
+            alt=""
+            fetchPriority="low"
+            decoding="async"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+              live && ready ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        </picture>
         {live && (
           <div className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-100" : "opacity-0"}`}>
             <HomeSwarm
