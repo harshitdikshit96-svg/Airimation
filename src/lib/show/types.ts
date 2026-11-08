@@ -11,14 +11,15 @@ export type Vec3 = { x: number; y: number; z: number };
  * Drone counts offered to the visitor.
  *
  * Airimation's Year-1 fleet is 100 drones, so 100 is the default and the
- * honest centre of the range. 200 and 500 are offered for larger events and
+ * honest centre of the range. 200 and 300 are offered for larger events and
  * are labelled as arranged in advance — see `COUNT_NOTES` in constants.ts.
- * 500 also shows what detailed formations need, which is a useful thing for
- * a buyer to see even if they do not book it.
+ * 300 also shows what detailed formations need, which is a useful thing for
+ * a buyer to see even if they do not book it. (Until Nov 2026 the top tier
+ * was 500; recipe.ts maps old 500 links to 300.)
  * Deliberately a fixed set, not free numeric entry: the point is comparison
  * between meaningfully different scales, not fine-tuning.
  */
-export const DRONE_COUNTS = [50, 100, 200, 500] as const;
+export const DRONE_COUNTS = [50, 100, 200, 300] as const;
 export type DroneCount = (typeof DRONE_COUNTS)[number];
 
 export type FormationCategory = "geometric" | "cultural" | "personal";
@@ -39,6 +40,8 @@ export type Recipe = {
   s: string[];
   /** Text for a personalising formation, if the sequence includes one. */
   t?: string;
+  /** Palette id (see palettes.ts). Absent means "auto". */
+  p?: string;
 };
 
 /** Context handed to a formation's build function. */

@@ -13,6 +13,7 @@
 import { DRONE_COUNTS, type DroneCount, type Recipe } from "./types";
 import { MAX_SEQUENCE, MAX_TEXT_LENGTH, MIN_SEQUENCE } from "./constants";
 import { DEFAULT_SEQUENCE, LIBRARY_VERSION, formationIds } from "./formations";
+import { DEFAULT_PALETTE, PALETTES } from "./palettes";
 
 export const DEFAULT_DRONE_COUNT: DroneCount = 100;
 
@@ -67,7 +68,9 @@ export function validateRecipe(input: unknown): Recipe | null {
 
   const version = typeof raw.v === "number" && raw.v > 0 ? raw.v : LIBRARY_VERSION;
 
-  const count = DRONE_COUNTS.find((c) => c === raw.d);
+  // 500 was the top tier before Nov 2026; links shared then still open.
+  const requested = raw.d === (500 as number) ? 300 : raw.d;
+  const count = DRONE_COUNTS.find((c) => c === requested);
   if (!count) return null;
 
   if (!Array.isArray(raw.s)) return null;
@@ -83,6 +86,11 @@ export function validateRecipe(input: unknown): Recipe | null {
 
   if (typeof raw.t === "string" && raw.t.trim()) {
     recipe.t = raw.t.trim().slice(0, MAX_TEXT_LENGTH);
+  }
+
+  // Unknown palettes are dropped rather than rejecting the whole link.
+  if (typeof raw.p === "string" && raw.p !== DEFAULT_PALETTE && PALETTES.some((p) => p.id === raw.p)) {
+    recipe.p = raw.p;
   }
 
   return recipe;

@@ -81,5 +81,5 @@ export const COUNT_NOTES: Record<number, string> = {
   50: "Intimate events and smaller venues",
   100: "Our standard fleet — most events",
   200: "Large public events, arranged in advance",
-  500: "Flagship scale — full detail, arranged well in advance",
+  300: "Flagship scale — full detail, arranged well in advance",
 };
