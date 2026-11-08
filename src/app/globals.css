@@ -146,6 +146,22 @@ body {
   animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+ * Entrance for above-the-fold hero copy. Transform only, never opacity:
+ * text that starts at opacity 0 does not count as painted, so a fade-in
+ * pushes the page's Largest Contentful Paint back by the whole wait for
+ * JS (measured: ~2.9s of LCP "render delay" with the Framer Motion
+ * Reveal). Pure CSS, so it runs from the server-rendered HTML.
+ */
+@keyframes hero-rise {
+  from { transform: translateY(14px); }
+  to   { transform: translateY(0); }
+}
+
+.hero-enter {
+  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

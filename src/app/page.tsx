@@ -27,7 +27,8 @@ export default function Home() {
           id="show"
           className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 pb-20 pt-36"
         >
-          <Reveal>
+          {/* Not <Reveal>: its opacity fade delays LCP until JS runs. */}
+          <div className="hero-enter">
             <p className="mb-7 font-mono text-xs tracking-[0.2em] text-dim">
               {homeHero.eyebrow}
             </p>
@@ -43,7 +44,7 @@ export default function Home() {
                 SCROLL TO BEGIN THE SHOW
               </span>
             </div>
-          </Reveal>
+          </div>
         </section>
 
         {/* LIFT-OFF / OPEN SKY CHAPTERS */}
