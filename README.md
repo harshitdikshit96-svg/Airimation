@@ -102,8 +102,47 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 
 ## Replacing the visuals
 
-The particle-swarm formations live in `src/lib/swarmShapes.ts` (point-cloud
-generators) and are animated by `src/components/visual/SwarmCanvas.tsx`
-(hero) and `FormationPreview.tsx` (gallery cards). Add a new formation by
-writing a function that returns an array of `{ x, y }` points in the 0–1
-range, then referencing it from either component.
+The home page story and `/design-your-show` render the drone swarm in
+real time with React Three Fiber (`src/components/swarm/`); the gallery
+and Biscope pages use the older 2D canvas (`src/lib/swarmShapes.ts`). See
+CLAUDE.md for the map. When real show footage exists, it replaces the
+posters and the hero, and the "concept render" labels can go.
+
+### Adding a formation
+
+A formation is a function from a drone count to that many `x, y, z`
+positions in metres (`y` = altitude, `z` toward the audience). Add it to
+`src/components/swarm/formations.ts`:
+
+```ts
+// Parametric: a wide six-turn spiral.
+export const galaxy = defineFormation("galaxy", "Galaxy", (n) => spiral(n, 70, 6));
+
+// Text, filled with drones (await document.fonts.load(...) first).
+export const welcome = defineFormation("welcome", "Swagat", (n) =>
+  fromText("SWAGAT", n, { width: 160 }));
+
+// SVG silhouette: any path, any viewBox.
+export const diya = defineFormation("diya", "Diya", (n) =>
+  fromSvg(DIYA_PATH_D, n, { viewBox: 100, width: 90 }));
+```
+
+Use it wherever a formation's positions are needed, e.g. a beat in
+`src/components/home/HomeSwarm.tsx` (`buildBeats`). Generators must be
+deterministic: use `makeRand(seed)`, never `Math.random()`.
+
+To offer it in the configurator, register it in
+`src/lib/show/formations/index.ts` instead (that library is pinned for
+share links: adding is free, changing an existing one needs a
+`LIBRARY_VERSION` bump — see SHOW_CONFIGURATOR.md).
+
+### 3D assets
+
+- `node scripts/build-skyline.mjs` regenerates the skyline into
+  `assets/src/` (git-ignored), and `node scripts/compress-assets.mjs`
+  compresses every GLB there into `public/models/` with Meshopt +
+  quantization (`--ktx2` adds KTX2 textures; needs `toktx`). The script
+  fails if the total exceeds the 1.5 MB budget.
+- `node scripts/render-poster.mjs http://localhost:3000` re-renders the
+  poster frames in `public/posters/` from the live scene, using the locally
+  installed Chrome.

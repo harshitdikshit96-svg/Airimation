@@ -1,7 +1,7 @@
 // Physical and temporal constants for the show configurator.
 //
 // COORDINATE FRAME — a deliberate break from the 2D swarm code in
-// `swarmShapes.ts` / `homeFormations.ts`, which works in normalised 0..1
+// `swarmShapes.ts`, which works in normalised 0..1
 // space and needs an `aspect` correction to stop circles rendering as
 // ellipses. Here everything is in METRES:
 //

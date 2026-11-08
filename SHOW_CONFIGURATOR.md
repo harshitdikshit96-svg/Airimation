@@ -41,13 +41,27 @@ Bump `LIBRARY_VERSION` only when an *existing* formation's geometry changes, and
 retain the old generator set in `VERSIONS` so links already shared keep rendering
 what their recipient saw.
 
-## Why raw three.js rather than react-three-fiber
+## Renderer: React Three Fiber (since Nov 2026)
 
-The scene is two `Points` objects, a horizon group and a camera. R3F solves
-declarative composition of complex scene graphs — a problem this does not have — and
-the rest of this codebase already animates imperatively with `requestAnimationFrame`.
-Per-frame positions write into a `Float32Array`; nothing updating at 60fps enters
-React state.
+The first version was raw three.js, on the grounds that two `Points` and a
+camera did not need a scene graph. That stopped being true once the home
+page needed the same swarm, plus a skyline GLB, bloom, quality tiers and
+context-loss handling: the shared module `src/components/swarm/` is now
+used by both, and `ShowStage.tsx` drives it from the plan clock.
+
+Interpolation moved to the GPU: from/to buffers are uploaded once per
+stage and the vertex shader does easing, stagger and the flight arc from a
+single `uProgress` uniform. Colour patterns are sampled once per stage
+(`swarm/colors.ts`), and twinkle is the shader's job. Nothing that changes
+per frame enters React state.
+
+Points vs InstancedMesh was measured (`/internal/swarm-bench`, software
+GPU standing in for a budget phone): Points held 60 fps at 1,600 and
+6,000 drones, InstancedMesh spheres took 79 ms and 276 ms per frame.
+
+Fleet tiers are now 50/100/200/300; links made with the old 500 tier
+decode as 300. Share links moved to `/design-your-show/s/[code]` (with a
+generated OG image); `?s=` links still open.
 
 ## Rendering lessons, each found by looking at a render
 
