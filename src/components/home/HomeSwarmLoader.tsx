@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import type { StoryState } from "./HomeSwarm";
 import { hasWebGL } from "@/components/swarm/quality";
+import { onEngageOrIdle } from "@/components/swarm/defer";
 import SoundToggle from "@/components/swarm/SoundToggle";
 
 // three, R3F, postprocessing and GSAP all live behind this import. It is
-// requested only after the page has loaded and gone idle, so none of it
-// competes with the hero text for bandwidth or main-thread time.
+// requested only after the page has loaded, on the visitor's first scroll
+// or tap (or a few idle seconds), so none of it competes with the hero.
 const HomeSwarm = dynamic(() => import("./HomeSwarm"), { ssr: false });
 
 export const HOME_POSTER = "/posters/home.jpg";
@@ -33,22 +34,6 @@ function pinnedBeat(): number | null {
   const raw = new URLSearchParams(window.location.search).get("swarmBeat");
   const value = raw === null ? NaN : Number(raw);
   return Number.isFinite(value) ? Math.min(Math.max(value, 0), 3.9999) : null;
-}
-
-function afterLoadAndIdle(cb: () => void): () => void {
-  let idleId = 0;
-  let timer = 0;
-  const go = () => {
-    if (typeof window.requestIdleCallback === "function") idleId = window.requestIdleCallback(cb, { timeout: 2500 });
-    else timer = window.setTimeout(cb, 600);
-  };
-  if (document.readyState === "complete") go();
-  else window.addEventListener("load", go, { once: true });
-  return () => {
-    window.removeEventListener("load", go);
-    if (idleId) window.cancelIdleCallback(idleId);
-    if (timer) window.clearTimeout(timer);
-  };
 }
 
 /**
@@ -78,7 +63,8 @@ export default function HomeSwarmLoader() {
 
   useEffect(() => {
     if (!webgl) return;
-    return afterLoadAndIdle(() => setMounted(true));
+    // A pinned beat (poster renders, tuning) has no visitor to wait for.
+    return onEngageOrIdle(() => setMounted(true), pinnedBeat() !== null ? 0 : 3500);
   }, [webgl]);
 
   // Scroll wiring loads with the scene, never on reduced motion.
