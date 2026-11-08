@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, ChevronUp, Copy, Move3d, Pause, Play, Plus, Sparkles, X } from "lucide-react";
 import ShowStage from "./ShowStage";
+import SoundToggle from "@/components/swarm/SoundToggle";
 import { generateShow } from "@/lib/show/generate";
 import { getLibrary } from "@/lib/show/formations";
 import { decodeRecipe, defaultRecipe, encodeRecipe } from "@/lib/show/recipe";
@@ -178,9 +179,12 @@ export default function ShowConfigurator({ initialCode }: { initialCode?: string
           <span className="font-mono text-xs text-muted">{draft.d} drones</span>
         </div>
 
-        <span className="pointer-events-none absolute right-4 top-4 rounded bg-black/50 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
-          Simulation
-        </span>
+        <div className="absolute right-4 top-4 flex items-center gap-2">
+          <span className="pointer-events-none rounded bg-black/50 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+            Simulation · concept render
+          </span>
+          <SoundToggle />
+        </div>
 
         {/* First-visit interaction hint, centred over the sky. */}
         {!hintSeen && (

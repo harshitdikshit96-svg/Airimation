@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import type { StoryState } from "./HomeSwarm";
 import { hasWebGL } from "@/components/swarm/quality";
+import SoundToggle from "@/components/swarm/SoundToggle";
 
 // three, R3F, postprocessing and GSAP all live behind this import. It is
 // requested only after the page has loaded and gone idle, so none of it
@@ -127,6 +128,7 @@ export default function HomeSwarmLoader() {
       </div>
 
       <div className="pointer-events-none fixed bottom-7 right-6 z-[2] flex flex-col items-end gap-1.5 sm:right-8">
+        {live && ready && !reduced && <SoundToggle className="mb-2" />}
         <div className="flex items-center gap-2.5">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white/70" />
           <span ref={caption} className="font-mono text-xs tracking-[0.18em] text-dim">

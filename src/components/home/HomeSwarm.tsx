@@ -17,6 +17,7 @@ import { cloud, fromText, grid, lotus, sheet } from "@/components/swarm/formatio
 import { matchTargets, radialDelays } from "@/components/swarm/match";
 import { solidColors, stageColors } from "@/components/swarm/colors";
 import type { QualityProfile } from "@/components/swarm/quality";
+import { whoosh } from "@/components/swarm/audio";
 
 /**
  * Scroll-driven story state, written by GSAP ScrollTrigger (HomeStory.ts)
@@ -173,6 +174,7 @@ function Scene({
         delays: beats.delays[k],
         count: n,
       });
+      if (c.k !== -1 && c.beats === beats) whoosh(k === 0 ? 0.6 : 1);
       c.k = k;
       c.beats = beats;
     }

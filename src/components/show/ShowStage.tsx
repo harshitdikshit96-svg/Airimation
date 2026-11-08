@@ -14,6 +14,7 @@ import Skyline from "@/components/swarm/Skyline";
 import { stageColors } from "@/components/swarm/colors";
 import { radialDelays } from "@/components/swarm/match";
 import { hasWebGL } from "@/components/swarm/quality";
+import { whoosh } from "@/components/swarm/audio";
 
 /** Largest fleet the configurator offers; buffers are sized once to this. */
 const CAPACITY = 300;
@@ -96,6 +97,7 @@ function ShowScene({
         delays: index === 1 ? liftDelays : undefined,
         count: plan.droneCount,
       });
+      if (c.stageIndex !== -1 && stage.assembleMs > 0) whoosh();
       c.stageIndex = index;
       stageCallback.current?.(stage.label);
     }
