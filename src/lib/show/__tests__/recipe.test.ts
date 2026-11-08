@@ -55,3 +55,13 @@ describe("show generation", () => {
     }
   });
 });
+
+import { describeRecipe } from "../summary";
+
+describe("summary", () => {
+  it("describes a recipe for previews and quote requests", () => {
+    const s = describeRecipe({ v: 1, d: 200, s: ["ring", "text", "heart"], t: "Aarav", p: "gold" });
+    expect(s.line).toBe("200 drones · Ring → “Aarav” → Heart");
+    expect(s.palette).toBe("Diwali gold");
+  });
+});

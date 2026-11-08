@@ -21,6 +21,6 @@ const ShowConfigurator = dynamic(() => import("./ShowConfigurator"), {
   ),
 });
 
-export default function ShowConfiguratorLoader() {
-  return <ShowConfigurator />;
+export default function ShowConfiguratorLoader({ initialCode }: { initialCode?: string }) {
+  return <ShowConfigurator initialCode={initialCode} />;
 }

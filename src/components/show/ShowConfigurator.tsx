@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, ChevronDown, ChevronUp, Copy, Move3d, Pause, Play, Plus, Sparkles, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check, ChevronDown, ChevronUp, Copy, Move3d, Pause, Play, Plus, Sparkles, X } from "lucide-react";
 import ShowStage from "./ShowStage";
 import { generateShow } from "@/lib/show/generate";
 import { getLibrary } from "@/lib/show/formations";
 import { decodeRecipe, defaultRecipe, encodeRecipe } from "@/lib/show/recipe";
 import { COUNT_NOTES, MAX_SEQUENCE, MAX_TEXT_LENGTH, MIN_SEQUENCE } from "@/lib/show/constants";
 import { DRONE_COUNTS, type DroneCount, type Recipe } from "@/lib/show/types";
+import { PALETTES } from "@/lib/show/palettes";
+import { sharePath } from "@/lib/show/summary";
 
 const TEXT_FORMATION = "text";
 const HINT_SEEN_KEY = "airimation-show-hint-seen";
@@ -28,20 +31,21 @@ function hintAlreadySeen(): boolean {
 }
 
 /**
- * Read a shared configuration out of the URL once, during render, via a lazy
- * initialiser. Not useEffect + setState — this repo's lint config forbids it,
- * and the lazy form avoids a second render pass anyway.
+ * The show to open with: a shared link's code (from the /s/[code] route),
+ * else a legacy `?s=` query, else the default. Read once via a lazy
+ * initialiser — not useEffect + setState, which this repo's lint forbids.
  */
-function initialRecipe(): Recipe {
+function initialRecipe(code?: string): Recipe {
+  if (code) return decodeRecipe(code) ?? defaultRecipe();
   if (typeof window === "undefined") return defaultRecipe();
   const shared = new URLSearchParams(window.location.search).get("s");
   return decodeRecipe(shared) ?? defaultRecipe();
 }
 
-export default function ShowConfigurator() {
+export default function ShowConfigurator({ initialCode }: { initialCode?: string }) {
   const library = getLibrary();
-  const [draft, setDraft] = useState<Recipe>(initialRecipe);
-  const [rendered, setRendered] = useState<Recipe>(initialRecipe);
+  const [draft, setDraft] = useState<Recipe>(() => initialRecipe(initialCode));
+  const [rendered, setRendered] = useState<Recipe>(() => initialRecipe(initialCode));
   const [playing, setPlaying] = useState(true);
   const [stage, setStage] = useState("Ground hold");
   const [copied, setCopied] = useState(false);
@@ -109,6 +113,20 @@ export default function ShowConfigurator() {
     setRendered((c) => ({ ...c, d: count }));
   };
 
+  /** Palettes apply instantly, like fleet size: comparing is the point. */
+  const setPalette = (id: string) => {
+    const apply = (c: Recipe): Recipe => {
+      const next = { ...c };
+      if (id === "auto") delete next.p;
+      else next.p = id;
+      return next;
+    };
+    setDraft(apply);
+    setRendered(apply);
+  };
+
+  const encodedShow = encodeRecipe(rendered);
+
   /**
    * Nothing about a canvas says "you can move this". The overlay below is
    * the only thing telling a first-time visitor the show is theirs to walk
@@ -125,11 +143,11 @@ export default function ShowConfigurator() {
   };
 
   const share = async () => {
-    const encoded = encodeRecipe(rendered);
-    const url = `${window.location.origin}${window.location.pathname}?s=${encoded}`;
+    const path = sharePath(encodedShow);
+    const url = `${window.location.origin}${path}`;
     try {
       await navigator.clipboard.writeText(url);
-      window.history.replaceState(null, "", `?s=${encoded}`);
+      window.history.replaceState(null, "", path);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
@@ -189,7 +207,14 @@ export default function ShowConfigurator() {
             >
               {playing ? <Pause size={16} /> : <Play size={16} />}
             </button>
-            <span className="hidden items-center gap-1.5 text-xs text-muted sm:inline-flex">
+            <Link
+              href={`/contact?show=${encodedShow}`}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-amber px-4 text-sm font-medium text-navy transition hover:opacity-90"
+            >
+              Request a quote for this show
+              <ArrowRight size={14} />
+            </Link>
+            <span className="hidden items-center gap-1.5 text-xs text-muted lg:inline-flex">
               <Move3d size={13} />
               Drag to orbit · scroll to zoom
             </span>
@@ -219,6 +244,32 @@ export default function ShowConfigurator() {
         {COUNT_NOTES[draft.d]}. Switch between fleet sizes above and watch the same
         formation fill in — that difference is what you are really choosing between.
       </p>
+
+      <div className="mt-6">
+        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-muted">LED palette</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {PALETTES.map((palette) => {
+            const selected = (rendered.p ?? "auto") === palette.id;
+            return (
+              <button
+                key={palette.id}
+                onClick={() => setPalette(palette.id)}
+                aria-pressed={selected}
+                className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm transition ${
+                  selected ? "border-amber text-ink" : "border-line-2 text-muted hover:text-ink"
+                }`}
+              >
+                <span className="flex -space-x-1" aria-hidden="true">
+                  {(palette.colors.length ? palette.colors : ["#ffb347", "#ff8fb8", "#5cc6d3"]).map((c) => (
+                    <span key={c} className="h-3 w-3 rounded-full ring-1 ring-black" style={{ background: c }} />
+                  ))}
+                </span>
+                {palette.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_260px]">
         <div>

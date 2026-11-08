@@ -1,13 +1,42 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, FormEvent } from "react";
 import { orgTypes } from "@/lib/content";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+const noopSubscribe = () => () => {};
+/** `?show=<code>` from the configurator's "Request a quote" button. */
+const readShowCode = () => new URLSearchParams(window.location.search).get("show");
+
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const showCode = useSyncExternalStore(noopSubscribe, readShowCode, () => null);
+  const [showMessage, setShowMessage] = useState("");
+
+  // Arriving from "Request a quote for this show": prefill the message with
+  // the show and its link. The formation library is only loaded in that
+  // case, so the form stays light everywhere else.
+  useEffect(() => {
+    if (!showCode) return;
+    let cancelled = false;
+    Promise.all([import("@/lib/show/recipe"), import("@/lib/show/summary")]).then(
+      ([{ decodeRecipe }, { describeRecipe, sharePath }]) => {
+        const recipe = decodeRecipe(showCode);
+        if (cancelled || !recipe) return;
+        const summary = describeRecipe(recipe);
+        setShowMessage(
+          `I'd like a quote for this show: ${summary.line} (${summary.palette} palette).\n` +
+            `Show link: ${window.location.origin}${sharePath(showCode)}\n\n` +
+            `Event, city and date: `
+        );
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [showCode]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -135,9 +164,12 @@ export default function ContactForm() {
           Message
         </label>
         <textarea
+          // Remount when the show summary arrives, so it lands as the default.
+          key={showMessage ? "show" : "blank"}
+          defaultValue={showMessage}
           name="message"
           required
-          rows={5}
+          rows={showMessage ? 7 : 5}
           className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
           placeholder="Tell us about the event, venue, or what you'd like to discuss"
         />
