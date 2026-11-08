@@ -59,7 +59,7 @@ export const TIMING = {
   /** Fraction of the assemble window over which per-drone starts are staggered. */
   staggerFraction: 0.15,
   /** Peak extra altitude on the transition arc, in metres. */
-  arcHeight: 14,
+  arcHeight: 6,
 };
 
 /** Sequence length bounds. */

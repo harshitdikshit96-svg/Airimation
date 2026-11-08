@@ -61,10 +61,11 @@ export const droneVertexShader = /* glsl */ `
     float flight = sin(e * PI);
 
     vec3 p = mix(aFrom, aTo, e);
-    // Arc up and swing slightly sideways mid-flight: paths separate, and
-    // the swarm reads as flying rather than sliding.
-    p.y += flight * uArc * (0.55 + 0.9 * aSeed);
-    p.x += flight * uArc * 0.35 * (aSeed - 0.5);
+    // Real drones fly near-straight lines between waypoints, separated by
+    // small per-drone altitude offsets so paths don't meet. Big random arcs
+    // read as sparks, so the offset is modest and mostly vertical.
+    p.y += flight * uArc * (0.4 + 0.6 * aSeed);
+    p.x += flight * uArc * 0.08 * (aSeed - 0.5);
 
     // Airborne drones hold position the way real ones do: almost, not quite.
     float airborne = smoothstep(1.0, 8.0, p.y);
@@ -74,18 +75,20 @@ export const droneVertexShader = /* glsl */ `
       cos(uTime * 0.47 + aSeed * 23.0)
     ) * uHover * airborne;
 
-    // Dissolve: drift outward and upward from the formation centre.
-    vec3 away = p - uCentre;
-    float dist = max(length(away), 0.001);
-    p += (away / dist) * uDissolve * (18.0 + 40.0 * aSeed);
-    p.y += uDissolve * uDissolve * 30.0 * aSeed;
+    // Dissolve the way a real show ends: LEDs switch off in a ripple (see
+    // "off" below) and the fleet starts a slow, level descent. No outward
+    // burst — that is what fireworks do.
+    p.y -= uDissolve * uDissolve * 14.0;
 
     vColor = mix(aColorFrom, aColorTo, e);
 
     // Lift-off light wave: each drone switches on as uLit passes its delay.
     float lit = smoothstep(aDelay - 0.06, aDelay + 0.02, uLit * 1.08);
-    float twinkle = 1.0 - uTwinkle * (0.5 + 0.5 * sin(uTime * (2.2 + aSeed * 3.1) + aSeed * 63.0));
-    float fade = 1.0 - smoothstep(0.35, 1.0, uDissolve);
+    // LEDs are steady; this is only a faint shimmer from the air between
+    // the drone and the viewer, slow and small.
+    float twinkle = 1.0 - uTwinkle * (0.5 + 0.5 * sin(uTime * (0.9 + aSeed * 0.8) + aSeed * 63.0));
+    float off = uDissolve * 1.35 - aDelay * 0.35;
+    float fade = 1.0 - smoothstep(0.0, 0.25, off);
     vIntensity = mix(0.1, 1.0, lit) * twinkle * fade;
 
     // A trail only exists while its drone is actually travelling; a ghost

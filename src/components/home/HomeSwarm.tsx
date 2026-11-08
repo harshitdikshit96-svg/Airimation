@@ -188,7 +188,7 @@ function Scene({
     u.uLit.value = reduced ? 1 : story.lit;
     u.uDissolve.value = reduced ? 0 : story.dissolve;
     u.uStagger.value = k === 0 ? 0.55 : 0.32;
-    u.uArc.value = k === 0 ? 0 : 14;
+    u.uArc.value = k === 0 ? 0 : 6;
     u.uCentre.value.set(0, 85, SHOW_Z);
     // Trails follow how fast the story is actually moving.
     const speed = Math.abs(beat - c.lastBeat) / Math.max(delta, 1e-3);

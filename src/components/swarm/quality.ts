@@ -23,7 +23,11 @@ export type QualityProfile = {
   bloom: boolean;
   /** MSAA samples for the composer — only silhouettes need it. */
   multisampling: number;
-  /** Ghost copies drawn behind moving drones. 0 disables trails. */
+  /**
+   * Ghost copies drawn behind moving drones. 0 (the default) disables them:
+   * real drones leave no trail to the eye — only long-exposure photographs
+   * show one — and on screen a trail reads as fireworks, not drones.
+   */
   trailSteps: number;
   stars: number;
   /** Mirror the swarm in the river (home page). */
@@ -37,7 +41,7 @@ export const PROFILES: Record<Tier, QualityProfile> = {
     homeDrones: 1600,
     bloom: true,
     multisampling: 4,
-    trailSteps: 4,
+    trailSteps: 0,
     stars: 1800,
     reflection: true,
   },
@@ -47,7 +51,7 @@ export const PROFILES: Record<Tier, QualityProfile> = {
     homeDrones: 900,
     bloom: true,
     multisampling: 0,
-    trailSteps: 2,
+    trailSteps: 0,
     stars: 1000,
     reflection: true,
   },
