@@ -294,8 +294,10 @@ export const roadmap = [
 
 // TEAM
 //
-// Ordered ADVISORS FIRST, then the core team — the advisory bench is the
-// strongest credibility signal Airimation has pre-first-show, so it leads.
+// Two groups: directors (Madhuri Mishra, Harshit Dixit) and advisors.
+// Advisors are kept here but hidden from the UI — see `teamConfig` below.
+// When shown, advisors lead: the bench is a strong credibility signal
+// pre-first-show.
 //
 // `photo` is a path under /public — e.g. "/team/gaurav.jpg". Leave it unset
 // until a real headshot exists; FounderAvatar falls back to initials so
@@ -347,9 +349,28 @@ export const advisors: TeamMember[] = [
     photo: "/team/vishal.jpg",
     profile: "https://www.essex.ac.uk/people/SINGH43901/Vishal%20Krishna-Singh",
   },
+  {
+    name: "Dr. Gaurav Tripathi",
+    role: "Advisor — Operations, Compliance and Client Relations",
+    background: "PhD, IIIT Lucknow; Assistant Professor at Bennett University.",
+    intro:
+      "Dr. Gaurav Tripathi advises on operations, compliance and client relations — the permissions, the safety case and the relationships that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
+    photo: "/team/gaurav.jpg",
+    email: "gaurav@airimation.in",
+  },
+  {
+    name: "Dr. Neeraj Jain",
+    role: "Advisor — RF and Communication Systems, 3D Printing",
+    background:
+      "Associate Professor at Bennett University; 10+ years in drone technology and AI.",
+    intro:
+      "Dr. Neeraj Jain advises on RF and communication systems, and 3D printing. An Associate Professor at Bennett University with over a decade in drone technology and AI, he guides the radio link that keeps hundreds of aircraft talking to the ground station through a live show.",
+    photo: "/team/neeraj.jpg",
+    profile: "https://www.bennett.edu.in/faculties/dr-neeraj-jain/",
+  },
 ];
 
-export const coreTeam: TeamMember[] = [
+export const directors: TeamMember[] = [
   {
     name: "Madhuri Mishra",
     role: "Co-founder and Director — Business Strategy and Expansion",
@@ -361,41 +382,34 @@ export const coreTeam: TeamMember[] = [
   },
   {
     name: "Harshit Dixit",
-    role: "Co-founder and Chief Technology Officer — Show Design and Animation",
+    role: "Co-founder and Director — Technology, Show Design and Animation",
     background: "BTech, IIIT Lucknow; 5+ years of industry experience.",
     intro:
-      "Harshit Dixit co-founded Airimation and leads technology, show design and animation. A BTech from IIIT Lucknow with five years of industry engineering behind him, he builds the pipeline that turns a client's occasion into a choreographed show file.",
+      "Harshit Dixit co-founded Airimation and, as a director, leads technology, show design and animation. A BTech from IIIT Lucknow with five years of industry engineering behind him, he builds the pipeline that turns a client's occasion into a choreographed show file.",
     photo: "/team/harshit.jpg",
     email: "harshit@airimation.in",
-  },
-  {
-    name: "Dr. Gaurav Tripathi",
-    role: "Operations, Compliance and Client Relations",
-    background: "PhD, IIIT Lucknow; Assistant Professor at Bennett University.",
-    intro:
-      "Dr. Gaurav Tripathi runs operations, compliance and client relations — the permissions, the safety case and the relationships that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
-    photo: "/team/gaurav.jpg",
-    email: "gaurav@airimation.in",
-  },
-  {
-    name: "Dr. Neeraj Jain",
-    role: "RF and Communication Systems Lead, 3D Printing Lead",
-    background:
-      "Associate Professor at Bennett University; 10+ years in drone technology and AI.",
-    intro:
-      "Dr. Neeraj Jain leads RF and communication systems, and 3D printing. An Associate Professor at Bennett University with over a decade in drone technology and AI, he owns the radio link that keeps hundreds of aircraft talking to the ground station through a live show.",
-    photo: "/team/neeraj.jpg",
-    profile: "https://www.bennett.edu.in/faculties/dr-neeraj-jain/",
   },
 ];
 
 /**
- * Advisors first, then the core team — the order used everywhere the whole
- * group is listed. `founders` is kept as an alias for the operating team so
- * existing imports keep working.
+ * Team visibility. Advisors stay listed in `advisors` above but are hidden
+ * from the site while `showAdvisors` is false; pages read `visibleAdvisors`
+ * and drop every advisor section and "advisory bench" line when it is empty.
+ * Flip this to true to bring them back — no other change needed.
  */
-export const team: TeamMember[] = [...advisors, ...coreTeam];
-export const founders = coreTeam;
+export const teamConfig = {
+  showAdvisors: false,
+};
+
+export const visibleAdvisors: TeamMember[] = teamConfig.showAdvisors ? advisors : [];
+
+/**
+ * Everyone shown on the site, advisors (when visible) first. `coreTeam` and
+ * `founders` are aliases for the directors so existing imports keep working.
+ */
+export const coreTeam = directors;
+export const founders = directors;
+export const team: TeamMember[] = [...visibleAdvisors, ...directors];
 
 export const orgTypes = [
   "Government / District Administration",

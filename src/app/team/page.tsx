@@ -2,14 +2,16 @@ import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
 import FounderAvatar from "@/components/team/FounderAvatar";
-import { advisors, coreTeam, site, type TeamMember } from "@/lib/content";
+import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
 import { ArrowRight, ExternalLink, Mail } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Team | Airimation",
   description:
-    "The advisory bench and operating team behind Airimation and its flagship drone light show, Biscope.",
+    visibleAdvisors.length > 0
+      ? "The advisory bench and directors behind Airimation and its flagship drone light show, Biscope."
+      : "The directors behind Airimation and its flagship drone light show, Biscope.",
 };
 
 /**
@@ -92,37 +94,39 @@ export default function TeamPage() {
               The people building Airimation.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
-              An advisory bench drawn from drone research, wireless communications
-              and institutional leadership, and a small operating team that flies
-              the shows. Based in {site.base}, building toward an indigenous Indian
-              UAV technology company — one show at a time.
+              {visibleAdvisors.length > 0
+                ? "An advisory bench drawn from drone research, wireless communications and institutional leadership, and the directors who run the company. "
+                : "The directors who run the company and design the shows. "}
+              Based in {site.base}, building toward an indigenous Indian UAV technology
+              company — one show at a time.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* Advisors lead: pre-first-show, the bench is the strongest thing we
-          can put in front of a client or an investor. */}
+      {/* Advisors: hidden while teamConfig.showAdvisors is false. */}
+      {visibleAdvisors.length > 0 && (
       <section className="px-6 pt-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <SectionLabel>Advisors</SectionLabel>
           </Reveal>
           <div className="mt-10 divide-y divide-line-2">
-            {advisors.map((member) => (
+            {visibleAdvisors.map((member) => (
               <MemberRow key={member.name} member={member} />
             ))}
           </div>
         </div>
       </section>
+      )}
 
       <section className="px-6 pb-20 pt-16">
         <div className="mx-auto max-w-5xl border-t border-line-2 pt-16">
           <Reveal>
-            <SectionLabel>Core Team</SectionLabel>
+            <SectionLabel>Directors</SectionLabel>
           </Reveal>
           <div className="mt-10 divide-y divide-line-2">
-            {coreTeam.map((member) => (
+            {directors.map((member) => (
               <MemberRow key={member.name} member={member} />
             ))}
           </div>

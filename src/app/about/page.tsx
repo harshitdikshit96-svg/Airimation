@@ -2,7 +2,7 @@ import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
-import { advisors, coreTeam, site, type TeamMember } from "@/lib/content";
+import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -112,24 +112,31 @@ export default function AboutPage() {
           <Reveal>
             <SectionLabel no="02">The founding team</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
-              An advisory bench, and a team that flies the shows
+              {visibleAdvisors.length > 0
+                ? "An advisory bench, and the directors who fly the shows"
+                : "The directors who fly the shows"}
             </h2>
           </Reveal>
 
-          <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-            Advisors
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {advisors.map((member, i) => (
-              <MemberCard key={member.name} member={member} delay={i * 0.06} />
-            ))}
-          </div>
+          {/* Advisors: hidden while teamConfig.showAdvisors is false. */}
+          {visibleAdvisors.length > 0 && (
+            <>
+              <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+                Advisors
+              </p>
+              <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {visibleAdvisors.map((member, i) => (
+                  <MemberCard key={member.name} member={member} delay={i * 0.06} />
+                ))}
+              </div>
+            </>
+          )}
 
-          <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-            Core team
+          <p className={`${visibleAdvisors.length > 0 ? "mt-12" : "mt-8"} font-mono text-[11px] uppercase tracking-[0.2em] text-dim`}>
+            Directors
           </p>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {coreTeam.map((member, i) => (
+            {directors.map((member, i) => (
               <MemberCard key={member.name} member={member} delay={i * 0.06} />
             ))}
           </div>

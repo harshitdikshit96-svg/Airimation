@@ -9,8 +9,8 @@ import {
   homeChapters,
   biscopeStepsCompact,
   homeSegments,
-  advisors,
-  coreTeam,
+  visibleAdvisors,
+  directors,
   safetyHighlightsCompact,
   contactInfo,
   designTeaser,
@@ -149,35 +149,39 @@ export default function Home() {
             </h2>
           </Reveal>
 
-          {/* Advisors lead — pre-first-show, the bench is the strongest
-              credibility signal the company has. */}
-          <Reveal>
-            <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-              Advisors
-            </p>
-          </Reveal>
-          <div className="mb-14 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 sm:gap-9">
-            {advisors.map((member, i) => (
-              <Reveal key={member.name} delay={i * 0.06}>
-                <div>
-                  <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
-                  <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
-                  <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
-                    {member.role}
-                  </p>
-                  <p className="text-[13.5px] font-light text-muted">{member.background}</p>
-                </div>
+          {/* Advisors are hidden while teamConfig.showAdvisors is false
+              (src/lib/content.ts); when shown, they lead. */}
+          {visibleAdvisors.length > 0 && (
+            <>
+              <Reveal>
+                <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+                  Advisors
+                </p>
               </Reveal>
-            ))}
-          </div>
+              <div className="mb-14 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 sm:gap-9">
+                {visibleAdvisors.map((member, i) => (
+                  <Reveal key={member.name} delay={i * 0.06}>
+                    <div>
+                      <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                      <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
+                      <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
+                        {member.role}
+                      </p>
+                      <p className="text-[13.5px] font-light text-muted">{member.background}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </>
+          )}
 
           <Reveal>
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-              Core team
+              Directors
             </p>
           </Reveal>
-          <div className="grid grid-cols-2 gap-x-5 gap-y-9 sm:gap-9 lg:grid-cols-4">
-            {coreTeam.map((member, i) => (
+          <div className="grid max-w-3xl grid-cols-2 gap-x-5 gap-y-9 sm:gap-9">
+            {directors.map((member, i) => (
               <Reveal key={member.name} delay={i * 0.06}>
                 <div>
                   <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
