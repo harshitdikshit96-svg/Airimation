@@ -15,7 +15,7 @@ export default function SoundToggle({ className = "" }: { className?: string }) 
       onClick={() => setMuted(!muted)}
       aria-pressed={!muted}
       aria-label={muted ? "Turn show sound on" : "Turn show sound off"}
-      className={`pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-2 bg-black/40 text-muted backdrop-blur-sm transition hover:text-ink ${className}`}
+      className={`pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-2 bg-black/60 text-muted transition hover:text-ink ${className}`}
     >
       {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
     </button>

@@ -1,34 +1,26 @@
 # Team photos
 
-Drop real founder headshots here, then set the matching `photo` path in
-`src/lib/content.ts`'s `founders` array — nothing else needs to change,
-`FounderAvatar` will pick it up automatically and stop showing the initials
-placeholder.
+Real headshots only: no generated or stock photos of real people (see
+DECISIONS.md §2).
 
-Suggested naming (matches each founder, in order):
+Drop the file here, then set the matching `photo` path on that person in
+`src/lib/content.ts` (`directors` or `advisors`). Nothing else changes;
+`FounderAvatar` shows initials until a photo is set.
 
-- gaurav-tripathi.jpg
-- harshit-dixit.jpg
-- anshuman.jpg
-- adarsh-shukla.jpg
+Sizing: portrait, at least 800x1000px, JPG or PNG. Pages crop to a 4:5 box
+on /team, a square on the home page (112–144 px) and a round thumbnail on
+/about, so a centred headshot with room above the shoulders works best.
 
-Sizing: portrait orientation, at least 800x1000px, JPG or PNG. The site
-crops to a 4:5 box on the /team page and a square box on the homepage, so a
-centered headshot with some room above the shoulders works best.
+## Current files (as of 9 Nov 2026)
 
-## Current files (updated 2026-09-29)
+| File | Person | Shown on the site |
+|---|---|---|
+| harshit.jpg | Harshit Dixit, Director | yes |
+| madhuri.png | Madhuri Mishra, Director | yes |
+| gaurav.jpg | Dr. Gaurav Tripathi, Advisor | yes |
+| neeraj.jpg | Dr. Neeraj Jain, Advisor | yes |
+| rajeev.jpg, deepak.jpg, vishal.jpg | advisors | no (`hidden: true`) |
 
-rajeev.jpg, deepak.jpg, vishal.jpg (advisors) and neeraj.jpg, madhuri.png,
-harshit.jpg, gaurav.jpg (core team).
-
-rajeev.jpg and vishal.jpg were replaced on 2026-09-29 (evening) with better
-source images: rajeev.jpg is cropped to 4:5 from a conference photo, with the
-bottom nameplate band deliberately cropped out; vishal.jpg is a centre crop of
-a square headshot. Both were upscaled modestly (2.2x and 1.8x).
-
-The other two added on 2026-09-29 were supplied at low resolution (216–591px) and
-have been cropped to 4:5 and upscaled modestly — capped at 2.2x, because
-pushing them further only invents soft pixels. They are noticeably softer
-than madhuri.png and harshit.jpg. Replace them with originals from each
-person when available; drop the file here and update the `photo` path in
-src/lib/content.ts, nothing else changes.
+Some photos were supplied at low resolution and upscaled modestly (capped
+at 2.2x); they look softer than madhuri.png and harshit.jpg. Replace them
+with originals when available.

@@ -26,6 +26,9 @@ stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 **Read `DECISIONS.md` first** — every company and site decision to date
 (team presentation, retired words, masked registration numbers, 3D
 performance rules) and the change log.
+**Keep it current:** after any change, add a dated entry to its change
+log, update §1–§3 if a decision changed, and re-run the §6 verification
+checklist (mark ✅/❌ and the date).
 
 This is the marketing website for **Airimation**, a Noida (Delhi NCR)
 drone-swarm light-show company. Next.js App Router, TypeScript, Tailwind

@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 9 November 2026.*
+the change log. Last updated: 9 November 2026 (round 3, verified — see §6).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -149,6 +149,12 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 
 ## 5. Change log
 
+### 9 Nov 2026 — round 3
+- **Verified** the whole doc against a production build (§6).
+- **Performance rule fix:** the show sound toggle (home, configurator) and the configurator's first-visit hint used `backdrop-blur` over the live canvas. Blur removed; backgrounds made a little more opaque instead.
+- `public/team/README.md` rewritten: it still listed Anshuman and Adarsh Shukla.
+- This file: §6 Verification added; open items renumbered to §7.
+
 ### 9 Nov 2026 — round 2
 - **Footer:** registration numbers masked (`U823xxxx…`), full street address replaced by "Greater Noida, Uttar Pradesh"; full numbers removed from the browser bundle and from JSON-LD (moved to `src/lib/registration.ts`). Site links in **two columns**.
 - **Contact page:** same masking; short registered office.
@@ -169,9 +175,42 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 - Jul 2026: Next.js site built; Neon contact form; IBM Plex self-hosted; homepage v2 scroll story; monochrome/borderless rules; white swarm; `/investors` removed; `/team`; `/internal` Academy + quiz with its own pink/yellow theme; brand spelling fixed to Airimation sitewide; sandeep.jpg casing fix.
 - Sep–Oct 2026: 3D R3F swarm with GPU morphing, home scroll story, `/design-your-show` configurator with share links and OG images, poster frames, synthesised show sound, statutory details in footer, advisors kept in config but hidden.
 
+## 6. Verification — 9 Nov 2026 (round 3)
+
+Every claim in §1–§5 that the site can show was checked against the code
+and a production build (`npm run build && npm run start`), in Chrome.
+Re-run this list after any change to copy, team, branding or the swarm.
+
+| Check | How | Result |
+|---|---|---|
+| Lint + retired words | `npm run lint` | ✅ pass |
+| Tests | `npm test` | ✅ 29/29 |
+| Production build | `npm run build` | ✅ pass |
+| `/biscope` → `/shows` | `curl -I` | ✅ 308 to `/shows` |
+| Retired words, removed members, hidden advisors in served HTML (/, /shows, /about, /vision, /gallery, /team, /contact, /design-your-show) | grep | ✅ none |
+| Full CIN/GSTIN/street address in HTML or `.next/static` bundle | grep | ✅ none; footer shows `U823xxx…`, `09xxx…`, `UDYAM-UP-xxx…`, `DIPPxxx…`, "Greater Noida, Uttar Pradesh" |
+| JSON-LD | read `/` | ✅ logo URL, locality only, no numbers |
+| HQ wording | read pages | ✅ "Noida, Uttar Pradesh (Delhi NCR)" |
+| Concept-render / simulation labels | read pages | ✅ on /, /shows, /gallery, /design-your-show, footer |
+| Team order and roles | read /, /about, /team | ✅ Directors Harshit, Madhuri; Advisors Gaurav, Neeraj; other three hidden |
+| Home team photos | Chrome | ✅ 144 px (desktop) |
+| /about thumbnails | Chrome | ✅ round, 64 px |
+| Logo | Chrome | ✅ white mark in header + footer, black on `/internal`, `icon.png` + `apple-icon.png` served |
+| Footer | Chrome | ✅ two link columns, masked numbers, harshitcreates.in credit |
+| "Where we are" | read / and /vision | ✅ prototype, Nano, ArduPilot, Skybrush, Indian parts; pledge and F1 goal on /vision |
+| Gallery fleets + formations | Chrome, every option | ✅ exactly as the §3 table |
+| 2D formation cards removed | code + Chrome | ✅ |
+| 360° orbit | Chrome, dragged ~270° | ✅ goes behind the figure, no pull-back |
+| 60 fps cap, DPR caps, no MSAA, half-res bloom, monitor never rebuilds | code (`quality.ts`, `SwarmCanvas.tsx`, `Effects.tsx`) + Chrome (canvas at 1.5× on a 1.8× screen) | ✅ |
+| No `backdrop-filter` over a live canvas | code + Chrome | ❌ → fixed: sound toggle and configurator hint still blurred; blur removed (round 3) |
+| Exporter column format | code | ✅ matches §3 |
+
+Not checkable from the site: company facts in §1 (registrations, fleet
+plan, money, internal roles) and the research in §4 — recorded as given.
+
 ---
 
-## 6. Open items
+## 7. Open items
 - [ ] Push `feat/3d-swarm` and check the Vercel preview on a real phone and a MacBook.
 - [ ] Verify the CIN state code ("UW" vs "UP").
 - [ ] Iconography review of Ganesha, Mahadev and Om before promoting them.
@@ -179,3 +218,5 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 - [ ] Pick 1–2 CC0 museum scans (Nataraja 1930.331, Ganesha 1970.62) to turn into 3D formations — needs downloading from your Sketchfab account.
 - [ ] `Airimation_Context_Brief.md` in the workspace is stale (Biscope, New Delhi, Sandeep) — update before sharing.
 - [ ] Choose a new flagship show name (or decide not to have one).
+- [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
+- [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).

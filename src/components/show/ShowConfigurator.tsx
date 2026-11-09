@@ -189,7 +189,7 @@ export default function ShowConfigurator({ initialCode }: { initialCode?: string
         {/* First-visit interaction hint, centred over the sky. */}
         {!hintSeen && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="show-hint flex flex-col items-center gap-3 rounded-xl border border-line-2 bg-black/70 px-7 py-5 backdrop-blur-sm">
+            <div className="show-hint flex flex-col items-center gap-3 rounded-xl border border-line-2 bg-black/80 px-7 py-5">
               <Move3d size={26} className="text-amber" />
               <p className="text-sm text-ink">This sky is yours to explore</p>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
