@@ -30,7 +30,7 @@ export default function Footer() {
             <p className={clsx("mt-3 max-w-xs text-sm", isInternal ? "text-int-muted" : "text-muted")}>
               {isInternal
                 ? "The internal learning game — the business, the tech, and the roadmap, gamified."
-                : `Drone-swarm light shows, designed and performed under our flagship, Biscope. Based in ${contactInfo.base}.`}
+                : `Drone-swarm light shows, designed, built and flown in India. Based in ${contactInfo.base}.`}
             </p>
             {!isInternal && (
               <p className="mt-2 max-w-xs text-xs text-dim">
@@ -139,7 +139,7 @@ export default function Footer() {
           <span>
             {isInternal
               ? "Internal use only — not for external distribution."
-              : "Show visuals are concept renders — Biscope's first shows are in preparation."}
+              : "Show visuals are concept renders — our first shows are in preparation."}
           </span>
         </div>
 

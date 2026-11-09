@@ -7,7 +7,8 @@ import FounderAvatar from "@/components/team/FounderAvatar";
 import {
   homeHero,
   homeChapters,
-  biscopeStepsCompact,
+  showStepsCompact,
+  buildStatus,
   homeSegments,
   visibleAdvisors,
   directors,
@@ -70,24 +71,25 @@ export default function Home() {
           </section>
         ))}
 
-        {/* BISCOPE */}
+        {/* THE SHOW — id "shows" is also the scroll trigger for the
+            wordmark beat (homeStory.ts). */}
         <section
-          id="biscope"
+          id="shows"
           className="mx-auto flex min-h-screen max-w-[1100px] flex-col justify-center px-6 py-16 sm:py-24"
         >
           <Reveal>
-            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">03 · THE FLAGSHIP</p>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">03 · THE SHOW</p>
             <h2 className="mb-4 font-serif text-[clamp(34px,4.4vw,58px)] font-light leading-[1.12] text-ink">
-              Biscope.
+              Storyboard to sky.
             </h2>
             <p className="mb-14 max-w-[58ch] text-[17px] font-light text-muted">
-              Our flagship show system: storyboard to sky, one disciplined pipeline.
-              Choreographed to a client&apos;s story, colours and music.
+              One disciplined pipeline, choreographed to a client&apos;s story,
+              colours and music.
             </p>
           </Reveal>
 
           <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {biscopeStepsCompact.map((step, i) => (
+            {showStepsCompact.map((step, i) => (
               <Reveal key={step.step} delay={i * 0.06}>
                 <div>
                   <p className="mb-3.5 font-mono text-xs tracking-[0.2em] text-dim">
@@ -137,43 +139,52 @@ export default function Home() {
           </Reveal>
         </section>
 
+        {/* WHERE WE ARE — honest build status */}
+        <section id="progress" className="mx-auto max-w-[1100px] px-6 py-16 sm:py-24">
+          <Reveal>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
+              05 · {buildStatus.eyebrow}
+            </p>
+            <h2 className="mb-5 max-w-[24ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+              {buildStatus.title}
+            </h2>
+            <p className="mb-12 max-w-[60ch] text-base font-light leading-relaxed text-muted">
+              {buildStatus.body}
+            </p>
+          </Reveal>
+          <dl className="grid grid-cols-1 gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+            {buildStatus.facts.map((fact, i) => (
+              <Reveal key={fact.label} delay={i * 0.06}>
+                <div>
+                  <dt className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">
+                    {fact.label}
+                  </dt>
+                  <dd className="text-[15px] font-light text-ink">{fact.value}</dd>
+                </div>
+              </Reveal>
+            ))}
+          </dl>
+          <Reveal delay={0.2}>
+            <Link
+              href="/vision"
+              className="mt-10 inline-flex min-h-11 items-center gap-2 font-mono text-xs tracking-[0.16em] text-dim transition-colors hover:text-ink"
+            >
+              The roadmap and the vision <ArrowRight size={13} />
+            </Link>
+          </Reveal>
+        </section>
+
         {/* TEAM */}
         <section
           id="team"
           className="mx-auto flex min-h-[90vh] max-w-[1100px] flex-col justify-center px-6 py-16 sm:py-24"
         >
           <Reveal>
-            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">05 · THE TEAM</p>
+            <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">06 · THE TEAM</p>
             <h2 className="mb-12 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
-              Built in New Delhi, by people who fly.
+              Built in Noida, from the airframe up.
             </h2>
           </Reveal>
-
-          {/* Advisors are hidden while teamConfig.showAdvisors is false
-              (src/lib/content.ts); when shown, they lead. */}
-          {visibleAdvisors.length > 0 && (
-            <>
-              <Reveal>
-                <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-                  Advisors
-                </p>
-              </Reveal>
-              <div className="mb-14 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 sm:gap-9">
-                {visibleAdvisors.map((member, i) => (
-                  <Reveal key={member.name} delay={i * 0.06}>
-                    <div>
-                      <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
-                      <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
-                      <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
-                        {member.role}
-                      </p>
-                      <p className="text-[13.5px] font-light text-muted">{member.background}</p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </>
-          )}
 
           <Reveal>
             <p className="mb-5 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -194,6 +205,31 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
+
+          {/* Advisors: those not marked `hidden` in src/lib/content.ts. */}
+          {visibleAdvisors.length > 0 && (
+            <>
+              <Reveal>
+                <p className="mb-5 mt-14 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+                  Advisors
+                </p>
+              </Reveal>
+              <div className="grid max-w-3xl grid-cols-2 gap-x-5 gap-y-9 sm:gap-9">
+                {visibleAdvisors.map((member, i) => (
+                  <Reveal key={member.name} delay={i * 0.06}>
+                    <div>
+                      <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                      <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
+                      <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
+                        {member.role}
+                      </p>
+                      <p className="text-[13.5px] font-light text-muted">{member.background}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </>
+          )}
 
           <Reveal delay={0.2}>
             <Link
@@ -228,7 +264,7 @@ export default function Home() {
         >
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
-              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">06 · CONTACT</p>
+              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">07 · CONTACT</p>
               <h2 className="mb-5 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                 Put a show in your sky.
               </h2>

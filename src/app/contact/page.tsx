@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact | Airimation",
   description:
-    "Get in touch with Airimation to book a Biscope drone-swarm light show, or to discuss partnership and investment.",
+    "Get in touch with Airimation to book a drone-swarm light show, or to discuss a partnership.",
 };
 
 export default function ContactPage() {
@@ -22,14 +22,14 @@ export default function ContactPage() {
               Let&apos;s talk about your event.
             </h1>
             <p className="mt-5 text-muted">
-              Whether it&apos;s a government celebration, a festival, a wedding,
+              Whether it&apos;s a civic celebration, a festival, a wedding,
               a corporate launch, or a partnership and investment conversation
               — tell us the details and we&apos;ll respond directly.
             </p>
 
             {/* Company information — the details a district office, a venue
                 or a corporate procurement team will ask for. Plain text,
-                no government badges; see content.ts for why. */}
+                no official badges; see content.ts for why. */}
             <div className="mt-10 border-t border-line-2 pt-8">
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-dim">
                 Company information
@@ -60,7 +60,7 @@ export default function ContactPage() {
               </dl>
               <p className="mt-6 text-xs leading-relaxed text-dim">
                 Recognised as a startup by the Department for Promotion of Industry
-                and Internal Trade, Government of India, and registered as an MSME
+                and Internal Trade (DPIIT), and registered as an MSME
                 under Udyam. Incorporated {company.incorporatedOn} under the
                 Companies Act, 2013.
               </p>

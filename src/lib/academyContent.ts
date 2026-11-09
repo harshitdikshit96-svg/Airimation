@@ -22,7 +22,7 @@ export const academyMeta = {
 // ---------------------------------------------------------------------------
 export const missionPrimer = {
   simple:
-    "Airimation is a company in New Delhi that flies hundreds of tiny flying robots — drones — in the night sky, together, in perfect formation, with colourful lights on them. From the ground it looks like a moving painting made of stars. That's a drone light show, and our version of it is called Biscope.",
+    "Airimation is a company in Noida, near Delhi, that flies hundreds of tiny flying robots — drones — in the night sky, together, in perfect formation, with colourful lights on them. From the ground it looks like a moving painting made of stars. That's a drone light show — and Airimation builds the drones and designs the shows.",
   whyItMatters: [
     {
       title: "It replaces fireworks",
@@ -102,7 +102,7 @@ export const historyTimeline: TimelineEvent[] = [
 ];
 
 export const funFacts = [
-  "A single Biscope drone is, technically, just a flying pixel with a GPS chip — the light show is really a very large, very literal video screen made of individually flying LEDs.",
+  "A single show drone is, technically, just a flying pixel with a GPS chip — the light show is really a very large, very literal video screen made of individually flying LEDs.",
   "The record for \"largest aerial image formed by drones\" (11,787 drones, Chongqing) is a different category from \"most drones flown simultaneously\" — Guinness treats scale, precision-of-image, and single-computer control as separate records, because each is a different engineering challenge.",
   "Modern show drones don't fly themselves moment-to-moment — every position at every second of the show is pre-computed and simulated on the ground long before the show, then simply played back, with each drone's onboard flight controller handling only the moment-to-moment stability.",
   "Because every drone flies the same pre-validated show file, a well-run drone show is one of the most repeatable live spectacles that exists — the 500th performance can be as precise as the 1st, which is not true of fireworks.",
@@ -325,7 +325,7 @@ export const opportunityPoints = [
   {
     title: "Fireworks are getting harder to justify",
     detail:
-      "Air quality, fire risk, and noise complaints have pushed courts and city authorities across India toward tighter firecracker restrictions around festivals — a reusable, silent, smoke-free alternative solves a problem venues and governments already have.",
+      "Air quality, fire risk, and noise complaints have pushed courts and city authorities across India toward tighter firecracker restrictions around festivals — a reusable, silent, smoke-free alternative solves a problem venues and city authorities already have.",
   },
   {
     title: "A calendar no outsider owns",
@@ -335,7 +335,7 @@ export const opportunityPoints = [
   {
     title: "It's a service business, not a drone-manufacturing business",
     detail:
-      "Airimation sells the choreographed experience (Biscope), the way an event production company sells a show — not the hardware. That keeps the business closer to storytelling and client relationships than to manufacturing margins.",
+      "Airimation sells the choreographed show experience, the way an event production company sells a show — not the hardware. That keeps the business closer to storytelling and client relationships than to manufacturing margins.",
   },
 ];
 
@@ -438,7 +438,7 @@ export const quizQuestions: QuizQuestion[] = [
     question: "Which platform issues India's drone flight permissions?",
     options: ["Google Maps", "The DGCA's Digital Sky platform", "A private drone insurance company", "NASA"],
     correct: 1,
-    explain: "Every Biscope show flies under the Drone Rules, 2021, cleared through DGCA Digital Sky, plus local NOCs.",
+    explain: "Every Airimation show flies under the Drone Rules, 2021, cleared through DGCA Digital Sky, plus local NOCs.",
   },
   {
     id: "q7",
@@ -446,7 +446,7 @@ export const quizQuestions: QuizQuestion[] = [
     question: "What does Airimation primarily sell?",
     options: [
       "Drones, to other companies",
-      "A choreographed light-show experience for events (Biscope)",
+      "A choreographed light-show experience for events",
       "GPS chips",
       "Firework replacement kits",
     ],
@@ -477,7 +477,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q10",
     topic: "Show pipeline",
-    question: "What are Biscope's four pipeline steps, in order?",
+    question: "What are Airimation's four show pipeline steps, in order?",
     options: [
       "Perform → Permit → Validate → Design",
       "Design → Validate → Permit → Perform",
@@ -492,13 +492,13 @@ export const quizQuestions: QuizQuestion[] = [
     topic: "Business",
     question: "Which of these is NOT one of Airimation's four core client segments?",
     options: [
-      "Government & public celebrations",
+      "Civic & public celebrations",
       "Temple-town festivals",
       "Premium weddings",
       "International airline advertising",
     ],
     correct: 3,
-    explain: "The four are government/civic, temple-town festivals, weddings, and corporate launches — not airline advertising.",
+    explain: "The four are civic and public celebrations, temple-town festivals, weddings, and corporate launches — not airline advertising.",
   },
   {
     id: "q12",
@@ -529,10 +529,10 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "q14",
     topic: "Safety",
-    question: "True or false: a Biscope show ever flies directly over the audience.",
+    question: "True or false: an Airimation show ever flies directly over the audience.",
     options: ["True — that's the best angle", "False — audiences are always kept at a cordoned lateral standoff"],
     correct: 1,
-    explain: "Biscope shows never fly over a crowd — a hard safety rule, not a preference.",
+    explain: "Airimation shows never fly over a crowd — a hard safety rule, not a preference.",
   },
   {
     id: "q15",

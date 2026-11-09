@@ -23,16 +23,22 @@ stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 
 ## Architecture
 
-This is the marketing website for **Airimation** (a New Delhi-based
-drone-swarm light-show company) and its flagship product
-**Biscope**. Next.js App Router, TypeScript, Tailwind CSS v4.
+This is the marketing website for **Airimation**, a Noida (Delhi NCR)
+drone-swarm light-show company. Next.js App Router, TypeScript, Tailwind
+CSS v4.
+
+**Retired words.** There is no flagship show name: "Biscope" was dropped
+(Nov 2026) and the old `/biscope` page is now `/shows` (permanent
+redirect in `next.config.ts`). The word "government" is not used in any
+Airimation material — say "civic" or "public". `npm run lint` enforces
+both (`scripts/check-brand-spelling.mjs`).
 
 **Content lives in one place.** `src/lib/content.ts` is the single source of
 truth for every fact, stat, and piece of copy used across the site (founders,
 roadmap, market figures, client segments, positioning vs. competitors). Pages
 import from it rather than hardcoding text — when the business facts change,
 update `content.ts`, not the individual page files. The figures there are
-sourced from Airimation's business plan / Biscope blueprint / pitch deck and
+sourced from Airimation's business plan / show blueprint / pitch deck and
 are explicitly marked illustrative and assumption-based at the source; treat
 anything on `/investors` as needing founder sign-off before publishing.
 
@@ -52,7 +58,7 @@ deliberate choice: the build sandbox this project was originally developed in
 has no network access to `fonts.googleapis.com`, and self-hosting is also
 one less external request at runtime in production.
 
-**The drone-swarm visuals are the centerpiece.** Biscope has no real show
+**The drone-swarm visuals are the centerpiece.** Airimation has no real show
 footage yet (pre-first-show), so the site renders shows in real time.
 
 *3D (home page story and `/design-your-show`)* — React Three Fiber, shared
@@ -80,7 +86,18 @@ module `src/components/swarm/`:
 - Posters (`public/posters/`) are rendered from the live scene by
   `scripts/render-poster.mjs`; re-run it when the look changes.
 
-*2D (gallery, biscope, academy)* — canvas 2D: `src/lib/swarmShapes.ts`
+*Animated cultural formations* (`src/lib/cultural/`, live on `/gallery`
+via `src/components/gallery/CulturalShowcase.tsx`) — Ganesha, Shiva, damru,
+bow & arrow, dragon. Pure TS (no DOM), posed every frame on the CPU and
+written to the swarm with `SwarmHandle.setPose`. See README > Animated
+cultural formations; `scripts/export-formations.ts` exports them.
+
+*Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
+1.5, no MSAA. The runtime monitor may lower DPR/bloom but never drone
+count or materials (a mid-scroll rebuild is a visible freeze). 2D canvases
+use `visibleRaf` so they sleep off-screen.
+
+*2D (gallery, shows, academy)* — canvas 2D: `src/lib/swarmShapes.ts`
 generators, `src/components/visual/SwarmCanvas.tsx` and
 `FormationPreview.tsx`.
 
@@ -113,9 +130,9 @@ than writing bespoke markup per section — follow that pattern for new pages.
 | Route | Purpose |
 |---|---|
 | `/` | Home — hero, process, audiences, positioning, roadmap, safety |
-| `/biscope` | The flagship product in depth |
+| `/shows` | The show in depth (was `/biscope`, redirects) |
 | `/about` | Company mission, honest positioning, founding team |
-| `/vision` | Airimation Academy (Year 2+) and UAV R&D (Year 4+) |
+| `/vision` | Build status, the two-track vision (shows, then R&D), dated roadmap |
 | `/gallery` | Concept formation renders |
 | `/investors` | Curated, PR-safe figures for investors/grant partners |
 | `/contact` | Contact form (posts to `/api/contact`) |

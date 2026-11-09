@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   title: "Team | Airimation",
   description:
     visibleAdvisors.length > 0
-      ? "The advisory bench and directors behind Airimation and its flagship drone light show, Biscope."
-      : "The directors behind Airimation and its flagship drone light show, Biscope.",
+      ? "The directors and advisors behind Airimation's drone-swarm light shows."
+      : "The directors behind Airimation's drone-swarm light shows.",
 };
 
 /**
@@ -95,19 +95,32 @@ export default function TeamPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
               {visibleAdvisors.length > 0
-                ? "An advisory bench drawn from drone research, wireless communications and institutional leadership, and the directors who run the company. "
+                ? "The directors who run the company, and the advisors who guide its operations and technology. "
                 : "The directors who run the company and design the shows. "}
-              Based in {site.base}, building toward an indigenous Indian UAV technology
-              company — one show at a time.
+              Based in {site.base}. Our first prototype drone is built, and
+              we&apos;re taking it into the Nano class — one milestone at a time.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* Advisors: hidden while teamConfig.showAdvisors is false. */}
-      {visibleAdvisors.length > 0 && (
       <section className="px-6 pt-20">
         <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <SectionLabel>Directors</SectionLabel>
+          </Reveal>
+          <div className="mt-10 divide-y divide-line-2">
+            {directors.map((member) => (
+              <MemberRow key={member.name} member={member} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Advisors: those not marked `hidden` in content.ts. */}
+      {visibleAdvisors.length > 0 && (
+      <section className="px-6 pb-20 pt-16">
+        <div className="mx-auto max-w-5xl border-t border-line-2 pt-16">
           <Reveal>
             <SectionLabel>Advisors</SectionLabel>
           </Reveal>
@@ -119,19 +132,6 @@ export default function TeamPage() {
         </div>
       </section>
       )}
-
-      <section className="px-6 pb-20 pt-16">
-        <div className="mx-auto max-w-5xl border-t border-line-2 pt-16">
-          <Reveal>
-            <SectionLabel>Directors</SectionLabel>
-          </Reveal>
-          <div className="mt-10 divide-y divide-line-2">
-            {directors.map((member) => (
-              <MemberRow key={member.name} member={member} />
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="border-t border-line-2 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl text-center">

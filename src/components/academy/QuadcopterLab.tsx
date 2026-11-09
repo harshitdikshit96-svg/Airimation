@@ -32,7 +32,7 @@ export default function QuadcopterLab({
     <ChapterShell
       eyebrow="LEVEL 3 · TAKE ONE APART"
       title="Quadcopter 101."
-      description="Every Biscope drone is built from the same 10 parts. Click each glowing dot to learn what it does — plain English first, technical name second."
+      description="Every show drone is built from the same 10 parts. Click each glowing dot to learn what it does — plain English first, technical name second."
       onNext={onNext}
       onPrev={onPrev}
       nextLabel="Next: Swarm science"

@@ -14,7 +14,7 @@
 // cannot occur. It also makes scale truthful, which is the point of the tool:
 // if it says 100 drones, the formation is the size 100 drones would make.
 //
-// These figures are estimates pending a check against a real Biscope show
+// These figures are estimates pending a check against a real Airimation show
 // plan. They are all in one place so that check is a single edit.
 
 /** Characteristic radius of a formation, in metres. */

@@ -5,7 +5,7 @@
 // Float32Array. Three families:
 //
 //   parametric  circle, sphere, spiral, heart, wave, grid, cloud, lotus
-//   text        fromText("BISCOPE", n)          - filled glyphs
+//   text        fromText("AIRIMATION", n)        - filled glyphs
 //   SVG         fromSvg(pathD, n, { viewBox })  - filled silhouettes
 //
 // This is the general toolkit (home page, new configurator formations).

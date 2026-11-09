@@ -1,11 +1,11 @@
 # Airimation Website
 
-The marketing website for **Airimation** and its flagship product **Biscope**
-— synchronised LED drone-swarm light shows for government, festival, wedding
-and corporate events, based in New Delhi.
+The marketing website for **Airimation** — synchronised LED drone-swarm
+light shows for civic, festival, wedding and corporate events, based in
+Noida (Delhi NCR).
 
 Built with Next.js (App Router, TypeScript), Tailwind CSS v4, and Framer
-Motion. Content is drawn from the Airimation business plan, Biscope blueprint,
+Motion. Content is drawn from the Airimation business plan, show blueprint,
 pitch deck and products blueprint — see `src/lib/content.ts` for every fact
 used on the site and where to update it.
 
@@ -20,7 +20,7 @@ Google Fonts request at runtime).
 The hero and gallery visuals are canvas-based particle simulations — a swarm
 of points that assembles into formations (a lotus, the Airimation monogram,
 concentric rings, a flight chevron). **These are concept renders, not real
-show footage** — Biscope's first live shows are still in preparation, and
+show footage** — Airimation's first live shows are still in preparation, and
 the site says so plainly rather than implying otherwise. Swap in real
 photography/video once available (see "Replacing the visuals" below).
 
@@ -91,7 +91,7 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
       Google Workspace address (currently a placeholder: `hello@airimation.in`).
 - [ ] Set up Neon (above) so contact-form leads aren't lost.
 - [ ] Replace concept formation renders on `/gallery` with real photography
-      or footage once Biscope's first shows are delivered.
+      or footage once Airimation's first shows are delivered.
 - [ ] Add real founder headshots: drop files in `public/team/` and set each
       founder's `photo` path in `src/lib/content.ts` (see `public/team/README.md`).
       Until then, `/` and `/team` show initials placeholders instead of photos.
@@ -104,7 +104,7 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 
 The home page story and `/design-your-show` render the drone swarm in
 real time with React Three Fiber (`src/components/swarm/`); the gallery
-and Biscope pages use the older 2D canvas (`src/lib/swarmShapes.ts`). See
+and /shows pages use the older 2D canvas (`src/lib/swarmShapes.ts`). See
 CLAUDE.md for the map. When real show footage exists, it replaces the
 posters and the hero, and the "concept render" labels can go.
 
@@ -135,6 +135,38 @@ To offer it in the configurator, register it in
 `src/lib/show/formations/index.ts` instead (that library is pinned for
 share links: adding is free, changing an existing one needs a
 `LIBRARY_VERSION` bump — see SHOW_CONFIGURATOR.md).
+
+### Animated cultural formations
+
+`src/lib/cultural/` holds figures that MOVE: Ganesha, Mahadev (Shiva),
+damru, dhanush-baan (bow and fire-arrow) and a dragon. They play live in
+3D on `/gallery` (`src/components/gallery/CulturalShowcase.tsx`).
+
+Each is an `AnimatedFormation` (see `kit.ts`): `build(n)` once per drone
+count, `pose(rig, t, pos, col)` every frame. Two ways to author one:
+
+- **2D figure from parts** (Ganesha, Shiva): describe the drawing as named
+  parts — ellipses, polygons and tapered `tube`s along a curve — and call
+  `sampleParts(parts, n)`. Edges are drawn with drones first, fill second.
+  Every drone remembers its part, and tube drones their position along the
+  tube, so `pose` can bend a trunk or run water down a stream.
+- **Procedural 3D** (damru, bow, dragon): assign each drone a place on the
+  object (along / around) in `build`, rebuild the object each frame in
+  `pose`.
+
+Colours are LINEAR rgb (`hex()` converts); black = LED off. Keep `pose`
+allocation-free: it runs every frame for up to 1,600 drones.
+
+Export for Blender / Skybrush and the asset spec:
+
+```bash
+npx vite-node scripts/export-formations.ts -- ../Formations 500 24
+```
+
+writes, per formation, a 600-point cloud (`.points.json`, spec format), a
+preview SVG, one CSV per drone for one loop, and `REPORT.md` with max
+speed and minimum separation — the gap between a concept render and a
+flyable show.
 
 ### 3D assets
 

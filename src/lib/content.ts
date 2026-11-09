@@ -1,5 +1,5 @@
 // Central content store for the Airimation website.
-// Pulled from the Airimation business plan, Biscope blueprint, pitch deck and
+// Pulled from the Airimation business plan, show blueprint, pitch deck and
 // products blueprint. Figures are illustrative / assumption-based per those
 // source documents and should be reviewed before any investor-facing use.
 
@@ -8,20 +8,19 @@ export const site = {
   // Deprecated: use `company.legalName`. Kept so older references keep
   // compiling; `company` is the single source of truth for statutory detail.
   legalName: "Airimation Technologies Private Limited",
-  flagship: "Biscope",
-  base: "New Delhi",
+  base: "Noida, Uttar Pradesh (Delhi NCR)",
   tagline:
-    "Synchronised drone-swarm light shows for the moments a state, a city or a family will remember.",
+    "Synchronised drone-swarm light shows for the moments a city, a festival or a family will remember.",
   shortDescription:
-    "Airimation designs and performs Biscope: choreographed LED drone-swarm shows for government celebrations, temple-town festivals, weddings and corporate events — a fast-growing, eco-friendly alternative to fireworks.",
+    "Airimation designs, builds and flies choreographed LED drone-swarm shows for civic celebrations, temple-town festivals, weddings and corporate events — a reusable, eco-friendly alternative to fireworks.",
 };
 
 // Copy for the cinematic, scroll-driven homepage ("Home v2"). Kept separate
-// from the longer-form copy above (used on /biscope, /about, etc.) because
+// from the longer-form copy above (used on /shows, /about, etc.) because
 // this page is a tighter, teaser-length narrative — the deep-dive pages
 // remain the place for the fuller explanation.
 export const homeHero = {
-  eyebrow: "NEW DELHI, INDIA · DRONE-SWARM LIGHT SHOWS",
+  eyebrow: "NOIDA · DELHI NCR · DRONE-SWARM LIGHT SHOWS",
   title: "The night sky, choreographed.",
   subtitle:
     "Hundreds of synchronised LED drones lift off, form, and dissolve — a light show for the moments a city, a festival or a family will remember. Scroll, and watch the swarm fly.",
@@ -43,8 +42,8 @@ export const homeChapters = [
 ];
 
 // Shorter phrasing of the same four-step process as `processSteps`, sized
-// for the compact homepage grid. /biscope keeps the longer version.
-export const biscopeStepsCompact = [
+// for the compact homepage grid. /shows keeps the longer version.
+export const showStepsCompact = [
   {
     step: "01",
     title: "Design",
@@ -96,15 +95,15 @@ export const safetyHighlightsCompact = [
   // does not repeat it.
   "Airimation Technologies Private Limited is a DPIIT-recognised startup and a registered Udyam (MSME) enterprise.",
   "Operations under the Drone Rules, 2021, via the DGCA Digital Sky Platform, with NPNT-compliant geofencing on every aircraft.",
-  "Audiences are always kept at a cordoned lateral standoff — Biscope shows never fly over a crowd.",
+  "Audiences are always kept at a cordoned lateral standoff — our shows never fly over a crowd.",
   "Automatic return-to-launch on link loss or low battery, geofence auto-containment, and a manual all-land kill-switch on standby.",
   "Third-party and public-liability insurance on every show; a dedicated safety officer monitors the swarm for the full performance.",
 ];
 
-// Short brand-pillar statements for the /biscope hero — three quick, punchy
-// claims about how Biscope works, not a factual/statistical claim (kept
+// Short brand-pillar statements for the /shows hero — three quick, punchy
+// claims about how a show works, not a factual/statistical claim (kept
 // deliberately free of numbers we can't back up pre-first-show).
-export const biscopePillars = [
+export const showPillars = [
   {
     title: "Engineered precision",
     description:
@@ -122,13 +121,26 @@ export const biscopePillars = [
   },
 ];
 
-// Teaser copy linking /biscope to the longer-term roadmap on /vision —
-// Biscope (the show business) funds and leads into the Academy and UAV R&D
-// stages already described in full on /vision; this just cross-links them.
-export const beyondBiscope = {
-  eyebrow: "Beyond Biscope",
-  title: "Biscope is where this starts, not where it ends.",
-  body: "The show business builds the cash, the crew and the credibility for what comes next — an in-house training academy, and eventually, an indigenous UAV technology company.",
+// Teaser copy linking /shows to the two-track vision on /vision.
+export const beyondShows = {
+  eyebrow: "Beyond the shows",
+  title: "Light shows are where this starts, not where it ends.",
+  body: "The show business builds the fleet, the crew and the credibility. Once operations are stable, the same swarm know-how goes into a grant-funded R&D track — environmental sensing, civic monitoring and swarm-coordination research.",
+};
+
+// WHERE WE ARE — the honest, current state of the build. Shown on the home
+// page and /vision. Update `status` as milestones land; nothing here may
+// claim a flown show until one has flown.
+export const buildStatus = {
+  eyebrow: "WHERE WE ARE",
+  title: "Our first prototype is built. Now we're making it lighter.",
+  body: "Airimation's first in-house show drone exists — not a renamed import. We're now taking its weight below 250 grams, into the DGCA Nano category: lighter and safer around people, simpler to clear, and far easier to transport and turn around at fleet scale.",
+  facts: [
+    { label: "Prototype", value: "First drone built in-house" },
+    { label: "In progress", value: "Weight down to Nano class — under 250 g" },
+    { label: "Flight stack", value: "ArduPilot firmware · Skybrush show control" },
+    { label: "Sourcing", value: "Components from Indian vendors only" },
+  ],
 };
 
 export type NavLink = {
@@ -140,7 +152,7 @@ export type NavLink = {
 
 export const navLinks: NavLink[] = [
   { href: "/design-your-show", label: "Design a Show", highlight: true },
-  { href: "/biscope", label: "Biscope" },
+  { href: "/shows", label: "Shows" },
   { href: "/about", label: "About" },
   { href: "/team", label: "Team" },
   { href: "/vision", label: "Vision" },
@@ -166,7 +178,7 @@ export const designYourShow = {
     },
     {
       title: "Your show is yours",
-      body: "The library here is a starting point. A real Biscope show is built around your occasion — a name, a deity, an emblem, a message — rather than assembled from stock formations.",
+      body: "The library here is a starting point. A real Airimation show is built around your occasion — a name, a deity, an emblem, a message — rather than assembled from stock formations.",
     },
   ],
 };
@@ -181,9 +193,9 @@ export const designTeaser = {
 
 export const clientSegments = [
   {
-    title: "Government & Public Celebrations",
+    title: "Civic & Public Celebrations",
     description:
-      "State and district functions, Republic Day and Independence Day-adjacent civic events, and public milestones — the single largest drone-show customer segment worldwide.",
+      "City and district functions, Republic Day and Independence Day celebrations, and public milestones — the single largest drone-show customer segment worldwide.",
     color: "amber",
   },
   {
@@ -235,6 +247,11 @@ export const processSteps = [
 
 export const droneSpecs = [
   {
+    title: "Nano-class airframe",
+    description:
+      "Our show drone is being engineered below 250 grams — the DGCA Nano category. Less mass in the air, simpler to clear, easier to move at fleet scale.",
+  },
+  {
     title: "RTK GNSS positioning",
     description:
       "Centimetre-accurate positioning on every drone — the precision that lets hundreds of aircraft hold tight, safe formations.",
@@ -253,51 +270,107 @@ export const droneSpecs = [
 
 export const safetyPoints = [
   "Operations under the Drone Rules, 2021, via the DGCA Digital Sky Platform, with NPNT-compliant geofencing on every aircraft.",
-  "Audiences are always kept at a cordoned lateral standoff — Biscope shows never fly over a crowd.",
+  "Audiences are always kept at a cordoned lateral standoff — our shows never fly over a crowd.",
   "Automatic return-to-launch or land on link loss or low battery, geofence auto-containment, and a manual all-land kill-switch on standby.",
   "Third-party liability and event public-liability insurance carried on every show, alongside hull and transit cover for the fleet.",
   "A dedicated safety officer monitors the swarm for the full duration of every performance.",
 ];
 
+// The plan, dated. Year zero is 2027. The fleet grows in 50-drone packs;
+// the minimum show is two packs (100 drones). Everything after "Now" is a
+// plan, and is labelled as one wherever it is shown.
 export const roadmap = [
   {
-    year: "Year 1",
-    heading: "Stand it up",
-    fleet: "100 drones · 12 shows",
-    detail: "Certification cleared; first shows delivered.",
+    year: "Now · 2026",
+    heading: "Prototype to Nano",
+    fleet: "1 prototype",
+    detail: "First in-house drone built; weight coming down below 250 g for the DGCA Nano category.",
   },
   {
-    year: "Year 2",
-    heading: "Prove & diversify",
-    fleet: "250 drones · 24 shows",
-    detail: "Airimation Academy — our advanced training line — goes live.",
+    year: "2027",
+    heading: "Fly the first few",
+    fleet: "2 drones by Q2 · 5 by year-end",
+    detail: "Formation flight, safety SOPs and the full show pipeline proven on a small fleet.",
   },
   {
-    year: "Year 3",
-    heading: "Build the moat",
-    fleet: "500 drones · 38 shows",
-    detail: "Manufacturer-partnered firmware and a custom LED module.",
+    year: "2028",
+    heading: "The first 100",
+    fleet: "100 drones · 6–8 shows",
+    detail: "Two 50-drone packs. Test shows across Uttar Pradesh, then the first commercial shows.",
   },
   {
-    year: "Year 4",
-    heading: "Scale & start R&D",
-    fleet: "1,000 drones · 52 shows",
-    detail: "EBITDA-positive; NPNT firmware maturing; the R&D division opens.",
+    year: "2029",
+    heading: "Scale up",
+    fleet: "Toward 500 drones",
+    detail: "Operations and hiring scale; Uttar Pradesh, then NCR, then pan-India.",
   },
   {
-    year: "Year 5",
-    heading: "Company, not operator",
-    fleet: "1,300 drones · 65 shows",
-    detail: "A divisional structure, with net profit within reach.",
+    year: "Beyond",
+    heading: "India, then the world",
+    fleet: "International clients",
+    detail: "Shows abroad — and the long-range goal: replacing the fireworks at Formula 1.",
+  },
+];
+
+// VISION — two tracks, in order. Track 2 starts only once show operations
+// are stable. Copy for /vision.
+export const visionTracks = [
+  {
+    no: "01",
+    label: "Track 1 · Light shows",
+    title: "A 100-drone fleet, then the country, then the world.",
+    body: "Build a 100-drone fleet and prove it with test shows in Uttar Pradesh. Grow the fleet and take bigger shows — Uttar Pradesh, then NCR, then pan-India, then international clients. The long-range goal is a single, specific one: replace the fireworks at Formula 1.",
+    steps: ["Uttar Pradesh", "Delhi NCR", "Pan-India", "International", "Formula 1"],
+  },
+  {
+    no: "02",
+    label: "Track 2 · Research & development",
+    title: "Swarm know-how, put to work on real problems.",
+    body: "Once show operations are stable, the same skills — many aircraft, one plan, centimetre precision — go into grant-funded custom solutions, built for the partner who needs them rather than as a product looking for a buyer.",
+    steps: [],
+  },
+];
+
+export const rdDirections = [
+  {
+    title: "Waste-site detection",
+    detail: "Camera payloads that find and map illegal dumping and waste sites for municipal and civic bodies.",
+  },
+  {
+    title: "River-pollutant analysis",
+    detail: "Spectrometer payloads that sample and map pollutants along a river, faster and wider than a boat crew can.",
+  },
+  {
+    title: "Swarm-coordination research",
+    detail: "Coordination and formation-control IP for defence research partners — strictly non-weaponised.",
+  },
+];
+
+export const pledge = {
+  title: "What we will never build",
+  body: "Airimation will never make weapons of destruction — no armed drones, no kamikaze swarms, in any shape or form, irrespective of the money on the table.",
+};
+
+export const principles = [
+  {
+    title: "Made with Indian parts",
+    body: "Every drone component is sourced from Indian vendors. It is slower some weeks; it is the company we want to be.",
+  },
+  {
+    title: "Proven, open foundations",
+    body: "ArduPilot on the aircraft and Skybrush for show control — mature open tools, so our effort goes into the airframe, the safety case and the show itself.",
+  },
+  {
+    title: "People first",
+    body: "An inclusive team, and real money spent on people's growth. A show only holds formation if the crew trust each other — that starts with how we treat them.",
   },
 ];
 
 // TEAM
 //
-// Two groups: directors (Madhuri Mishra, Harshit Dixit) and advisors.
-// Advisors are kept here but hidden from the UI — see `teamConfig` below.
-// When shown, advisors lead: the bench is a strong credibility signal
-// pre-first-show.
+// Two groups: directors (Harshit Dixit, Madhuri Mishra) and advisors
+// (Dr. Gaurav Tripathi, Dr. Neeraj Jain). The other advisors stay listed
+// with `hidden: true` — kept for when they can be named, never rendered.
 //
 // `photo` is a path under /public — e.g. "/team/gaurav.jpg". Leave it unset
 // until a real headshot exists; FounderAvatar falls back to initials so
@@ -316,6 +389,8 @@ export type TeamMember = {
   email?: string;
   /** Public profile, for verification. */
   profile?: string;
+  /** Kept in config, never rendered. */
+  hidden?: boolean;
 };
 
 export const advisors: TeamMember[] = [
@@ -327,16 +402,18 @@ export const advisors: TeamMember[] = [
     intro:
       "Prof. Rajeev Tripathi chairs Airimation's advisory bench. A Professor of Electronics & Communication Engineering at MNNIT Allahabad, he has served as the institute's Director and as Vice Chancellor of RGPV Bhopal, bringing more than three decades in wireless communications, academic leadership and institutional governance.",
     photo: "/team/rajeev.jpg",
+    hidden: true,
     profile: "https://www.linkedin.com/in/rajeev-tripathi-67a4953/",
   },
   {
     name: "Dr. Deepak Kumar Singh",
-    role: "Advisor — Drone R&D and Government Relations",
+    role: "Advisor — Drone R&D and Institutional Relations",
     background:
-      "PhD (IIT Kanpur); Dean at IIIT Lucknow; member of the UPTEC advisory board, Government of Uttar Pradesh.",
+      "PhD (IIT Kanpur); Dean at IIIT Lucknow; member of the UPTEC advisory board, Uttar Pradesh.",
     intro:
-      "Dr. Deepak Kumar Singh advises Airimation on drone research and on working with government. He holds a PhD from IIT Kanpur, serves as Dean at IIIT Lucknow, and sits on the advisory board of UPTEC under the Government of Uttar Pradesh — the intersection of research and public-sector delivery that this business depends on.",
+      "Dr. Deepak Kumar Singh advises Airimation on drone research and institutional relations. He holds a PhD from IIT Kanpur, serves as Dean at IIIT Lucknow, and sits on the advisory board of UPTEC in Uttar Pradesh — the intersection of research and public-sector delivery that this business depends on.",
     photo: "/team/deepak.jpg",
+    hidden: true,
     profile: "https://www.linkedin.com/in/deepaksingh001/",
   },
   {
@@ -347,24 +424,25 @@ export const advisors: TeamMember[] = [
     intro:
       "Dr. Vishal Krishna Singh advises on flight software and real-time systems. A Lecturer in the School of Computer Science and Electronic Engineering at the University of Essex, his research spans the Internet of Things, machine learning and wireless sensor networks — the disciplines a swarm holding formation actually runs on.",
     photo: "/team/vishal.jpg",
+    hidden: true,
     profile: "https://www.essex.ac.uk/people/SINGH43901/Vishal%20Krishna-Singh",
   },
   {
     name: "Dr. Gaurav Tripathi",
-    role: "Advisor — Operations, Compliance and Client Relations",
+    role: "Advisor — Operations and Communication",
     background: "PhD, IIIT Lucknow; Assistant Professor at Bennett University.",
     intro:
-      "Dr. Gaurav Tripathi advises on operations, compliance and client relations — the permissions, the safety case and the relationships that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
+      "Dr. Gaurav Tripathi advises on operations and communication — keeping partners, the team and every stakeholder working to one plan, and on the permissions and safety case that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
     photo: "/team/gaurav.jpg",
     email: "gaurav@airimation.in",
   },
   {
     name: "Dr. Neeraj Jain",
-    role: "Advisor — RF and Communication Systems, 3D Printing",
+    role: "Advisor — Technology and Research",
     background:
       "Associate Professor at Bennett University; 10+ years in drone technology and AI.",
     intro:
-      "Dr. Neeraj Jain advises on RF and communication systems, and 3D printing. An Associate Professor at Bennett University with over a decade in drone technology and AI, he guides the radio link that keeps hundreds of aircraft talking to the ground station through a live show.",
+      "Dr. Neeraj Jain advises on technology and research — the hardware and software of the show drone, its RF link, and the direction of Airimation's research track. An Associate Professor at Bennett University with over a decade in drone technology and AI.",
     photo: "/team/neeraj.jpg",
     profile: "https://www.bennett.edu.in/faculties/dr-neeraj-jain/",
   },
@@ -372,36 +450,37 @@ export const advisors: TeamMember[] = [
 
 export const directors: TeamMember[] = [
   {
-    name: "Madhuri Mishra",
-    role: "Co-founder and Director — Business Strategy and Expansion",
-    background: "PhD, IIIT Lucknow; Assistant Professor at UPES Dehradun.",
-    intro:
-      "Madhuri Mishra co-founded Airimation and leads business strategy and expansion. She holds a PhD from IIIT Lucknow and is an Assistant Professor at UPES Dehradun, and sets the direction for where the company flies next and who it flies for.",
-    photo: "/team/madhuri.png",
-    email: "madhuri@airimation.in",
-  },
-  {
     name: "Harshit Dixit",
-    role: "Co-founder and Director — Technology, Show Design and Animation",
-    background: "BTech, IIIT Lucknow; 5+ years of industry experience.",
+    role: "Co-founder and Director — Technology, Hardware and Operations",
+    background: "BTech, IIIT Lucknow; 5+ years of industry engineering.",
     intro:
-      "Harshit Dixit co-founded Airimation and, as a director, leads technology, show design and animation. A BTech from IIIT Lucknow with five years of industry engineering behind him, he builds the pipeline that turns a client's occasion into a choreographed show file.",
+      "Harshit Dixit co-founded Airimation and is its full-time director. He runs the hardware build — the prototype now being taken into the Nano category — alongside licences, compliance and the team, and builds the software pipeline that turns a client's occasion into a choreographed show. A BTech from IIIT Lucknow with five years of product engineering behind him.",
     photo: "/team/harshit.jpg",
     email: "harshit@airimation.in",
+  },
+  {
+    name: "Madhuri Mishra",
+    role: "Co-founder and Director — Research and Strategy",
+    background: "PhD, IIIT Lucknow; Assistant Professor at UPES Dehradun.",
+    intro:
+      "Madhuri Mishra co-founded Airimation and leads research and strategy, keeping the R&D work on track and setting the direction for where the company flies next. She holds a PhD from IIIT Lucknow and is an Assistant Professor at UPES Dehradun.",
+    photo: "/team/madhuri.png",
+    email: "madhuri@airimation.in",
   },
 ];
 
 /**
- * Team visibility. Advisors stay listed in `advisors` above but are hidden
- * from the site while `showAdvisors` is false; pages read `visibleAdvisors`
- * and drop every advisor section and "advisory bench" line when it is empty.
- * Flip this to true to bring them back — no other change needed.
+ * Team visibility. `showAdvisors: false` hides every advisor; otherwise
+ * each advisor shows unless marked `hidden`. Pages read `visibleAdvisors`
+ * and drop every advisor section when it is empty.
  */
 export const teamConfig = {
-  showAdvisors: false,
+  showAdvisors: true,
 };
 
-export const visibleAdvisors: TeamMember[] = teamConfig.showAdvisors ? advisors : [];
+export const visibleAdvisors: TeamMember[] = teamConfig.showAdvisors
+  ? advisors.filter((a) => !a.hidden)
+  : [];
 
 /**
  * Everyone shown on the site, advisors (when visible) first. `coreTeam` and
@@ -412,7 +491,7 @@ export const founders = directors;
 export const team: TeamMember[] = [...visibleAdvisors, ...directors];
 
 export const orgTypes = [
-  "Government / District Administration",
+  "Civic body / District Administration",
   "Temple Trust / Festival Committee",
   "Wedding Planner / Venue",
   "Corporate / Agency",
@@ -424,7 +503,7 @@ export const orgTypes = [
  * Statutory identity.
  *
  * These are STATEMENTS OF FACT, published as plain text. We deliberately do
- * not display the Startup India, MSME/Udyam or Government of India logos:
+ * not display the Startup India, MSME/Udyam or national-emblem logos:
  *  - the Startup India mark is DPIIT-owned and recognition alone grants no
  *    right to use it; private use needs prior written approval,
  *  - the MSME mark needs Ministry approval and is promotional/non-commercial
@@ -466,5 +545,5 @@ export const credentials = [
 export const contactInfo = {
   // TODO: point this at your Google Workspace address once set up (e.g. hello@airimation.in)
   email: "hello@airimation.in",
-  base: "New Delhi, India",
+  base: "Noida, Uttar Pradesh (Delhi NCR)",
 };

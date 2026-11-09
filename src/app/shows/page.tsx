@@ -8,21 +8,21 @@ import {
   droneSpecs,
   clientSegments,
   safetyPoints,
-  biscopePillars,
-  beyondBiscope,
+  showPillars,
+  beyondShows,
 } from "@/lib/content";
-import { ArrowRight, Radio, Satellite, Lightbulb } from "lucide-react";
+import { ArrowRight, Feather, Radio, Satellite, Lightbulb } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Biscope | Airimation",
+  title: "Drone Light Shows | Airimation",
   description:
-    "Biscope is Airimation's flagship drone-swarm light show — synchronised LED drones choreographed for government, festival, wedding and corporate events.",
+    "Airimation's drone-swarm light shows — synchronised LED drones choreographed for civic, festival, wedding and corporate events.",
 };
 
-const specIcons = [Satellite, Radio, Lightbulb];
+const specIcons = [Feather, Satellite, Radio, Lightbulb];
 
-export default function BiscopePage() {
+export default function ShowsPage() {
   return (
     <>
       {/* HERO */}
@@ -34,9 +34,9 @@ export default function BiscopePage() {
 
         <div className="relative mx-auto max-w-4xl py-24">
           <Reveal>
-            <SectionLabel>The Flagship Product</SectionLabel>
+            <SectionLabel>The Show</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-6xl">
-              Biscope: a swarm of light, choreographed to the second.
+              A swarm of light, choreographed to the second.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
               Hundreds of synchronised LED drones fly a designed, validated,
@@ -52,8 +52,8 @@ export default function BiscopePage() {
               </Button>
             </div>
             <p className="mt-6 text-xs text-dim">
-              Formations shown are concept renders, not show footage —
-              Biscope&apos;s first live shows are in preparation.
+              Formations shown are concept renders, not show footage — our
+              first prototype is built and our first shows are in preparation.
             </p>
           </Reveal>
         </div>
@@ -63,7 +63,7 @@ export default function BiscopePage() {
       <section className="px-6 py-16">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {biscopePillars.map((pillar, i) => (
+            {showPillars.map((pillar, i) => (
               <Reveal key={pillar.title} delay={i * 0.07}>
                 <h3 className="font-serif text-lg font-semibold text-ink">
                   {pillar.title}
@@ -87,7 +87,7 @@ export default function BiscopePage() {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {droneSpecs.map((spec, i) => {
               const Icon = specIcons[i];
               return (
@@ -115,7 +115,7 @@ export default function BiscopePage() {
               A six-to-seven-day cycle, every time
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
-              Every Biscope show runs the same disciplined sequence — design,
+              Every Airimation show runs the same disciplined sequence — design,
               validation, permitting and performance — handled by a defined
               crew working to written safety procedures.
             </p>
@@ -143,7 +143,7 @@ export default function BiscopePage() {
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <Reveal>
-            <SectionLabel no="03">Where Biscope performs</SectionLabel>
+            <SectionLabel no="03">Where we perform</SectionLabel>
             <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
               Built for four audiences
             </h2>
@@ -163,16 +163,16 @@ export default function BiscopePage() {
         </div>
       </section>
 
-      {/* BEYOND BISCOPE */}
+      {/* BEYOND THE SHOWS */}
       <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <Reveal>
             <div className="panel-border rounded-3xl bg-panel/30 p-8 sm:p-12">
-              <SectionLabel>{beyondBiscope.eyebrow}</SectionLabel>
+              <SectionLabel>{beyondShows.eyebrow}</SectionLabel>
               <h2 className="mt-3 font-serif text-2xl font-semibold text-ink sm:text-3xl">
-                {beyondBiscope.title}
+                {beyondShows.title}
               </h2>
-              <p className="mt-4 max-w-2xl text-muted">{beyondBiscope.body}</p>
+              <p className="mt-4 max-w-2xl text-muted">{beyondShows.body}</p>
               <div className="mt-7">
                 <Button href="/vision" variant="ghost">
                   See the Roadmap <ArrowRight size={16} />

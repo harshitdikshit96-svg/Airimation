@@ -44,14 +44,13 @@ export default function AboutPage() {
           <Reveal>
             <SectionLabel>About Airimation</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
-              A regional drone-experience company, building toward an
-              indigenous UAV technology company.
+              A drone-show company that builds its own drones.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
-              Airimation&apos;s mission is to become a leading Indian UAV technology
-              company — earned in stages, starting from a profitable,
-              category-leading regional drone-show operation based in{" "}
-              {site.base}.
+              Airimation designs, builds and flies synchronised drone light
+              shows from {site.base} — starting in Uttar Pradesh, growing
+              market by market, and earning the right to a research track
+              once the shows run like clockwork.
             </p>
             <p className="mt-4 text-sm text-dim">
               Airimation is a brand of {site.legalName}, the company&apos;s
@@ -69,18 +68,21 @@ export default function AboutPage() {
                 What we are — and what we are not
               </h2>
               <p className="mt-4 leading-relaxed text-muted">
-                In its early years, <strong className="text-ink">Biscope</strong>{" "}
-                is a drone-show services and operator business, run on proven
-                off-the-shelf software and a contract-manufactured drone. That
-                is a good business on its own terms: profitable at the unit
-                level, and riding a real shift away from fireworks.
+                Today Airimation is an early-stage company with its{" "}
+                <strong className="text-ink">first in-house prototype drone built</strong>,
+                now being taken below 250 grams into the DGCA Nano category. It
+                runs on proven open software — ArduPilot on the aircraft,
+                Skybrush for show control — with every component sourced from
+                Indian vendors. We have not flown a commercial show yet, and
+                nothing on this site pretends otherwise.
               </p>
               <p className="mt-4 leading-relaxed text-muted">
-                The longer-term vision — an indigenous, full-stack UAV
-                technology company — is a destination we build toward over
-                five to ten years, using the cash and credibility the show
-                business generates. It is not a claim we make on day one, and
-                we would rather be precise about that than over-promise.
+                The plan is two tracks, in order. First, light shows: a
+                100-drone fleet, test shows in Uttar Pradesh, then NCR,
+                pan-India and international clients. Second, once operations
+                are stable, grant-funded R&amp;D that puts the same swarm
+                know-how to work on environmental and civic problems. We would
+                rather be precise about that order than over-promise.
               </p>
             </div>
           </Reveal>
@@ -97,7 +99,7 @@ export default function AboutPage() {
             <p className="mt-4 max-w-2xl text-muted">
               Uttar Pradesh runs one of India&apos;s richest event and
               religious-tourism calendars — from Ayodhya and the Kumbh to
-              Varanasi and Mathura — alongside a dense state-government events
+              Varanasi and Mathura — alongside a dense civic events
               calendar. No competitor, not even the national market leader, is
               rooted here. Our moat is proximity, regional density and
               relationships built market by market, which is hard for a
@@ -113,15 +115,24 @@ export default function AboutPage() {
             <SectionLabel no="02">The founding team</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
               {visibleAdvisors.length > 0
-                ? "An advisory bench, and the directors who fly the shows"
-                : "The directors who fly the shows"}
+                ? "The directors, and the advisors beside them"
+                : "The directors building the company"}
             </h2>
           </Reveal>
 
-          {/* Advisors: hidden while teamConfig.showAdvisors is false. */}
+          <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+            Directors
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {directors.map((member, i) => (
+              <MemberCard key={member.name} member={member} delay={i * 0.06} />
+            ))}
+          </div>
+
+          {/* Advisors: only those not marked `hidden` in content.ts. */}
           {visibleAdvisors.length > 0 && (
             <>
-              <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+              <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
                 Advisors
               </p>
               <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -131,15 +142,6 @@ export default function AboutPage() {
               </div>
             </>
           )}
-
-          <p className={`${visibleAdvisors.length > 0 ? "mt-12" : "mt-8"} font-mono text-[11px] uppercase tracking-[0.2em] text-dim`}>
-            Directors
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {directors.map((member, i) => (
-              <MemberCard key={member.name} member={member} delay={i * 0.06} />
-            ))}
-          </div>
 
           <Reveal delay={0.2}>
             <Link

@@ -33,7 +33,7 @@ export type StoryState = {
   dissolve: number;
 };
 
-export const PHASES = ["GROUND HOLD", "LIFT-OFF", "OPEN SKY", "LOTUS BLOOM", "BISCOPE"];
+export const PHASES = ["GROUND HOLD", "LIFT-OFF", "OPEN SKY", "LOTUS BLOOM", "AIRIMATION"];
 
 // The launch field is a sandbank across the river, the show above it, the
 // ghat behind. Coordinates in metres; the audience stands at +z.
@@ -46,7 +46,7 @@ const CAMERA_POS = new THREE.Vector3(0, 12, 330);
  * Where the camera looks at each beat: [x shift, look-at altitude].
  * On wide screens the swarm sits on the opposite side from the section's
  * copy (01 is left-aligned, 02 right-aligned), and the wordmark rises
- * high so the Biscope heading can scroll in beneath it. On portrait
+ * high so the show section's heading can scroll in beneath it. On portrait
  * screens it stays centred in the upper part of the frame.
  */
 const FRAMING_WIDE: [number, number][] = [
@@ -135,8 +135,10 @@ function Scene({
       .catch(() => undefined)
       .then(() => {
         // Narrower on portrait screens, or the outer letters fall off the edges.
-        const width = tall ? 104 : 190;
-        if (!cancelled) setWordmark(fromText("BISCOPE", n, { width, bow: tall ? 6 : 12, letterSpacing: 10, seed: 7, altitude: tall ? 100 : 96 }));
+        // Ten letters: a touch wider and tighter-spaced than the old
+        // seven-letter wordmark so each glyph keeps enough drones to read.
+        const width = tall ? 112 : 214;
+        if (!cancelled) setWordmark(fromText("AIRIMATION", n, { width, bow: tall ? 6 : 12, letterSpacing: 6, seed: 7, altitude: tall ? 100 : 96 }));
       });
     return () => {
       cancelled = true;
@@ -228,7 +230,10 @@ function Scene({
       <Water zFar={RIVER_EDGE_Z} />
       <Suspense fallback={null}>
         <Skyline part="ghat" position={[0, 0, GHAT_Z]} lightGain={2.6} />
-        <Skyline part="ring" lightGain={1.3} />
+        {/* The far city ring is ~85k triangles, almost all of it behind
+            the camera or lost in fog on this fixed home framing. Low-tier
+            devices are vertex-bound, so they get the ghat alone. */}
+        {quality.tier !== "low" && <Skyline part="ring" lightGain={1.3} />}
       </Suspense>
       <DroneSwarm ref={swarm} capacity={n} quality={quality} reflection size={2.3} />
     </>
