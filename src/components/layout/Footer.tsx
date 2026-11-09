@@ -19,6 +19,14 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
           <div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, cached */}
+            <img
+              src={isInternal ? "/brand/airimation-mark-black.svg" : "/brand/airimation-mark-white.svg"}
+              alt=""
+              width={44}
+              height={51}
+              className="mb-4 h-[51px] w-auto"
+            />
             <span
               className={clsx(
                 "font-serif text-lg font-semibold",
@@ -48,7 +56,8 @@ export default function Footer() {
             >
               {isInternal ? "Academy" : "Site"}
             </div>
-            <ul className="mt-2 space-y-1">
+            {/* Two columns: one long column made the footer needlessly tall. */}
+            <ul className="mt-2 grid grid-cols-2 gap-x-6">
               {(isInternal
                 ? [
                     { href: "/internal", label: "Chapters" },
@@ -123,8 +132,8 @@ export default function Footer() {
               ))}
             </dl>
             <p className="mt-4 max-w-2xl text-xs leading-relaxed text-dim">
-              {company.legalName} · Incorporated {company.incorporatedOn} under the
-              Companies Act, 2013. Registered office: {company.registeredOffice}
+              {company.legalName} · Incorporated under the Companies Act,
+              2013 · Registered in {company.registeredOfficeShort}
             </p>
           </div>
         )}

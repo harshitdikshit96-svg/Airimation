@@ -50,25 +50,18 @@ const organizationJsonLd = {
   name: site.name,
   legalName: company.legalName,
   url: "https://airimation.in",
+  logo: "https://airimation.in/brand/airimation-logo-512.png",
   email: company.email,
   foundingDate: "2026-08-22",
   areaServed: "IN",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "CF-132G, Ansal Golf Links, Pari Chowk, Knowledge Park-I",
     addressLocality: "Greater Noida",
     addressRegion: "Uttar Pradesh",
-    postalCode: "201310",
     addressCountry: "IN",
   },
-  // Statutory identifiers, so the legal entity is machine-readable and
-  // verifiable rather than merely asserted.
-  identifier: [
-    { "@type": "PropertyValue", propertyID: "CIN", value: company.cin },
-    { "@type": "PropertyValue", propertyID: "GSTIN", value: company.gstin },
-    { "@type": "PropertyValue", propertyID: "Udyam", value: company.udyam },
-    { "@type": "PropertyValue", propertyID: "DPIIT", value: company.dpiit },
-  ],
+  // Statutory identifiers are deliberately NOT published here while the
+  // site masks them (content.ts > revealRegistrationNumbers).
 };
 
 export default function RootLayout({

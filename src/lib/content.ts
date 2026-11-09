@@ -522,19 +522,24 @@ export const orgTypes = [
  */
 export const company = {
   legalName: "Airimation Technologies Private Limited",
-  cin: "U82300UW2026PTC257648",
-  incorporatedOn: "22 August 2026",
-  gstin: "09ABGCA5420J1ZN",
-  udyam: "UDYAM-UP-28-0243960",
-  dpiit: "DIPP285551",
-  registeredOffice:
-    "CF-132G, Ansal Golf Links, Pari Chowk, Knowledge Park-I, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh 201310, India",
-  /** Short form, for places where the full address is too much. */
+  // Full numbers live in src/lib/registration.ts, which no page imports:
+  // anything in this file reaches the browser (the footer is a client
+  // component), so only masked forms belong here.
+  cin: "U823" + "x".repeat(17),
+  gstin: "09" + "x".repeat(13),
+  udyam: "UDYAM-UP-" + "x".repeat(10),
+  dpiit: "DIPP" + "x".repeat(6),
+  /** Short form only on the site. */
   registeredOfficeShort: "Greater Noida, Uttar Pradesh",
   email: "teamairimation@gmail.com",
 };
 
-/** Credential lines for the footer strip, in display order. */
+/**
+ * Registration numbers are shown MASKED on the site (Nov 2026 decision:
+ * the full numbers gave away more than a marketing page needs to). The
+ * real values are in src/lib/registration.ts.
+ */
+/** Credential lines for the footer strip, in display order (masked). */
 export const credentials = [
   { label: "CIN", value: company.cin },
   { label: "GSTIN", value: company.gstin },

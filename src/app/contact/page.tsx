@@ -54,15 +54,14 @@ export default function ContactPage() {
                     Registered office
                   </dt>
                   <dd className="mt-1 text-sm leading-relaxed text-muted">
-                    {company.registeredOffice}
+                    {company.registeredOfficeShort}
                   </dd>
                 </div>
               </dl>
               <p className="mt-6 text-xs leading-relaxed text-dim">
                 Recognised as a startup by the Department for Promotion of Industry
                 and Internal Trade (DPIIT), and registered as an MSME
-                under Udyam. Incorporated {company.incorporatedOn} under the
-                Companies Act, 2013.
+                under Udyam. Incorporated under the Companies Act, 2013.
               </p>
             </div>
 

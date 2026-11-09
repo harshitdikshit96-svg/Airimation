@@ -79,7 +79,19 @@ export default function Header() {
       )}
     >
       <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
-        <Link href={isInternal ? "/internal" : "/"} onClick={() => setOpen(false)}>
+        <Link
+          href={isInternal ? "/internal" : "/"}
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-2.5"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, cached; next/image adds nothing for vectors */}
+          <img
+            src={isInternal ? "/brand/airimation-mark-black.svg" : "/brand/airimation-mark-white.svg"}
+            alt=""
+            width={26}
+            height={30}
+            className="h-[30px] w-auto"
+          />
           <span
             className={clsx(
               "font-serif text-lg font-semibold tracking-tight",
