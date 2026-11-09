@@ -32,7 +32,7 @@ const DRONE_COUNT = 160;
  * of borrowed/stock drone footage this renders our own live formation math,
  * which is honest and also the thing that's actually differentiated. Same
  * single-colour, tight-size, two-layer-glow rendering used everywhere else
- * on the public site (see FormationPreview).
+ * on the public site.
  */
 export default function CinematicSwarmHero({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

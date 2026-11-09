@@ -112,7 +112,7 @@ export const damru: AnimatedFormation<Rig> = {
   label: "Damru",
   blurb: "Shiva's drum in 3D — the beads strike, the heads flash.",
   loop: 4,
-  minDrones: 250,
+  minDrones: 200,
   build,
   pose(rig, t, pos, col) {
     // Slow turn plus a wrist twist.

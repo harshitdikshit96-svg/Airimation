@@ -1,7 +1,6 @@
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
-import FormationPreview from "@/components/visual/FormationPreview";
 import CulturalShowcaseLoader from "@/components/gallery/CulturalShowcaseLoader";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
@@ -12,42 +11,6 @@ export const metadata: Metadata = {
     "Concept formations from Airimation's show-design pipeline — our first live shows are in preparation."
 };
 
-const formations: {
-  key: "lotus" | "monogram" | "ring" | "wave" | "heart" | "snowflake";
-  title: string;
-  caption: string;
-}[] = [
-  {
-    key: "lotus",
-    title: "Bloom",
-    caption: "A layered lotus formation, designed for heritage and temple-town venues.",
-  },
-  {
-    key: "ring",
-    title: "Salute",
-    caption: "Concentric rings — a formal opening formation for civic events.",
-  },
-  {
-    key: "wave",
-    title: "Flight",
-    caption: "A rising chevron, evoking the swarm in transit between formations.",
-  },
-  {
-    key: "heart",
-    title: "Devotion",
-    caption: "A heart formation — a warm closing note for weddings and anniversaries.",
-  },
-  {
-    key: "snowflake",
-    title: "Frost",
-    caption: "A six-armed snowflake, for winter festivals and year-end celebrations.",
-  },
-  {
-    key: "monogram",
-    title: "Mark",
-    caption: "The Airimation monogram, assembled by the swarm as a closing formation.",
-  },
-];
 
 export default function GalleryPage() {
   return (
@@ -73,15 +36,16 @@ export default function GalleryPage() {
       <section className="px-6 pt-14 sm:pt-20">
         <div className="mx-auto max-w-6xl">
           <Reveal>
-            <SectionLabel no="01">Story formations, in motion</SectionLabel>
+            <SectionLabel>Story formations, in motion</SectionLabel>
             <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
-              Ganesha, Mahadev, the damru, a fire-arrow, a dragon.
+              From a 100-drone tricolour to a 2,000-drone dragon.
             </h2>
             <p className="mt-4 max-w-3xl text-muted">
-              Figures that move the way a show tells a story — a trunk that
-              sways, the Ganga pouring from Shiva&apos;s hair, beads striking a
-              drum. Simulated live, in 3D: switch the fleet size to see how much
-              detail each drone count can hold.
+              Figures that move the way a show tells a story — a flag that
+              waves, a diya that flickers, a trunk that sways, the Ganga pouring
+              from Shiva&apos;s hair. Simulated live in 3D. Pick a fleet size:
+              each one offers the formations that genuinely read at that count,
+              so you see what your budget buys.
             </p>
           </Reveal>
           <div className="mt-10">
@@ -90,30 +54,9 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl">
-          <Reveal>
-            <SectionLabel no="02">The formation library</SectionLabel>
-          </Reveal>
-          <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
-            {formations.map((f, i) => (
-              <Reveal key={f.key} delay={i * 0.08}>
-                <div className="panel-border overflow-hidden rounded-2xl bg-panel/40">
-                  <div className="aspect-[4/3] bg-navy-2">
-                    <FormationPreview formation={f.key} />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-serif text-lg font-semibold text-ink">
-                      {f.title}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted">{f.caption}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* The 2D "formation library" cards were removed (Nov 2026): flat white
+          dots on black next to the 3D showcase looked unfinished. */}
+      <div className="h-14 sm:h-20" />
 
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-3xl text-center">

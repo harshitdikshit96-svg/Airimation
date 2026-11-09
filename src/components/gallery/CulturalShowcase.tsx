@@ -16,14 +16,19 @@ import Skyline from "@/components/swarm/Skyline";
 import { detectTier, type QualityProfile } from "@/components/swarm/quality";
 import { assign } from "@/lib/show/assign";
 import type { Vec3 } from "@/lib/show/types";
-import { CULTURAL, SHOW_ALT, type AnimatedFormation } from "@/lib/cultural";
+import { SHOW_ALT, culturalById, formationsFor, type AnimatedFormation } from "@/lib/cultural";
 
-/** Fleet sizes on offer. The top one depends on the device. */
-function fleetOptions(): number[] {
+/**
+ * Fleet sizes on offer, every device. Each shows only the formations that
+ * actually read at that size (`minDrones`), at least four even at 100.
+ */
+const FLEETS = [100, 200, 500, 800, 1500, 2000];
+/** Starting fleet: a showy one where the device can afford it. */
+function defaultFleet(): number {
   const tier = detectTier();
-  return tier === "high" ? [300, 800, 1600] : tier === "mid" ? [300, 600, 1000] : [250, 500];
+  return tier === "high" ? 800 : 500;
 }
-const CAPACITY = 1600;
+const CAPACITY = 2000;
 const MORPH = 3.2; // seconds between figures
 const LOOPS_PER_FIGURE = 2;
 
@@ -35,7 +40,7 @@ function toVecs(a: Float32Array, n: number): Vec3[] {
   return out;
 }
 
-/** Rigs are cached per (figure, count): building Shiva at 1,600 is ~250 ms. */
+/** Rigs are cached per (figure, count): building Shiva at 2,000 is ~300 ms. */
 const rigCache = new Map<string, Rig>();
 function rigFor(f: AnimatedFormation<Rig>, n: number): Rig {
   const key = `${f.id}:${n}`;
@@ -46,12 +51,12 @@ function rigFor(f: AnimatedFormation<Rig>, n: number): Rig {
 
 function Scene({
   quality,
-  index,
+  id,
   count,
   playing,
 }: {
   quality: QualityProfile;
-  index: number;
+  id: string;
   count: number;
   playing: boolean;
 }) {
@@ -69,7 +74,7 @@ function Scene({
     }),
     []
   );
-  const clock = useRef({ key: "", t: 0, morph: 0, order: null as Uint16Array | null, idle: 0 });
+  const clock = useRef({ key: "", t: 0, morph: 0, order: null as Uint16Array | null, idle: 0, shownCount: 0 });
 
   useEffect(() => {
     const ctl = controls.current;
@@ -83,7 +88,7 @@ function Scene({
     const api = swarm.current;
     if (!api) return;
     const c = clock.current;
-    const f = CULTURAL[index] as AnimatedFormation<Rig>;
+    const f = culturalById(id) as AnimatedFormation<Rig>;
     const key = `${f.id}:${count}`;
     const dt = Math.min(delta, 0.1);
     const u = api.uniforms;
@@ -103,9 +108,10 @@ function Scene({
         buffers.ordered.set(buffers.pos.subarray(j, j + 3), i * 3);
         buffers.orderedCol.set(buffers.col.subarray(j, j + 3), i * 3);
       }
-      if (first) {
-        // First figure: rise from a launch grid below it.
-        for (let i = 0; i < count; i++) {
+      // Drones that were not flying before (first figure, or a bigger
+      // fleet) rise from the ground beneath their targets.
+      if (first || count > c.shownCount) {
+        for (let i = first ? 0 : c.shownCount; i < count; i++) {
           buffers.shown[i * 3] = buffers.ordered[i * 3];
           buffers.shown[i * 3 + 1] = 0.4;
           buffers.shown[i * 3 + 2] = buffers.ordered[i * 3 + 2];
@@ -120,6 +126,7 @@ function Scene({
         count,
       });
       c.key = key;
+      c.shownCount = count;
       c.order = order;
       c.morph = 0;
       c.t = 0;
@@ -158,15 +165,13 @@ function Scene({
     u.uMotion.value = 0;
     u.uCentre.value.set(0, SHOW_ALT, 0);
 
-    // A slow drift round the figure while nobody is steering, so the 3D
-    // ones (damru, dragon) show their depth.
+    // Full 360: the visitor can orbit all the way round. When nobody has
+    // touched it for a few seconds it turns slowly on its own, and stops
+    // the instant they do (OrbitControls "start" resets `idle`). It never
+    // pulls the camera back to a "home" angle — that fought the visitor.
     c.idle += dt;
     const ctl = controls.current;
-    if (ctl && c.idle > 4) {
-      const target = Math.sin(state.clock.elapsedTime * 0.11) * 0.42;
-      const now = ctl.getAzimuthalAngle();
-      ctl.setAzimuthalAngle(now + (target - now) * 0.01);
-    }
+    if (ctl) ctl.autoRotate = c.idle > 5;
   });
 
   return (
@@ -188,8 +193,7 @@ function Scene({
         dampingFactor={0.06}
         minDistance={120}
         maxDistance={260}
-        minAzimuthAngle={-1.1}
-        maxAzimuthAngle={1.1}
+        autoRotateSpeed={0.35}
         // The eye is BELOW the figure (an audience looks up), so the polar
         // angle sits past 90 degrees; 108 keeps the camera above ground at
         // the furthest zoom.
@@ -202,21 +206,25 @@ function Scene({
 }
 
 export default function CulturalShowcase() {
-  const [options] = useState(fleetOptions);
-  const [count, setCount] = useState(() => options[options.length - 1]);
-  const [index, setIndex] = useState(0);
+  const [count, setCount] = useState(defaultFleet);
+  const [id, setId] = useState("tiranga");
   const [auto, setAuto] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [failed, setFailed] = useState(false);
-  const f = CULTURAL[index];
+  const list = useMemo(() => formationsFor(count), [count]);
+  // A formation that doesn't read at this fleet size falls back to the first that does.
+  const current = list.find((f) => f.id === id) ?? list[0];
 
-  // Auto-advance through the set until the visitor picks one.
+  // Auto-advance through the fleet's set until the visitor picks one.
   useEffect(() => {
     if (!auto) return;
-    const ms = (MORPH + Math.max(f.loop * LOOPS_PER_FIGURE, 10)) * 1000;
-    const id = window.setTimeout(() => setIndex((i) => (i + 1) % CULTURAL.length), ms);
-    return () => window.clearTimeout(id);
-  }, [auto, index, f.loop]);
+    const ms = (MORPH + Math.max(current.loop * LOOPS_PER_FIGURE, 10)) * 1000;
+    const timer = window.setTimeout(() => {
+      const k = list.findIndex((f) => f.id === current.id);
+      setId(list[(k + 1) % list.length].id);
+    }, ms);
+    return () => window.clearTimeout(timer);
+  }, [auto, current, list]);
 
   if (failed) {
     return (
@@ -234,59 +242,56 @@ export default function CulturalShowcase() {
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
           onFail={() => setFailed(true)}
         >
-          {(quality) => <Scene quality={quality} index={index} count={count} playing={playing} />}
+          {(quality) => <Scene quality={quality} id={current.id} count={count} playing={playing} />}
         </SwarmCanvas>
 
         <div className="pointer-events-none absolute left-4 top-4 sm:left-6 sm:top-5">
-          <p className="font-serif text-2xl text-ink sm:text-3xl">{f.label}</p>
-          <p className="mt-1 max-w-[34ch] text-sm text-muted">{f.blurb}</p>
+          <p className="font-serif text-2xl text-ink sm:text-3xl">{current.label}</p>
+          <p className="mt-1 max-w-[34ch] text-sm text-muted">{current.blurb}</p>
         </div>
         <p className="pointer-events-none absolute bottom-3 right-4 font-mono text-[10px] uppercase tracking-[0.16em] text-dim">
-          Concept render · {count.toLocaleString("en-IN")} drones · drag to look around
+          Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360°
         </p>
-        {count < f.minDrones && (
-          <p className="pointer-events-none absolute bottom-3 left-4 max-w-[46ch] font-mono text-[10px] uppercase tracking-[0.12em] text-amber-soft">
-            Needs ~{f.minDrones}+ drones to hold its detail
-          </p>
-        )}
       </div>
 
-      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Formation">
-          {CULTURAL.map((item, i) => (
+          {list.map((item) => (
             <button
               key={item.id}
               role="tab"
-              aria-selected={i === index}
+              aria-selected={item.id === current.id}
               onClick={() => {
-                setIndex(i);
+                setId(item.id);
                 setAuto(false);
               }}
               className={`min-h-11 rounded-full border px-4 font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
-                i === index ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
+                item.id === current.id ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
               }`}
             >
               {item.label}
             </button>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">Fleet</span>
-          {options.map((n) => (
-            <button
-              key={n}
-              onClick={() => setCount(n)}
-              aria-pressed={n === count}
-              className={`min-h-11 rounded-full border px-3.5 font-mono text-xs transition-colors ${
-                n === count ? "border-ink/60 text-ink" : "border-line-2 text-dim hover:text-ink"
-              }`}
-            >
-              {n.toLocaleString("en-IN")}
-            </button>
-          ))}
+        <div className="flex shrink-0 items-center gap-2">
+          <label htmlFor="fleet" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+            Fleet
+          </label>
+          <select
+            id="fleet"
+            value={count}
+            onChange={(e) => setCount(Number(e.target.value))}
+            className="min-h-11 rounded-full border border-line-2 bg-navy px-4 font-mono text-xs text-ink"
+          >
+            {FLEETS.map((n) => (
+              <option key={n} value={n}>
+                {n.toLocaleString("en-IN")} drones · {formationsFor(n).length} formations
+              </option>
+            ))}
+          </select>
           <button
             onClick={() => setPlaying((p) => !p)}
-            className="ml-1 min-h-11 rounded-full border border-line-2 px-3.5 font-mono text-xs text-dim transition-colors hover:text-ink"
+            className="min-h-11 rounded-full border border-line-2 px-3.5 font-mono text-xs text-dim transition-colors hover:text-ink"
           >
             {playing ? "Pause" : "Play"}
           </button>

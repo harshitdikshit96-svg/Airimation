@@ -9,10 +9,13 @@
 //                      formation centre, Y up, outline-first for 2D figures,
 //                      plus sRGB colours.
 //   <id>.preview.svg   front view of t=0 as coloured dots (for decks/clients).
-//   trajectories/      one CSV per drone for one loop, Skybrush Studio
-//                      (Blender) CSV-import layout: Z UP (Blender), metres,
-//                      0-255 RGB. Zip the folder to import. Verify the
-//                      column layout on the first import.
+//   <id>.skybrush.zip  one CSV per drone for one loop, in Skybrush Studio
+//                      for Blender's "zipped CSV" import format (Formations
+//                      panel docs): Time_msec,x_m,y_m,z_m,Red,Green,Blue,
+//                      Z up, metres, colours in LINEAR space (0-255).
+//   <id>.formation.csv the t=0 frame as a static formation, Skybrush's
+//                      "static CSV" import: Name,x_m,y_m,z_m,Red,Green,Blue.
+//                      Both imports work on the free community server.
 // And <outDir>/REPORT.md: max speed and minimum separation per formation —
 // what has to change before any of it is flight-ready.
 //
@@ -21,6 +24,7 @@
 // That is Skybrush's job, after design.
 
 import { mkdirSync, writeFileSync } from "node:fs";
+import { crc32, deflateRawSync } from "node:zlib";
 import { join, resolve } from "node:path";
 import { CULTURAL, SHOW_ALT } from "../src/lib/cultural";
 
@@ -29,6 +33,55 @@ const OUT = resolve(args[0] ?? "../Formations");
 const N = Number(args[1] ?? 500);
 const FPS = Number(args[2] ?? 24);
 const CLOUD = 600;
+
+/** Minimal zip writer (deflate), so the export is import-ready as is. */
+function zip(files: { name: string; data: Buffer }[]): Buffer {
+  const chunks: Buffer[] = [];
+  const central: Buffer[] = [];
+  let offset = 0;
+  for (const f of files) {
+    const name = Buffer.from(f.name);
+    const body = deflateRawSync(f.data);
+    const crc = crc32(f.data) >>> 0;
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0);
+    local.writeUInt16LE(20, 4);
+    local.writeUInt16LE(0, 6);
+    local.writeUInt16LE(8, 8);
+    local.writeUInt32LE(0, 10);
+    local.writeUInt32LE(crc, 14);
+    local.writeUInt32LE(body.length, 18);
+    local.writeUInt32LE(f.data.length, 22);
+    local.writeUInt16LE(name.length, 26);
+    local.writeUInt16LE(0, 28);
+    chunks.push(local, name, body);
+    const c = Buffer.alloc(46);
+    c.writeUInt32LE(0x02014b50, 0);
+    c.writeUInt16LE(20, 4);
+    c.writeUInt16LE(20, 6);
+    c.writeUInt16LE(0, 8);
+    c.writeUInt16LE(8, 10);
+    c.writeUInt32LE(0, 12);
+    c.writeUInt32LE(crc, 16);
+    c.writeUInt32LE(body.length, 20);
+    c.writeUInt32LE(f.data.length, 24);
+    c.writeUInt16LE(name.length, 28);
+    c.writeUInt32LE(offset, 42);
+    central.push(c, name);
+    offset += 30 + name.length + body.length;
+  }
+  const cd = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(files.length, 8);
+  end.writeUInt16LE(files.length, 10);
+  end.writeUInt32LE(cd.length, 12);
+  end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...chunks, cd, end]);
+}
+
+/** Linear 0..1 -> linear 0..255 (Skybrush reads CSV colours as linear). */
+const lin255 = (c: number) => Math.round(255 * Math.max(0, Math.min(1, c)));
 
 const toSrgb = (c: number) => {
   const v = Math.max(0, Math.min(1, c));
@@ -74,7 +127,7 @@ const report: string[] = [
 
 for (const f of CULTURAL) {
   const dir = join(OUT, f.id);
-  mkdirSync(join(dir, "trajectories"), { recursive: true });
+  mkdirSync(dir, { recursive: true });
   const pos = new Float32Array(N * 3);
   const col = new Float32Array(N * 3);
   const prev = new Float32Array(N * 3);
@@ -100,7 +153,7 @@ for (const f of CULTURAL) {
   // --- trajectories + stats
   const rig = f.build(N);
   const frames = Math.round(f.loop * FPS);
-  const rows: string[][] = Array.from({ length: N }, () => ["Time [msec],x [m],y [m],z [m],Red,Green,Blue"]);
+  const rows: string[][] = Array.from({ length: N }, () => ["Time_msec,x_m,y_m,z_m,Red,Green,Blue"]);
   let maxSpeed = 0;
   let maxLit = 0;
   let minSep = Infinity;
@@ -122,16 +175,26 @@ for (const f of CULTURAL) {
       prevLit[i] = lit;
       // Blender/Skybrush: Z up. Ours: Y up, +Z toward the audience.
       rows[i].push(
-        `${Math.round(t * 1000)},${x.toFixed(2)},${(-z).toFixed(2)},${y.toFixed(2)},${toSrgb(col[i * 3])},${toSrgb(col[i * 3 + 1])},${toSrgb(col[i * 3 + 2])}`
+        `${Math.round(t * 1000)},${x.toFixed(2)},${(-z).toFixed(2)},${y.toFixed(2)},${lin255(col[i * 3])},${lin255(col[i * 3 + 1])},${lin255(col[i * 3 + 2])}`
       );
     }
     if (k % Math.max(1, Math.round(FPS / 2)) === 0) minSep = Math.min(minSep, minSeparation(pos, col, N));
     prev.set(pos);
   }
-  rows.forEach((r, i) => writeFileSync(join(dir, "trajectories", `drone_${String(i + 1).padStart(4, "0")}.csv`), r.join("\n") + "\n"));
+  writeFileSync(
+    join(dir, `${f.id}.skybrush.zip`),
+    zip(rows.map((r, i) => ({ name: `Drone ${String(i + 1).padStart(4, "0")}.csv`, data: Buffer.from(r.join("\n") + "\n") })))
+  );
 
-  // --- preview SVG, front view at t=0
+  // --- preview SVG + static Skybrush formation, t=0
   f.pose(rig, 0, pos, col);
+  const stat = ["Name,x_m,y_m,z_m,Red,Green,Blue"];
+  for (let i = 0; i < N; i++) {
+    stat.push(
+      `Drone ${String(i + 1).padStart(4, "0")},${pos[i * 3].toFixed(2)},${(-pos[i * 3 + 2]).toFixed(2)},${pos[i * 3 + 1].toFixed(2)},${lin255(col[i * 3])},${lin255(col[i * 3 + 1])},${lin255(col[i * 3 + 2])}`
+    );
+  }
+  writeFileSync(join(dir, `${f.id}.formation.csv`), stat.join("\n") + "\n");
   const S = 6;
   const w = (maxX - minX) * S + 40;
   const h = (maxY - minY) * S + 40;
@@ -168,7 +231,8 @@ report.push(
   "",
   "- `<id>/<id>.points.json` — 600 points at t=0: metres, origin at the formation centre, Y up, sRGB colours. The Formation Asset Spec format.",
   "- `<id>/<id>.preview.svg` — the t=0 frame as coloured dots.",
-  "- `<id>/trajectories/drone_NNNN.csv` — one loop per drone: `Time [msec], x, y, z (metres, Z up), Red, Green, Blue (0–255)`. Zip a formation's `trajectories` folder for Skybrush Studio's CSV import; check the column mapping on the first import.",
+  "- `<id>/<id>.skybrush.zip` — one loop, one CSV per drone, Skybrush Studio for Blender \"zipped CSV\" import: `Time_msec,x_m,y_m,z_m,Red,Green,Blue` (metres, Z up, linear colour 0–255). Formations panel → Import.",
+  "- `<id>/<id>.formation.csv` — the t=0 frame as a static formation (Skybrush \"static CSV\" import: `Name,x_m,y_m,z_m,Red,Green,Blue`).",
   "",
   `Show-centre altitude used: ${SHOW_ALT} m.`
 );

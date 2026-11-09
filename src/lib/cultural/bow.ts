@@ -100,7 +100,7 @@ export const bowArrow: AnimatedFormation<Rig> = {
   label: "Dhanush-baan",
   blurb: "A fire-arrow drawn, held, and loosed across the sky.",
   loop: 6,
-  minDrones: 250,
+  minDrones: 200,
   build,
   pose(rig, t, pos, col) {
     // Draw amount.
