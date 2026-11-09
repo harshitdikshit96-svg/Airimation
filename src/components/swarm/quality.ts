@@ -5,6 +5,15 @@
 // runtime if frames are actually slow. No `detect-gpu`: it fetches its
 // benchmark tables from a CDN on every visit.
 //
+// Two kinds of knob, kept apart on purpose:
+//  - CONTENT (drone count, stars, reflection) is fixed from the first guess
+//    for the life of the canvas. Changing it mid-show rebuilds buffers and
+//    recompiles shaders, which is a visible freeze exactly when the visitor
+//    is scrolling — the worst moment to stutter.
+//  - RENDER (DPR, bloom) is what the runtime monitor steps down. Changing it
+//    only resizes the canvas or drops the composer, and the swarm's
+//    bloom-dependent look is a uniform update, not a new material.
+//
 // The configurator never caps the drone count: the count IS the product
 // (a buyer comparing 100 vs 300 must see 100 vs 300), and 300 points are
 // cheap on any GPU. What costs on weak phones is fill rate — DPR, bloom,
@@ -15,13 +24,21 @@ export type Tier = "high" | "mid" | "low";
 
 export type QualityProfile = {
   tier: Tier;
-  /** Device-pixel-ratio cap. */
+  /**
+   * Device-pixel-ratio cap. Never 2: the swarm is soft glowing points under
+   * bloom, so 1.5x is indistinguishable from 2x while shading ~44% fewer
+   * pixels per pass. Copy is DOM and stays retina-sharp regardless.
+   */
   dpr: number;
   /** Drones in the home-page concept swarm. */
   homeDrones: number;
   /** Full-screen bloom pass (otherwise the sprite's own halo does the glow). */
   bloom: boolean;
-  /** MSAA samples for the composer — only silhouettes need it. */
+  /**
+   * MSAA samples for the composer. 0 everywhere: 4x MSAA on a half-float
+   * buffer at retina size measured as ~half of the whole frame cost on the
+   * high tier, to anti-alias skyline edges that sit in fog at the horizon.
+   */
   multisampling: number;
   /**
    * Ghost copies drawn behind moving drones. 0 (the default) disables them:
@@ -37,17 +54,17 @@ export type QualityProfile = {
 export const PROFILES: Record<Tier, QualityProfile> = {
   high: {
     tier: "high",
-    dpr: 2,
+    dpr: 1.5,
     homeDrones: 1600,
     bloom: true,
-    multisampling: 4,
+    multisampling: 0,
     trailSteps: 0,
     stars: 1800,
     reflection: true,
   },
   mid: {
     tier: "mid",
-    dpr: 1.5,
+    dpr: 1.25,
     homeDrones: 900,
     bloom: true,
     multisampling: 0,
@@ -68,6 +85,19 @@ export const PROFILES: Record<Tier, QualityProfile> = {
 };
 
 const ORDER: Tier[] = ["low", "mid", "high"];
+
+/** Frame-rate ceiling. 120 Hz displays would otherwise render twice as often for no visible gain. */
+export const MAX_FPS = 60;
+
+/**
+ * The profile a scene is built with: content from the initial tier (stable
+ * for the canvas's life), render knobs from the current runtime tier.
+ */
+export function mergeProfile(content: Tier, render: Tier): QualityProfile {
+  const c = PROFILES[content];
+  const r = PROFILES[ORDER[Math.min(ORDER.indexOf(content), ORDER.indexOf(render))]];
+  return { ...c, dpr: r.dpr, bloom: r.bloom, multisampling: r.multisampling };
+}
 
 export function stepDown(tier: Tier): Tier {
   return ORDER[Math.max(0, ORDER.indexOf(tier) - 1)];

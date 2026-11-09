@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { visibleRaf } from "@/components/visual/visibleRaf";
 import {
   scatterPoints,
   lotusPoints,
@@ -27,7 +28,7 @@ const DRONE_COUNT = 160;
 /**
  * Ambient looping swarm, cycling through every formation shape in sequence.
  * This is the site's stand-in for the show-reel video a page like this would
- * normally carry — Biscope hasn't flown its first real show yet, so instead
+ * normally carry — Airimation hasn't flown its first real show yet, so instead
  * of borrowed/stock drone footage this renders our own live formation math,
  * which is honest and also the thing that's actually differentiated. Same
  * single-colour, tight-size, two-layer-glow rendering used everywhere else
@@ -80,7 +81,7 @@ export default function CinematicSwarmHero({ className }: { className?: string }
     const holdMs = 2600;
     const transitionMs = 1700;
     let phase: "hold" | "moving" = "hold";
-    let raf = 0;
+    const loop = visibleRaf(canvas);
 
     function ease(t: number) {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -133,13 +134,13 @@ export default function CinematicSwarmHero({ className }: { className?: string }
       // Reduced motion: render one representative static formation and stop
       // — no ongoing morph loop.
       if (!reduceMotion) {
-        raf = requestAnimationFrame(draw);
+        loop.request(draw);
       }
     }
-    raf = requestAnimationFrame(draw);
+    loop.request(draw);
 
     return () => {
-      cancelAnimationFrame(raf);
+      loop.cancel();
       window.removeEventListener("resize", setSize);
     };
   }, []);

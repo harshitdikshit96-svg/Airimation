@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useMemo, type Ref } from "react";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { droneFragmentShader, droneVertexShader } from "./shaders";
 import type { QualityProfile } from "./quality";
@@ -38,6 +39,13 @@ export type Transition = {
 export type SwarmHandle = {
   uniforms: SwarmUniforms;
   setTransition(t: Transition): void;
+  /**
+   * Live pose for animated formations: write this frame's positions and
+   * colours straight into the "to" buffers (hold uProgress at 1). Slot i
+   * shows source point `order[i]` when an order is given. ~40 KB of upload
+   * per frame at 1,600 drones — trivial next to the draw itself.
+   */
+  setPose(positions: Float32Array, colors: Float32Array, count: number, order?: Uint16Array): void;
 };
 
 type Props = {
@@ -51,27 +59,38 @@ type Props = {
   ref?: Ref<SwarmHandle>;
 };
 
-function makeMaterial(
-  shared: SwarmUniforms,
-  pixelRatio: number,
-  opts: { lag: number; mirror: boolean; opacity: number; bloom: boolean; size: number }
-) {
-  const { lag, mirror, opacity, bloom, size } = opts;
+/**
+ * The bloom-dependent look, as uniform values. Applied in place when the
+ * runtime monitor turns bloom off, so that never compiles a new material.
+ */
+function applyLook(material: THREE.ShaderMaterial, bloom: boolean, size: number, pixelRatio: number) {
+  const u = material.uniforms;
+  u.uSize.value = bloom ? size : size * 1.5;
+  u.uPixelRatio.value = pixelRatio;
+  u.uMinPx.value = bloom ? 3.2 : 3.6;
+  u.uMaxPx.value = bloom ? 30 : 34;
+  // Bloom on: a hot HDR core that only drones can reach. Bloom off: a
+  // brighter, wider halo stands in for the flare.
+  u.uCore.value = bloom ? 5.5 : 1.4;
+  u.uHalo.value = bloom ? 0.45 : 0.6;
+  u.uHaloWidth.value = bloom ? 5.5 : 3.0;
+}
+
+function makeMaterial(shared: SwarmUniforms, opts: { lag: number; mirror: boolean; opacity: number }) {
+  const { lag, mirror, opacity } = opts;
   return new THREE.ShaderMaterial({
     uniforms: {
       ...shared,
       uLag: { value: lag },
       uMirror: { value: mirror ? 1 : 0 },
       uOpacity: { value: opacity },
-      uSize: { value: bloom ? size : size * 1.5 },
-      uPixelRatio: { value: pixelRatio },
-      uMinPx: { value: bloom ? 3.2 : 3.6 },
-      uMaxPx: { value: bloom ? 30 : 34 },
-      // Bloom on: a hot HDR core that only drones can reach. Bloom off: a
-      // brighter, wider halo stands in for the flare.
-      uCore: { value: bloom ? 5.5 : 1.4 },
-      uHalo: { value: bloom ? 0.45 : 0.6 },
-      uHaloWidth: { value: bloom ? 5.5 : 3.0 },
+      uSize: { value: 1 },
+      uPixelRatio: { value: 1 },
+      uMinPx: { value: 3.2 },
+      uMaxPx: { value: 30 },
+      uCore: { value: 5.5 },
+      uHalo: { value: 0.45 },
+      uHaloWidth: { value: 5.5 },
     },
     vertexShader: droneVertexShader,
     fragmentShader: droneFragmentShader,
@@ -82,6 +101,8 @@ function makeMaterial(
 }
 
 export default function DroneSwarm({ capacity, quality, reflection = false, size = 1.7, ref }: Props) {
+  const { trailSteps, bloom } = quality;
+  const mirrored = reflection && quality.reflection;
   const { geometry, uniforms, passes } = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
     const attr = (name: string, itemSize: number) => {
@@ -116,38 +137,33 @@ export default function DroneSwarm({ capacity, quality, reflection = false, size
       uWaterY: { value: 0 },
     };
 
-    const pixelRatio = Math.min(typeof window === "undefined" ? 1 : window.devicePixelRatio || 1, quality.dpr);
-    const bloom = quality.bloom;
-    const passes: { material: THREE.ShaderMaterial; order: number; trail: boolean }[] = [];
+    const passes: { material: THREE.ShaderMaterial; order: number; size: number }[] = [];
 
     // Trails first, so the live drone draws on top of its own wake.
-    for (let k = quality.trailSteps; k >= 1; k--) {
+    for (let k = trailSteps; k >= 1; k--) {
       passes.push({
-        material: makeMaterial(uniforms, pixelRatio, {
+        material: makeMaterial(uniforms, {
           lag: 0.018 * k,
           mirror: false,
-          opacity: 0.38 * (1 - k / (quality.trailSteps + 1)),
-          bloom,
-          size: size * 0.85,
+          opacity: 0.38 * (1 - k / (trailSteps + 1)),
         }),
         order: 1,
-        trail: true,
+        size: size * 0.85,
       });
     }
-    passes.push({
-      material: makeMaterial(uniforms, pixelRatio, { lag: 0, mirror: false, opacity: 1, bloom, size }),
-      order: 2,
-      trail: false,
-    });
-    if (reflection && quality.reflection) {
-      passes.push({
-        material: makeMaterial(uniforms, pixelRatio, { lag: 0, mirror: true, opacity: 1, bloom, size: size * 1.2 }),
-        order: 0,
-        trail: false,
-      });
+    passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: false, opacity: 1 }), order: 2, size });
+    if (mirrored) {
+      passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: true, opacity: 1 }), order: 0, size: size * 1.2 });
     }
     return { geometry, uniforms, passes };
-  }, [capacity, quality, reflection, size]);
+    // Deliberately NOT keyed on the whole `quality` object: DPR and bloom
+    // change at runtime and are applied as uniforms below.
+  }, [capacity, trailSteps, mirrored, size]);
+
+  const dpr = useThree((s) => s.viewport.dpr);
+  useEffect(() => {
+    for (const pass of passes) applyLook(pass.material, bloom, pass.size, dpr);
+  }, [passes, bloom, dpr]);
 
   useImperativeHandle(
     ref,
@@ -168,6 +184,30 @@ export default function DroneSwarm({ capacity, quality, reflection = false, size
         const d = delay.array as Float32Array;
         for (let i = 0; i < n; i++) d[i] = delays ? delays[i] : seeded(i, 5);
         delay.needsUpdate = true;
+        geometry.setDrawRange(0, n);
+      },
+      setPose(positions, colors, count, order) {
+        const n = Math.min(count, capacity);
+        const to = geometry.getAttribute("aTo") as THREE.BufferAttribute;
+        const ct = geometry.getAttribute("aColorTo") as THREE.BufferAttribute;
+        const tp = to.array as Float32Array;
+        const tc = ct.array as Float32Array;
+        if (order) {
+          for (let i = 0; i < n; i++) {
+            const j = order[i] * 3;
+            tp[i * 3] = positions[j];
+            tp[i * 3 + 1] = positions[j + 1];
+            tp[i * 3 + 2] = positions[j + 2];
+            tc[i * 3] = colors[j];
+            tc[i * 3 + 1] = colors[j + 1];
+            tc[i * 3 + 2] = colors[j + 2];
+          }
+        } else {
+          tp.set(positions.subarray(0, n * 3));
+          tc.set(colors.subarray(0, n * 3));
+        }
+        to.needsUpdate = true;
+        ct.needsUpdate = true;
         geometry.setDrawRange(0, n);
       },
     }),

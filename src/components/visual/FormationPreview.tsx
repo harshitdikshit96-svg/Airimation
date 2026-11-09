@@ -1,5 +1,6 @@
 "use client";
 
+import { visibleRaf } from "@/components/visual/visibleRaf";
 import { useEffect, useRef } from "react";
 import {
   scatterPoints,
@@ -71,7 +72,7 @@ export default function FormationPreview({
     const holdMs = 2400;
     const transitionMs = 1800;
     let phase: "hold" | "moving" = "hold";
-    let raf = 0;
+    const loop = visibleRaf(canvas);
 
     function setSize() {
       if (!canvas) return;
@@ -132,12 +133,12 @@ export default function FormationPreview({
         ctx.arc(px, py, p.size * 0.85, 0, Math.PI * 2);
         ctx.fill();
       });
-      raf = requestAnimationFrame(draw);
+      loop.request(draw);
     }
-    raf = requestAnimationFrame(draw);
+    loop.request(draw);
 
     return () => {
-      cancelAnimationFrame(raf);
+      loop.cancel();
       window.removeEventListener("resize", setSize);
     };
   }, [formation, particleCount]);

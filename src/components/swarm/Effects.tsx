@@ -23,6 +23,8 @@ export default function Effects({ quality }: { quality: QualityProfile }) {
     <EffectComposer multisampling={quality.multisampling} frameBufferType={HalfFloatType}>
       <Bloom
         mipmapBlur
+        // Half-res bloom chain: the glow is a blur, it has no detail to lose.
+        resolutionScale={0.5}
         luminanceThreshold={0.9}
         luminanceSmoothing={0.3}
         intensity={quality.tier === "high" ? 1.7 : 1.35}

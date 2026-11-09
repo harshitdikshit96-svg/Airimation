@@ -73,7 +73,9 @@ export default function Header() {
     <header
       className={clsx(
         "relative z-30 w-full border-b",
-        isInternal ? "border-int-line bg-int-bg" : "border-line-2 bg-navy/80 backdrop-blur-sm"
+        isInternal ? "border-int-line bg-int-bg" : // Opaque, no backdrop-blur: the bar sits over a live WebGL canvas on
+        // the home page, and a backdrop filter there re-blurs every frame.
+        "border-line-2 bg-navy/95"
       )}
     >
       <div className="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">

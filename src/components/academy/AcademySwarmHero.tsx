@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { visibleRaf } from "@/components/visual/visibleRaf";
 import {
   scatterPoints,
   lotusPoints,
@@ -72,7 +73,7 @@ export default function AcademySwarmHero() {
     const holdMs = 2600;
     const transitionMs = 1700;
     let phase: "hold" | "moving" = "hold";
-    let raf = 0;
+    const loop = visibleRaf(canvas);
 
     function ease(t: number) {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -121,12 +122,12 @@ export default function AcademySwarmHero() {
         ctx.fill();
       });
 
-      raf = requestAnimationFrame(draw);
+      loop.request(draw);
     }
-    raf = requestAnimationFrame(draw);
+    loop.request(draw);
 
     return () => {
-      cancelAnimationFrame(raf);
+      loop.cancel();
       window.removeEventListener("resize", setSize);
     };
   }, []);
