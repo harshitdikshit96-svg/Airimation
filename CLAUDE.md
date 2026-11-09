@@ -23,6 +23,10 @@ stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 
 ## Architecture
 
+**Read `DECISIONS.md` first** — every company and site decision to date
+(team presentation, retired words, masked registration numbers, 3D
+performance rules) and the change log.
+
 This is the marketing website for **Airimation**, a Noida (Delhi NCR)
 drone-swarm light-show company. Next.js App Router, TypeScript, Tailwind
 CSS v4.
@@ -88,7 +92,9 @@ module `src/components/swarm/`:
 
 *Animated cultural formations* (`src/lib/cultural/`, live on `/gallery`
 via `src/components/gallery/CulturalShowcase.tsx`) — Ganesha, Shiva, damru,
-bow & arrow, dragon. Pure TS (no DOM), posed every frame on the CPU and
+bow & arrow, dragon, plus small-fleet ones (tiranga, diya, lotus, heart,
+om). Each declares `minDrones`; the gallery's fleet dropdown (100–2,000)
+offers only what reads at that size. Pure TS (no DOM), posed every frame on the CPU and
 written to the swarm with `SwarmHandle.setPose`. See README > Animated
 cultural formations; `scripts/export-formations.ts` exports them.
 
@@ -97,9 +103,9 @@ cultural formations; `scripts/export-formations.ts` exports them.
 count or materials (a mid-scroll rebuild is a visible freeze). 2D canvases
 use `visibleRaf` so they sleep off-screen.
 
-*2D (gallery, shows, academy)* — canvas 2D: `src/lib/swarmShapes.ts`
-generators, `src/components/visual/SwarmCanvas.tsx` and
-`FormationPreview.tsx`.
+*2D (shows hero, academy)* — canvas 2D: `src/lib/swarmShapes.ts`
+generators, `CinematicSwarmHero.tsx`, `AcademySwarmHero.tsx`. (The 2D
+gallery cards were removed in Nov 2026.)
 
 All of it is presented honestly as "concept renders" (gallery copy, the
 footer note, the tag beside the home phase indicator, the configurator's
