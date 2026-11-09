@@ -29,7 +29,32 @@ function defaultFleet(): number {
   return tier === "high" ? 800 : 500;
 }
 const CAPACITY = 2000;
-const MORPH = 3.2; // seconds between figures
+
+const SCAN_IDS = new Set(["cma-nataraja", "mia-nataraja", "somaskanda"]);
+const GROUPS = [
+  { id: "story", label: "Story & culture" },
+  { id: "scan", label: "Sculptures — real 3D scans" },
+  { id: "shape", label: "3D shapes" },
+] as const;
+function groupOf(id: string): (typeof GROUPS)[number]["id"] {
+  if (id.startsWith("classic-")) return "shape";
+  if (SCAN_IDS.has(id)) return "scan";
+  return "story";
+}
+/**
+ * Transitions take as long as the distance needs at drone speed. The
+ * shader eases each drone with a cubic (peak speed 3x the average) inside
+ * its staggered window, so duration = 3 * distance / ((1 - stagger) * v).
+ * Clamped to 6–24 s so a long hop doesn't stall the page; at the top end
+ * that is still a little quicker than a real fleet would fly it.
+ */
+const STAGGER = 0.1;
+const MORPH_SPEED = 7.5;
+function morphSeconds(maxDistance: number): number {
+  return Math.min(24, Math.max(6, (3 * maxDistance) / ((1 - STAGGER) * MORPH_SPEED)));
+}
+/** Upper bound for the auto-advance timer, before the real distance is known. */
+const MORPH = 24;
 const LOOPS_PER_FIGURE = 2;
 
 type Rig = unknown;
@@ -74,7 +99,7 @@ function Scene({
     }),
     []
   );
-  const clock = useRef({ key: "", t: 0, morph: 0, order: null as Uint16Array | null, idle: 0, shownCount: 0 });
+  const clock = useRef({ key: "", t: 0, morph: 0, morphTotal: 6, order: null as Uint16Array | null, idle: 0, shownCount: 0 });
 
   useEffect(() => {
     const ctl = controls.current;
@@ -125,6 +150,16 @@ function Scene({
         colorTo: buffers.orderedCol,
         count,
       });
+      let far = 0;
+      for (let i = 0; i < count; i++) {
+        const dd = Math.hypot(
+          buffers.ordered[i * 3] - buffers.shown[i * 3],
+          buffers.ordered[i * 3 + 1] - buffers.shown[i * 3 + 1],
+          buffers.ordered[i * 3 + 2] - buffers.shown[i * 3 + 2]
+        );
+        if (dd > far) far = dd;
+      }
+      c.morphTotal = morphSeconds(far);
       c.key = key;
       c.shownCount = count;
       c.order = order;
@@ -132,11 +167,11 @@ function Scene({
       c.t = 0;
     }
 
-    if (c.morph < MORPH) {
+    if (c.morph < c.morphTotal) {
       c.morph += dt;
-      u.uProgress.value = Math.min(1, c.morph / MORPH);
-      u.uStagger.value = 0.3;
-      u.uArc.value = 6;
+      u.uProgress.value = Math.min(1, c.morph / c.morphTotal);
+      u.uStagger.value = STAGGER;
+      u.uArc.value = 3;
     } else {
       // Live: pose the figure every frame.
       if (playing) c.t = (c.t + dt) % f.loop;
@@ -218,7 +253,8 @@ export default function CulturalShowcase() {
   // Auto-advance through the fleet's set until the visitor picks one.
   useEffect(() => {
     if (!auto) return;
-    const ms = (MORPH + Math.max(current.loop * LOOPS_PER_FIGURE, 10)) * 1000;
+    // One full loop (long ones capped), after the transition.
+    const ms = (MORPH + Math.min(Math.max(current.loop * LOOPS_PER_FIGURE, 16), 48)) * 1000;
     const timer = window.setTimeout(() => {
       const k = list.findIndex((f) => f.id === current.id);
       setId(list[(k + 1) % list.length].id);
@@ -255,23 +291,34 @@ export default function CulturalShowcase() {
       </div>
 
       <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Formation">
-          {list.map((item) => (
-            <button
-              key={item.id}
-              role="tab"
-              aria-selected={item.id === current.id}
-              onClick={() => {
-                setId(item.id);
-                setAuto(false);
-              }}
-              className={`min-h-11 rounded-full border px-4 font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
-                item.id === current.id ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="flex flex-col gap-4" role="tablist" aria-label="Formation">
+          {GROUPS.map((g) => {
+            const items = list.filter((f) => groupOf(f.id) === g.id);
+            if (!items.length) return null;
+            return (
+              <div key={g.id}>
+                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">{g.label}</p>
+                <div className="flex flex-wrap gap-2">
+                  {items.map((item) => (
+                    <button
+                      key={item.id}
+                      role="tab"
+                      aria-selected={item.id === current.id}
+                      onClick={() => {
+                        setId(item.id);
+                        setAuto(false);
+                      }}
+                      className={`min-h-11 rounded-full border px-4 font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
+                        item.id === current.id ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <label htmlFor="fleet" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
