@@ -25,10 +25,11 @@ export default function FounderAvatar({
 }: {
   name: string;
   photo?: string;
-  size?: "md" | "lg";
+  /** sm: round 64px thumbnail (cards) · md: square tile · lg: 4:5 portrait. */
+  size?: "sm" | "md" | "lg";
   className?: string;
 }) {
-  const aspect = size === "lg" ? "aspect-[4/5]" : "aspect-square";
+  const aspect = size === "lg" ? "aspect-[4/5]" : size === "sm" ? "aspect-square h-16 w-16 shrink-0 !rounded-full" : "aspect-square";
 
   if (photo) {
     return (
@@ -40,7 +41,7 @@ export default function FounderAvatar({
           // The tiles are small and fixed-width now, so ask for small files:
           // "lg" is a 200px column (96px on phones), "md" a grid cell that is
           // roughly half the viewport on phones.
-          sizes={size === "lg" ? "(min-width: 640px) 200px, 96px" : "(min-width: 1024px) 220px, 45vw"}
+          sizes={size === "lg" ? "(min-width: 640px) 200px, 96px" : size === "sm" ? "64px" : "176px"}
           className="object-cover grayscale-[40%] contrast-[1.05] transition-all duration-500 group-hover:grayscale-0"
         />
       </div>
@@ -58,7 +59,7 @@ export default function FounderAvatar({
       <span
         className={clsx(
           "font-serif font-medium text-amber-soft/80",
-          size === "lg" ? "text-5xl" : "text-3xl"
+          size === "lg" ? "text-5xl" : size === "sm" ? "text-lg" : "text-3xl"
         )}
       >
         {initials(name)}

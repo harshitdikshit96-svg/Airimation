@@ -195,7 +195,7 @@ export default function Home() {
             {directors.map((member, i) => (
               <Reveal key={member.name} delay={i * 0.06}>
                 <div>
-                  <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                  <FounderAvatar name={member.name} photo={member.photo} className="mb-4 w-28 sm:w-36" />
                   <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
                   <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
                     {member.role}
@@ -218,7 +218,7 @@ export default function Home() {
                 {visibleAdvisors.map((member, i) => (
                   <Reveal key={member.name} delay={i * 0.06}>
                     <div>
-                      <FounderAvatar name={member.name} photo={member.photo} className="mb-4" />
+                      <FounderAvatar name={member.name} photo={member.photo} className="mb-4 w-28 sm:w-36" />
                       <h3 className="mb-1 text-[17px] font-medium text-ink">{member.name}</h3>
                       <p className="mb-3 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-dim sm:text-xs sm:tracking-[0.08em]">
                         {member.role}

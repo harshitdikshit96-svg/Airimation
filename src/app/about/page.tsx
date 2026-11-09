@@ -2,6 +2,7 @@ import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
+import FounderAvatar from "@/components/team/FounderAvatar";
 import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
@@ -13,22 +14,17 @@ export const metadata: Metadata = {
 };
 
 function MemberCard({ member, delay }: { member: TeamMember; delay: number }) {
-  const initials = member.name
-    .replace(/^(Dr\.|Prof\.)\s+/, "")
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2);
-
   return (
     <Reveal delay={delay}>
-      <div className="panel-border h-full rounded-2xl bg-panel/40 p-6">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-panel-2 font-serif text-sm text-amber-soft">
-          {initials}
-        </div>
-        <h3 className="mt-4 font-serif text-lg font-semibold text-ink">{member.name}</h3>
-        <div className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-cyan-soft">
-          {member.role}
+      <div className="group panel-border h-full rounded-2xl bg-panel/40 p-6">
+        <div className="flex items-center gap-4">
+          <FounderAvatar name={member.name} photo={member.photo} size="sm" />
+          <div>
+            <h3 className="font-serif text-lg font-semibold text-ink">{member.name}</h3>
+            <div className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-cyan-soft">
+              {member.role}
+            </div>
+          </div>
         </div>
         <p className="mt-3 text-sm text-muted">{member.background}</p>
       </div>
