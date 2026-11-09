@@ -2,12 +2,13 @@
 // Ganga pouring from it, a serpent at the throat, the third eye, tiger-skin
 // over crossed legs, and the trishul standing beside him with its damru.
 //
-// Motion (8 s loop): the Ganga flows (drones travel along the stream, which
-// is how a real show animates water), hair locks drift, the third eye
+// Motion (8 s loop, real drone speeds): the Ganga FLOWS IN LIGHT — the
+// drones hold the stream's shape while bright ripples run down it, which
+// is how a real show animates water. Hair locks drift, the third eye
 // pulses, the halo glints round, the damru on the trishul swings gently,
-// and the figure breathes.
+// and the figure breathes. Every part is inflated into a rounded relief.
 
-import { AnimatedFormation, Part, SHOW_ALT, TAU, V2, hex, mixRGB, onTube, sampleParts, smooth, type Sampled2D } from "./kit";
+import { AnimatedFormation, Part, SHOW_ALT, TAU, V2, hex, inflate, mixRGB, onTube, sampleParts, type Sampled2D } from "./kit";
 
 const circle = (cx: number, cy: number, r: number, k = 28): V2[] =>
   Array.from({ length: k + 1 }, (_, i) => [cx + Math.cos((i / k) * TAU) * r, cy + Math.sin((i / k) * TAU) * r] as V2);
@@ -134,11 +135,11 @@ export const shiva: AnimatedFormation<Rig> = {
 
       switch (p) {
         case P.ganga: {
-          // Water drones travel down the stream and re-enter at the source.
-          const flow = (s.s[i] + t / 4) % 1;
-          [x, y] = onTube(ganga, flow, s.u[i], (q) => [0, -Math.sin(q * Math.PI) * 0.8 * Math.sin(w * 2)]);
-          bright = smooth(flow / 0.08) * smooth((1 - flow) / 0.12);
-          c = mixRGB(C.water, C.white, 0.5 + 0.5 * Math.sin(flow * 40 - t * 6));
+          // Drones hold the stream; ripples of light run down it.
+          [x, y] = onTube(ganga, s.s[i], s.u[i], (q) => [0, -Math.sin(q * Math.PI) * 0.8 * Math.sin(w * 2)]);
+          const ripple = 0.5 + 0.5 * Math.sin(s.s[i] * 28 - w * 6);
+          bright = 0.55 + 0.75 * ripple * ripple;
+          c = mixRGB(C.water, C.white, ripple);
           z = 3;
           break;
         }
@@ -218,7 +219,9 @@ export const shiva: AnimatedFormation<Rig> = {
 
       pos[i * 3] = x;
       pos[i * 3 + 1] = SHOW_ALT - 12 + y;
-      pos[i * 3 + 2] = z;
+      // Rounded relief: every part bulges toward the audience from its own
+      // edge, so the figure has volume when the camera moves round it.
+      pos[i * 3 + 2] = z + inflate(s.d[i], p === P.trishul ? 0.6 : 2.1);
       const k = bright * (s.edge[i] ? 1.12 : 0.95);
       col[i * 3] = c[0] * k;
       col[i * 3 + 1] = c[1] * k;

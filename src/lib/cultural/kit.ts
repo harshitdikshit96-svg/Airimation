@@ -57,6 +57,12 @@ export type Sampled2D = {
   s: Float32Array;
   /** Tube drones: signed offset across the tube, -1..1 of the local radius. */
   u: Float32Array;
+  /**
+   * Metres from this drone to the edge of its own part. Used to INFLATE a
+   * flat drawing into a rounded relief (z ~ sqrt(d)), so a figure has
+   * volume when the camera moves round it instead of reading as a sheet.
+   */
+  d: Float32Array;
   /** Per part, its tubes' centrelines (same order as its `tube` prims). */
   tubes: TubeLine[][];
 };
@@ -252,6 +258,36 @@ export function sampleParts(parts: Part[], n: number, opts: { res?: number; edge
       }
     }
   }
+  // Distance (in cells) from every cell to the nearest cell of a DIFFERENT
+  // label: a two-pass chamfer transform. Gives each part its own bulge.
+  const dist = new Float32Array(W * H).fill(1e9);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+    const k = j * W + i;
+    const l = label[k];
+    if (l < 0) {
+      dist[k] = 0;
+      continue;
+    }
+    if (i === 0 || j === 0 || i === W - 1 || j === H - 1) dist[k] = 1;
+    else if (label[k - 1] !== l || label[k + 1] !== l || label[k - W] !== l || label[k + W] !== l) dist[k] = 1;
+  }
+  const D2 = Math.SQRT2;
+  for (let j = 1; j < H; j++) for (let i = 1; i < W - 1; i++) {
+    const k = j * W + i;
+    if (dist[k] === 0) continue;
+    dist[k] = Math.min(dist[k], dist[k - 1] + 1, dist[k - W] + 1, dist[k - W - 1] + D2, dist[k - W + 1] + D2);
+  }
+  for (let j = H - 2; j >= 0; j--) for (let i = W - 2; i >= 1; i--) {
+    const k = j * W + i;
+    if (dist[k] === 0) continue;
+    dist[k] = Math.min(dist[k], dist[k + 1] + 1, dist[k + W] + 1, dist[k + W + 1] + D2, dist[k + W - 1] + D2);
+  }
+  const distAt = (x: number, y: number) => {
+    const i = Math.floor((x - x0) / cell);
+    const j = Math.floor((y - y0) / cell);
+    return i < 0 || j < 0 || i >= W || j >= H ? 0 : dist[j * W + i] * cell;
+  };
+
   const at = (x: number, y: number) => {
     const i = Math.floor((x - x0) / cell);
     const j = Math.floor((y - y0) / cell);
@@ -355,6 +391,7 @@ export function sampleParts(parts: Part[], n: number, opts: { res?: number; edge
     tube: new Uint8Array(n).fill(255),
     s: new Float32Array(n),
     u: new Float32Array(n),
+    d: new Float32Array(n),
     tubes: compiled.map((c) => c.prims.filter((p): p is Extract<Compiled, { k: "tube" }> => p.k === "tube").map((p) => p.line)),
   };
   for (let k = 0; k < n; k++) {
@@ -364,6 +401,7 @@ export function sampleParts(parts: Part[], n: number, opts: { res?: number; edge
     out.x[k] = x;
     out.y[k] = y;
     out.edge[k] = best.isEdge[i];
+    out.d[k] = out.edge[k] ? 0 : distAt(x, y);
     let l = at(x, y);
     if (l < 0) l = 0;
     out.part[k] = l;
@@ -430,6 +468,19 @@ export type AnimatedFormation<R = unknown> = {
   build(n: number): R;
   pose(rig: R, t: number, pos: Float32Array, col: Float32Array): void;
 };
+
+/**
+ * Relief depth for a drone `d` metres inside its part: a rounded bulge
+ * (sqrt profile, like an inflated balloon), `k` sets how deep.
+ */
+export const inflate = (d: number, k = 2.4) => k * Math.sqrt(Math.max(0, d));
+
+/**
+ * Real show drones fly at roughly 3–8 m/s. Every formation's motion is
+ * tuned to stay under this, and a test enforces it; anything faster is done
+ * with LIGHT (LEDs changing on drones that hold still), as real shows do.
+ */
+export const MAX_DRONE_SPEED = 8;
 
 /** Altitude of a figure's origin. Matches the configurator's show centre. */
 export const SHOW_ALT = 85;

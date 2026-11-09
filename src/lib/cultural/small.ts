@@ -4,7 +4,7 @@
 // drones holding still while a glow runs along them — which is exactly how
 // a 100-drone show would fly them.
 
-import { AnimatedFormation, Part, SHOW_ALT, TAU, clamp, hex, mixRGB, sampleParts, smooth, type RGB, type Sampled2D } from "./kit";
+import { AnimatedFormation, Part, SHOW_ALT, TAU, clamp, hex, inflate, mixRGB, sampleParts, smooth, type RGB, type Sampled2D } from "./kit";
 
 const GOLD = Math.PI * (3 - Math.sqrt(5));
 
@@ -29,7 +29,7 @@ export const tiranga: AnimatedFormation<FlagRig> = {
   id: "tiranga",
   label: "Tiranga",
   blurb: "The tricolour waves; the chakra turns at its heart.",
-  loop: 8,
+  loop: 16,
   minDrones: 100,
   build(n) {
     // ~14% chakra (rim + 24 spokes need at least ~14 drones), rest the field.
@@ -88,8 +88,9 @@ export const tiranga: AnimatedFormation<FlagRig> = {
     const white = hex("#ffffff");
     const green = hex("#1fc23f");
     const blue = hex("#3d6dff");
-    const w = (TAU * t) / 8;
-    const turn = w * 0.5;
+    // One full chakra turn and two flag waves per 16 s loop: ~3 m/s.
+    const w = (TAU * t) / 16;
+    const turn = w;
     const wave = (x: number, y: number) => {
       // Travelling wave, zero at the hoist (left edge), growing to the fly.
       const k = (x + FW / 2) / FW;
@@ -142,7 +143,7 @@ export const diya: AnimatedFormation<{ s: Sampled2D }> = {
   id: "diya",
   label: "Diya",
   blurb: "One lamp, one flame — the oldest light show there is.",
-  loop: 4,
+  loop: 8,
   minDrones: 100,
   build: (n) => ({ s: sampleParts(DIYA_PARTS, n, { seed: 3, edgeBias: 1.2, res: 260 }) }),
   pose({ s }, t, pos, col) {
@@ -152,9 +153,12 @@ export const diya: AnimatedFormation<{ s: Sampled2D }> = {
     const core = hex("#fffbe0");
     const mid = hex("#ffc23a");
     const tip = hex("#ff4d12");
-    const flick = Math.sin(t * 7.3) * 0.5 + Math.sin(t * 12.1 + 1) * 0.3;
-    const lean = Math.sin(t * 1.6) * 0.18 + flick * 0.04;
-    const stretch = 1 + flick * 0.08;
+    // The flame's SHAPE moves slowly (a drone can follow it); the flicker
+    // is LIGHT only — brightness and colour, which a real LED does fast.
+    const w = (TAU * t) / 8;
+    const flick = Math.sin(t * 9.4) * 0.5 + Math.sin(t * 15.7 + 1) * 0.3;
+    const lean = Math.sin(w) * 0.12;
+    const stretch = 1 + Math.sin(w * 2) * 0.05;
     for (let i = 0; i < s.n; i++) {
       let x = s.x[i];
       let y = s.y[i];
@@ -168,10 +172,10 @@ export const diya: AnimatedFormation<{ s: Sampled2D }> = {
         x += Math.sin(lean) * h * 0.9;
         const q = clamp(h / 24, 0, 1);
         c = q < 0.35 ? mixRGB(core, mid, q / 0.35) : mixRGB(mid, tip, (q - 0.35) / 0.65);
-        k = 1.1 + 0.25 * Math.sin(t * 9 + y);
+        k = 1.05 + 0.3 * flick * (0.4 + q);
       } else if (p === 2) c = oil;
       else if (s.edge[i]) c = rim;
-      write(pos, col, i, x, SHOW_ALT + y, p === 3 ? 4 : 0, c, k);
+      write(pos, col, i, x, SHOW_ALT + y, (p === 3 ? 4 : 0) + inflate(s.d[i], 2.2), c, k);
     }
   },
 };
@@ -190,7 +194,7 @@ export const lotusBloom: AnimatedFormation<LotusRig> = {
   id: "lotus",
   label: "Kamal",
   blurb: "A lotus opens from the bud, petal by petal.",
-  loop: 10,
+  loop: 40,
   minDrones: 100,
   build(n) {
     const ring: number[] = [];
@@ -235,10 +239,11 @@ export const lotusBloom: AnimatedFormation<LotusRig> = {
     const pink = hex("#ff5fa2");
     const blush = hex("#ffc2dc");
     const gold = hex("#ffd34d");
-    // 0 bud .. 1 open: open over 3 s, hold, close over 3 s.
-    const phase = t / 10;
-    const open = smooth(phase / 0.3) * (1 - smooth((phase - 0.75) / 0.25));
-    const spin = (TAU * t) / 40;
+    // 0 bud .. 1 open: opens over 12 s, holds, closes over 12 s, so petal
+    // tips never pass ~6 m/s. A gentle sway instead of a spin.
+    const phase = t / 40;
+    const open = smooth(phase / 0.3) * (1 - smooth((phase - 0.7) / 0.3));
+    const spin = Math.sin((TAU * t) / 40) * 0.15;
     for (let i = 0; i < rig.n; i++) {
       if (rig.ring[i] === 9) {
         const r = rig.a[i] * 8;
@@ -268,16 +273,17 @@ export const lotusBloom: AnimatedFormation<LotusRig> = {
 // ------------------------------------------------------------ Heart
 
 /** A heart that beats — lub-dub — for weddings and anniversaries. */
-export const heartbeat: AnimatedFormation<{ n: number; x: Float32Array; y: Float32Array; edge: Uint8Array }> = {
+export const heartbeat: AnimatedFormation<{ n: number; x: Float32Array; y: Float32Array; z: Float32Array; edge: Uint8Array }> = {
   id: "heart",
   label: "Dil",
   blurb: "A heart that beats — for weddings and anniversaries.",
-  loop: 2.4,
+  loop: 3.2,
   minDrones: 100,
   build(n) {
     const x = new Float32Array(n);
     const y = new Float32Array(n);
     const edge = new Uint8Array(n);
+    const z = new Float32Array(n);
     const outline = Math.round(n * 0.55);
     for (let i = 0; i < outline; i++) {
       const t = (i / outline) * TAU;
@@ -290,20 +296,23 @@ export const heartbeat: AnimatedFormation<{ n: number; x: Float32Array; y: Float
     for (let k = 0; k < fill; k++) {
       const s = 0.18 + 0.68 * Math.sqrt((k + 0.5) / fill);
       const t = k * GOLD * 3.1;
+      // A plump, rounded heart: the inner rings bulge toward the audience.
+      z[outline + k] = 11 * Math.sqrt(1 - s * s);
       x[outline + k] = 16 * Math.pow(Math.sin(t), 3) * 2.4 * s;
       y[outline + k] = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * 2.4 * s;
     }
-    return { n, x, y, edge };
+    return { n, x, y, z, edge };
   },
   pose(rig, t, pos, col) {
     const red = hex("#ff2a4d");
     const rose = hex("#ff8fb0");
-    // Lub-dub: two quick beats, then rest.
-    const p = (t % 2.4) / 2.4;
-    const beat = Math.exp(-Math.pow((p - 0.1) / 0.05, 2)) + 0.6 * Math.exp(-Math.pow((p - 0.28) / 0.05, 2));
-    const s = 1 + beat * 0.07;
+    // Lub-dub, mostly in LIGHT: a bright pulse with a tiny swell (2%),
+    // because a whole 80 m heart cannot physically jump in a tenth of a second.
+    const p = (t % 3.2) / 3.2;
+    const beat = Math.exp(-Math.pow((p - 0.15) / 0.05, 2)) + 0.6 * Math.exp(-Math.pow((p - 0.32) / 0.05, 2));
+    const s = 1 + beat * 0.02;
     for (let i = 0; i < rig.n; i++) {
-      write(pos, col, i, rig.x[i] * s, SHOW_ALT + 6 + rig.y[i] * s, 0, rig.edge[i] ? red : rose, (rig.edge[i] ? 1.05 : 0.8) + beat * 0.35);
+      write(pos, col, i, rig.x[i] * s, SHOW_ALT + 6 + rig.y[i] * s, rig.z[i] * s, rig.edge[i] ? red : rose, (rig.edge[i] ? 1.05 : 0.8) + beat * 0.35);
     }
   },
 };
@@ -355,7 +364,8 @@ export const om: AnimatedFormation<{ s: Sampled2D }> = {
       const c = p === 4 ? white : mixRGB(saffron, gold, s.edge[i] ? 0.6 : 0.2);
       const k = 0.75 + glow * 0.9 + (p === 4 ? 0.4 + 0.3 * Math.sin(t * 3) : 0);
       const x = s.x[i];
-      write(pos, col, i, x * Math.cos(sway), SHOW_ALT + s.y[i], x * Math.sin(sway), mixRGB(c, white, glow * 0.5), k);
+      const z = inflate(s.d[i], 2.6);
+      write(pos, col, i, x * Math.cos(sway) - z * Math.sin(sway), SHOW_ALT + s.y[i], x * Math.sin(sway) + z * Math.cos(sway), mixRGB(c, white, glow * 0.5), k);
     }
   },
 };

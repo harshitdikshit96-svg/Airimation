@@ -5,7 +5,7 @@
 //   ears fan slowly, the trunk sways from its root to its curled tip,
 //   the crown's jewels glint, the whole head breathes very slightly.
 
-import { AnimatedFormation, Part, SHOW_ALT, TAU, hex, mixRGB, onTube, sampleParts, type Sampled2D } from "./kit";
+import { AnimatedFormation, Part, SHOW_ALT, TAU, hex, inflate, mixRGB, onTube, sampleParts, type Sampled2D } from "./kit";
 
 const P = {
   earL: 0, earR: 1, earInL: 2, earInR: 3, head: 4, crown: 5, jewel: 6, tuskL: 7, tuskR: 8, trunk: 9, eyes: 10, tilak: 11,
@@ -85,7 +85,7 @@ export const ganesha: AnimatedFormation<Rig> = {
     const w = (TAU * t) / 6;
     const fan = Math.sin(w) * 0.09; // ears: +-9% width, slow
     const sway = Math.sin(w + 0.6); // trunk
-    const breathe = 1 + Math.sin(w * 0.5) * 0.008;
+    const breathe = 1 + Math.sin(w) * 0.008;
     const trunkLine = s.tubes[P.trunk][0];
 
     for (let i = 0; i < s.n; i++) {
@@ -115,7 +115,9 @@ export const ganesha: AnimatedFormation<Rig> = {
 
       pos[i * 3] = x * breathe;
       pos[i * 3 + 1] = SHOW_ALT + y * breathe;
-      pos[i * 3 + 2] = z;
+      // Rounded relief from each part's own edge: the head and trunk bulge,
+      // the ears cup, so the figure has volume from any angle.
+      pos[i * 3 + 2] = z + inflate(s.d[i], p === P.earL || p === P.earR ? 1.4 : 2.4);
 
       // Colour.
       let c = C.skin;

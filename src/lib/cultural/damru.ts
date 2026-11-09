@@ -3,8 +3,11 @@
 // swing up and strike the heads. Each strike flashes the head it hits —
 // the visual beat of the sound.
 //
-// 4 s loop. The drum turns slowly so the 3D form reads, with the quick
-// wrist-twist that throws the beads.
+// 40 s loop, at real drone speeds. The drum turns once, slowly, so its 3D
+// form reads; the beads swing gently. The BEAT is light, not motion: each
+// time a bead reaches the end of its swing the drumhead on that side
+// flashes white. (A real damru's wrist-twist is a blur no fleet can fly —
+// the earlier version moved drones at 150+ m/s.)
 
 import { AnimatedFormation, SHOW_ALT, TAU, clamp, hex, makeRand, mixRGB, type RGB } from "./kit";
 
@@ -111,22 +114,23 @@ export const damru: AnimatedFormation<Rig> = {
   id: "damru",
   label: "Damru",
   blurb: "Shiva's drum in 3D — the beads strike, the heads flash.",
-  loop: 4,
+  loop: 40,
   minDrones: 200,
   build,
   pose(rig, t, pos, col) {
-    // Slow turn plus a wrist twist.
-    const twist = Math.sin((TAU * t) / 1) * 0.18;
-    const spin = (TAU * t) / 16 + twist;
+    const w = (TAU * t) / 40;
+    // One slow turn per loop (~4 m/s at the bead).
+    const spin = w;
     const cs = Math.cos(spin);
     const sn = Math.sin(spin);
-    // Bead swing in the drum's frame: angle of the cord from horizontal.
-    // +ve swings it up to the top head. The two beads are opposite.
-    const swing = Math.sin((TAU * t) / 1 + 0.9) * 1.25;
+    // Bead swing in the drum's frame: angle of the cord from horizontal,
+    // six swings per loop, +-15 degrees (~5.5 m/s at the bead).
+    const sw = Math.sin(w * 6 + 0.9);
+    const swing = sw * 0.26;
     const CORD = 21;
-    // Strike flashes: when a bead is near a head.
-    const hitTop = clamp((Math.sin((TAU * t) / 1 + 0.9) - 0.82) / 0.18, 0, 1);
-    const hitBot = clamp((-Math.sin((TAU * t) / 1 + 0.9) - 0.82) / 0.18, 0, 1);
+    // The beat, in light: a flash on the head each time the swing peaks.
+    const hitTop = Math.pow(clamp((sw - 0.75) / 0.25, 0, 1), 2);
+    const hitBot = Math.pow(clamp((-sw - 0.75) / 0.25, 0, 1), 2);
 
     for (let i = 0; i < rig.n; i++) {
       const p = rig.piece[i];
@@ -152,8 +156,8 @@ export const damru: AnimatedFormation<Rig> = {
         lz = Math.sin(b) * R * a;
         ly = sd * H;
         const hit = sd > 0 ? hitTop : hitBot;
-        c = a >= 0.99 ? C.gold : mixRGB(C.skin, C.flash, hit);
-        bright = a >= 0.99 ? 1 : 0.8 + hit * 0.9;
+        c = a >= 0.99 ? mixRGB(C.gold, C.flash, hit * 0.6) : mixRGB(C.skin, C.flash, hit);
+        bright = a >= 0.99 ? 1 + hit * 0.5 : 0.75 + hit * 1.1;
       } else if (p === "band") {
         const r = RW + 1.6;
         lx = Math.cos(b) * r;
@@ -178,14 +182,14 @@ export const damru: AnimatedFormation<Rig> = {
           ly = cy + b * 2.4;
           lz = rig.c[i] * 2.4;
           c = C.gold;
-          bright = 1.2;
+          bright = 1.2 + (sd > 0 ? hitTop + hitBot : hitTop + hitBot) * 0.6;
         }
       } else {
         // Tassel: a short hank hanging from the band.
         const k = rig.a[i];
         lx = rig.b[i] * (0.6 + k * 1.6);
         lz = RW + 2 + rig.c[i] * 0.8;
-        ly = -1.5 - k * 9 + Math.sin(t * 4 + k * 3) * 0.4;
+        ly = -1.5 - k * 9 + Math.sin(w * 10 + k * 3) * 0.4;
         c = k > 0.7 ? C.gold : C.red;
       }
 

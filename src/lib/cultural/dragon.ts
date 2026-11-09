@@ -9,13 +9,18 @@
 
 import { AnimatedFormation, SHOW_ALT, TAU, clamp, hex, makeRand, mixRGB, smooth, type RGB } from "./kit";
 
-const LOOP = 16;
+// 80 s per lap at real drone speeds (~3–4 m/s along the path). Every
+// secondary motion runs a whole number of cycles per lap so the loop is
+// seamless, and the fire breath is LIGHT on parked drones.
+const LOOP = 80;
 const SPAN = 2.3; // radians of the path the body covers
 type V3 = [number, number, number];
 
 function path(u: number): V3 {
   // An elliptical swim through the show volume, rising and dipping.
-  return [52 * Math.sin(u), SHOW_ALT + 9 * Math.sin(2 * u) + 3 * Math.sin(5 * u), 20 * Math.cos(u)];
+  // Wider in depth than before: the tight turns at the ends of a flat
+  // ellipse swung the head round faster than a drone can fly.
+  return [50 * Math.sin(u), SHOW_ALT + 8 * Math.sin(2 * u) + 2 * Math.sin(5 * u), 32 * Math.cos(u)];
 }
 
 function frameAt(u: number): { p: V3; T: V3; N: V3; B: V3 } {
@@ -140,10 +145,11 @@ export const dragon: AnimatedFormation<Rig> = {
   build,
   pose(rig, t, pos, col) {
     const uHead = (TAU * t) / LOOP + 0.6;
+    const ph = (TAU * t) / LOOP;
     // Fire when the dragon is crossing in front of the audience (z > 0).
     const phase = (t / LOOP) % 1;
     const fire = smooth((phase - 0.08) / 0.06) * (1 - smooth((phase - 0.26) / 0.06));
-    const jawOpen = 0.08 + fire * 0.45 + Math.max(0, Math.sin(t * 1.3)) * 0.06;
+    const jawOpen = 0.08 + fire * 0.4 + Math.max(0, Math.sin(ph * 8)) * 0.06;
     const head0 = frameAt(uHead);
     // The head is drawn 1.35x its modelled size: at show distance a
     // true-to-scale head is lost against the body.
@@ -157,7 +163,7 @@ export const dragon: AnimatedFormation<Rig> = {
     for (let k = 0; k <= S; k++) {
       const sk = k / S;
       const f = frameAt(uHead - 0.14 - sk * SPAN);
-      const ripple = Math.sin(sk * 11 - t * 3.2) * 2.6 * smooth(sk / 0.25);
+      const ripple = Math.sin(sk * 11 - ph * 8) * 2.4 * smooth(sk / 0.25);
       tab.set([f.p[0] + f.N[0] * ripple, f.p[1] + f.N[1] * ripple, f.p[2] + f.N[2] * ripple, ...f.T, ...f.N, ...f.B], k * 12);
     }
     const toWorld = (f: { p: V3; T: V3; N: V3; B: V3 }, fw: number, lat: number, up: number): V3 => [
@@ -208,7 +214,7 @@ export const dragon: AnimatedFormation<Rig> = {
         const side = which % 2 ? 1 : -1;
         const f = bodyFrame(s);
         const r = radius(s);
-        const paddle = Math.sin(t * 2.4 + which * 1.7) * 0.6;
+        const paddle = Math.sin(ph * 10 + which * 1.7) * 0.35;
         const len = 7;
         if (a < 0.8) {
           const k = a / 0.8;
@@ -249,24 +255,26 @@ export const dragon: AnimatedFormation<Rig> = {
         c = mixRGB(C.ivory, C.gold, a * 0.5);
       } else if (p === "mane") {
         const ang = Math.PI * (0.1 + 0.8 * a);
-        const rr = 3.4 + cc * 2.6 + Math.sin(t * 5 + b * 6) * 0.5;
+        const rr = 3.4 + cc * 2.6 + Math.sin(ph * 20 + b * 6) * 0.5;
         w = toWorldH(-1 - cc * 4, Math.cos(ang) * rr, Math.sin(ang) * rr);
         c = mixRGB(C.orange, C.gold, cc);
         bright = 0.9;
       } else if (p === "whisker") {
         const side = rig.k[i];
-        const wave = Math.sin(a * 7 - t * 4) * 1.6 * a;
+        const wave = Math.sin(a * 7 - ph * 16) * 1.4 * a;
         w = toWorldH(12 - a * 17, side * (1.8 + a * 6.5), -0.4 - a * 3 + wave);
         c = mixRGB(C.ivory, C.gold, a);
         bright = 1 - a * 0.4;
       } else {
-        // Fire breath: a widening cone from the open mouth.
-        const d = a * 30 * (0.3 + 0.7 * fire);
+        // Fire breath: drones hold a cone ahead of the mouth (dark until
+        // the breath), the fire itself is light rolling outward.
+        const d = a * 15;
         const spread = 0.6 + d * 0.22;
         const flick = 0.6 + 0.4 * Math.sin(t * 29 + cc * 50);
+        const reach = clamp(fire * 1.3 - a * 0.3, 0, 1);
         w = toWorldH(12.5 + d / HS, (Math.cos(b) * spread * cc) / HS, -0.8 + (Math.sin(b) * spread * cc - d * 0.05) / HS);
         c = mixRGB(C.fireCore, C.fireOut, clamp(a * 1.4, 0, 1));
-        bright = fire * flick * (1 - a * 0.6);
+        bright = reach * flick * (1 - a * 0.6);
       }
 
       pos[i * 3] = w[0];
