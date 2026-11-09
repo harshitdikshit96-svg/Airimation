@@ -2,13 +2,14 @@ import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
 import FormationPreview from "@/components/visual/FormationPreview";
+import CulturalShowcaseLoader from "@/components/gallery/CulturalShowcaseLoader";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Gallery | Airimation",
   description:
-    "Concept formations from Biscope's design pipeline — Airimation's first live shows are in preparation.",
+    "Concept formations from Airimation's show-design pipeline — our first live shows are in preparation."
 };
 
 const formations: {
@@ -24,7 +25,7 @@ const formations: {
   {
     key: "ring",
     title: "Salute",
-    caption: "Concentric rings — a formal opening formation for government events.",
+    caption: "Concentric rings — a formal opening formation for civic events.",
   },
   {
     key: "wave",
@@ -59,7 +60,7 @@ export default function GalleryPage() {
               Formations from the design pipeline.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
-              Biscope&apos;s first live shows are in preparation, so what
+              Our first live shows are in preparation, so what
               follows are concept renders from our own choreography process —
               not footage. We would rather show you the real thing honestly
               than fake it.
@@ -68,9 +69,33 @@ export default function GalleryPage() {
         </div>
       </section>
 
+      {/* LIVE 3D — animated cultural formations */}
+      <section className="px-6 pt-14 sm:pt-20">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <SectionLabel no="01">Story formations, in motion</SectionLabel>
+            <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+              Ganesha, Mahadev, the damru, a fire-arrow, a dragon.
+            </h2>
+            <p className="mt-4 max-w-3xl text-muted">
+              Figures that move the way a show tells a story — a trunk that
+              sways, the Ganga pouring from Shiva&apos;s hair, beads striking a
+              drum. Simulated live, in 3D: switch the fleet size to see how much
+              detail each drone count can hold.
+            </p>
+          </Reveal>
+          <div className="mt-10">
+            <CulturalShowcaseLoader />
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <Reveal>
+            <SectionLabel no="02">The formation library</SectionLabel>
+          </Reveal>
+          <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
             {formations.map((f, i) => (
               <Reveal key={f.key} delay={i * 0.08}>
                 <div className="panel-border overflow-hidden rounded-2xl bg-panel/40">
@@ -97,7 +122,7 @@ export default function GalleryPage() {
               Want your event&apos;s formation designed from scratch?
             </h2>
             <p className="mt-4 text-muted">
-              Every Biscope show is bespoke — storyboarded and animated around
+              Every Airimation show is bespoke — storyboarded and animated around
               your theme, colours and story before a single drone flies.
             </p>
             <div className="mt-8">
