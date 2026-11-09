@@ -47,7 +47,7 @@ export default function ShowsPage() {
               <Button href="/contact">
                 Book a Show <ArrowRight size={16} />
               </Button>
-              <Button href="/gallery" variant="ghost">
+              <Button href="/design-your-show" variant="ghost">
                 See the Formations
               </Button>
             </div>

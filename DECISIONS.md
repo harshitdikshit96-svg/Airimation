@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 9 November 2026 (round 3, verified — see §6).*
+the change log. Last updated: 10 November 2026 (round 4).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -99,21 +99,32 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 
 ---
 
-## 3. Animated formations
+## 3. Animated formations — on Design a Show
 
-Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on `/gallery`. Each formation declares the smallest fleet at which it still reads; the fleet dropdown shows only those.
+Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`/design-your-show`** (the gallery page now redirects there). Each formation declares the smallest fleet at which it still reads; the fleet dropdown (100 / 200 / 500 / 800 / 1,500 / 2,000) shows only those, grouped as *Story & culture*, *Sculptures — real 3D scans*, *3D shapes*.
 
 | Fleet | Formations offered |
 |---|---|
-| 100 | Tiranga, Diya, Kamal (lotus), Dil (heart) |
+| 100 | Tiranga, Diya, Kamal, Dil + 9 3D shapes (globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst) |
 | 200 | + Om, Damru, Dhanush-baan |
-| 500, 800, 1,500, 2,000 | + Ganesha, Mahadev, Dragon (all 10) |
+| 500 | + Ganesha, Mahadev, Dragon |
+| 800 | + **Nataraja** (Cleveland 1930.331 scan, ring of fire), **Dancing Shiva** (Minneapolis scan) |
+| 1,500, 2,000 | + **Somaskanda** (Minneapolis scan) — all 22 |
 
-**Flight feasibility** (from the export script at 500 drones — see `Formations/REPORT.md`): the web versions are concept animations. Real show drones fly ~3–8 m/s with ~2–3 m separation.
-- Already near real speed: **Om (3.8 m/s), Ganesha (4.6), Tiranga (6.9)** — spacing still needs widening.
-- Mahadev ~2× too fast (the Ganga flow should become a light effect).
-- Diya, Kamal, Dil 3–4× too fast.
-- Damru, Dhanush-baan, Dragon move far faster than drones can — in a real show these become **light effects** (LEDs chasing along drones that hold still) or much slower motion.
+**Real drone speeds (decided 10 Nov 2026).** Every drone in every formation stays **under 8 m/s**, enforced by `src/lib/cultural/__tests__/speed.test.ts` (every drone, every frame, including the loop wrap). Anything faster is done with **light** on drones that hold still, as real shows do:
+- Dhanush-baan: the draw takes 6 s; at release the arrow's flight is a light-chase along drones parked on the flight path; string and arrow reset in the dark.
+- Damru: one slow turn per 40 s; the beat is a white flash on the drumhead each time a bead's swing peaks.
+- Mahadev: the Ganga holds its shape; ripples of light run down it.
+- Diya: the flame's shape moves slowly; the flicker is brightness and colour.
+- Dragon: one lap per 80 s; fire breath is light on parked drones.
+- Dil: the beat is a light pulse with a 2% swell.
+- Transitions between formations last as long as the distance needs (6–24 s).
+
+Export at 500 drones (`Formations/REPORT.md`): max speed 2.2–7.5 m/s for all. Remaining gap to flight-ready is **separation**: only the scan sculptures (2.8–4.6 m) and Mahadev (2.1 m) already meet ~2–3 m; the rest need spacing widened in Skybrush.
+
+**Depth.** Flat drawings are "inflated" into rounded reliefs (each part bulges from its own edge, `kit.ts > inflate`), so Ganesha, Mahadev, Om, Diya and Dil have volume when orbited. The scans and 3D shapes are true 3D.
+
+**Scans** (`scripts/scan-to-formation.mjs`): GLB → surface samples → farthest-point ordering (any prefix is evenly spread, so one file serves every fleet size) → `src/lib/cultural/scans/<id>.json` (~24 KB). Shading is light: brightness follows each surface normal against a fixed light while the figure turns. Source files and licences: `Airimation/Scans/SOURCES.md`.
 
 **Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`) writes per formation:
 - `<id>.skybrush.zip` — Skybrush Studio for Blender "zipped CSV" import: one CSV per drone, `Time_msec,x_m,y_m,z_m,Red,Green,Blue`, metres, Z up, linear colour. Works on the free community server.
@@ -147,7 +158,27 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 
 ---
 
+### Research → implementation status (10 Nov 2026)
+| Research item | Status |
+|---|---|
+| CC0 museum scans → 3D formations | ✅ 5 downloaded from **Zenodo** (CC0 mirrors; no Sketchfab login): 3 Nataraja, Somaskanda, Uma-Maheshvara. 3 shipped (Nataraja 1930.331, Minneapolis Nataraja, Somaskanda). Uma-Maheshvara (flat stele) and Nataraja c.1100 (duplicate) not shown. |
+| Ganesha scans (Cleveland 1970.62, Minneapolis) and shikhara | ❌ not available as CC0 on Zenodo; Sketchfab needs a login. Our drawn Ganesha stays. |
+| Other Zenodo Natarajas | ⛔ CC BY-NC (non-commercial) — not usable. |
+| Flag and Ashoka Chakra | ✅ Tiranga built in code (3:2, 24 spokes). |
+| Map of India — official outline only | ✅ none on the site (checked both formation libraries). |
+| No traced copyrighted art | ✅ all figures are code, CC0 scans or our own drawings. |
+| Skybrush import formats | ✅ exporter writes zipped-CSV and static-CSV exactly as documented. |
+| Ghat / Taj Mahal / India Gate models | ⏸ no free CC0 source; commercial licence needed — your call. |
+| Competitive risk (Deepotsav, 2,100 drones) | ℹ strategy, not a site change — see §4. |
+
 ## 5. Change log
+
+### 10 Nov 2026 — round 4
+- **Design a Show = the 3D showcase.** `/design-your-show` now shows the fleet-size showcase (100–2,000 drones) with a Request-a-quote CTA. The old formation-picker configurator is **archived** at `/design-your-show/classic` (noindex, not linked) with a note pointing to the new page; old share links `/design-your-show/s/…` still open it. `/gallery` → 308 to `/design-your-show`; Gallery removed from the nav.
+- **Real drone speeds:** every formation re-choreographed under 8 m/s (see §3); speed test added; all motion now loops seamlessly.
+- **3D:** reliefs inflated; 3 CC0 scan sculptures added; 9 3D shapes from the archived designer carried over.
+- Formation buttons grouped; transitions scale with distance.
+- `Scans/` folder in the workspace with the 5 GLBs and `SOURCES.md`; exports regenerated (22 formations).
 
 ### 9 Nov 2026 — round 3
 - **Verified** the whole doc against a production build (§6).
@@ -215,7 +246,9 @@ plan, money, internal roles) and the research in §4 — recorded as given.
 - [ ] Verify the CIN state code ("UW" vs "UP").
 - [ ] Iconography review of Ganesha, Mahadev and Om before promoting them.
 - [ ] Test-import one `*.skybrush.zip` in Skybrush Studio for Blender.
-- [ ] Pick 1–2 CC0 museum scans (Nataraja 1930.331, Ganesha 1970.62) to turn into 3D formations — needs downloading from your Sketchfab account.
+- [x] CC0 scans → 3D formations (Nataraja ×2, Somaskanda shipped, 10 Nov).
+- [ ] A CC0 or licensed Ganesha 3D scan, if one turns up (none free on Zenodo).
+- [ ] Widen spacing to ≥2 m in Skybrush for the drawn figures before any real flight (speeds are already real).
 - [ ] `Airimation_Context_Brief.md` in the workspace is stale (Biscope, New Delhi, Sandeep) — update before sharing.
 - [ ] Choose a new flagship show name (or decide not to have one).
 - [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.

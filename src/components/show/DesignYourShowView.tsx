@@ -1,15 +1,25 @@
+import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import ShowConfiguratorLoader from "@/components/show/ShowConfiguratorLoader";
 import { designYourShow } from "@/lib/content";
 
 /**
- * The /design-your-show page body. Shared by the page itself and by
- * shared-show links (/design-your-show/s/[code]), which open the same page
- * with the sender's show loaded.
+ * ARCHIVED show designer (the formation-picker configurator). Rendered at
+ * /design-your-show/classic and by old share links
+ * (/design-your-show/s/[code]), which open it with the sender's show
+ * loaded. The live Design a Show page is DesignShowcaseView.
  */
-export default function DesignYourShowView({ code }: { code?: string }) {
+export default function DesignYourShowView({ code, archived = true }: { code?: string; archived?: boolean }) {
   return (
     <main className="mx-auto max-w-[1100px] px-6 pb-24 pt-28">
+      {archived && (
+        <p className="mb-8 rounded-lg border border-line-2 px-4 py-3 text-sm text-muted">
+          This is our earlier show designer, kept so shared links still work.{" "}
+          <Link href="/design-your-show" className="text-amber-soft underline-offset-4 hover:underline">
+            Try the new one — 100 to 2,000 drones, in 3D →
+          </Link>
+        </p>
+      )}
       {/* Not <Reveal>: its opacity fade delays LCP until JS runs. */}
       <div className="hero-enter">
         <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">

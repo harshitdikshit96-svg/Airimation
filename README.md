@@ -140,7 +140,7 @@ share links: adding is free, changing an existing one needs a
 
 `src/lib/cultural/` holds figures that MOVE: Ganesha, Mahadev (Shiva),
 damru, dhanush-baan (bow and fire-arrow) and a dragon. They play live in
-3D on `/gallery` (`src/components/gallery/CulturalShowcase.tsx`).
+3D on `/design-your-show` (`src/components/gallery/CulturalShowcase.tsx`).
 
 Each is an `AnimatedFormation` (see `kit.ts`): `build(n)` once per drone
 count, `pose(rig, t, pos, col)` every frame. Two ways to author one:
@@ -167,6 +167,19 @@ writes, per formation, a 600-point cloud (`.points.json`, spec format), a
 preview SVG, one CSV per drone for one loop, and `REPORT.md` with max
 speed and minimum separation — the gap between a concept render and a
 flyable show.
+
+### Scans → formations
+
+Real 3D sculptures become formations with:
+
+```bash
+node scripts/scan-to-formation.mjs path/to/scan.glb my-id --points 2000 [--crop-bottom 0.2] [--rotate-x -90]
+```
+
+then register `src/lib/cultural/scans/my-id.json` in `scans/index.ts` with
+`scanFormation(...)`. **Only CC0 / public-domain scans.** The current ones
+came from Zenodo's CC0 mirrors of the Cleveland Museum of Art and
+Minneapolis Institute of Art releases (see `Airimation/Scans/SOURCES.md`).
 
 ### 3D assets
 

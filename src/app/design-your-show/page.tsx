@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import DesignYourShowView from "@/components/show/DesignYourShowView";
+import DesignShowcaseView from "@/components/show/DesignShowcaseView";
 
 export const metadata: Metadata = {
   title: "Design Your Show | Airimation",
   description:
-    "Choose a fleet size and formations, and watch a drone light show play out over a night sky — so you can picture yours before you book.",
+    "Pick a fleet size — 100 to 2,000 drones — and watch the formations it can fly, from the Tiranga to Ganesha and a dragon, simulated live in 3D at real drone speeds.",
 };
 
 export default function DesignYourShowPage() {
-  return <DesignYourShowView />;
+  return <DesignShowcaseView />;
 }

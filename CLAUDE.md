@@ -87,17 +87,20 @@ module `src/components/swarm/`:
 - `audio.ts` — synthesised Web Audio, muted until the visitor unmutes.
 - Home: `src/components/home/` (`HomeSwarmLoader` → `HomeSwarm`,
   GSAP ScrollTrigger in `homeStory.ts`). `?swarmBeat=0..4` pins a beat.
-- Configurator: `src/components/show/ShowStage.tsx` drives the same swarm
+- Archived configurator: `src/components/show/ShowStage.tsx` drives the same swarm
   from a show plan. Formation library + share-link recipe stay in
   `src/lib/show/` (pure, version-pinned — see SHOW_CONFIGURATOR.md).
 - Posters (`public/posters/`) are rendered from the live scene by
   `scripts/render-poster.mjs`; re-run it when the look changes.
 
-*Animated cultural formations* (`src/lib/cultural/`, live on `/gallery`
-via `src/components/gallery/CulturalShowcase.tsx`) — Ganesha, Shiva, damru,
-bow & arrow, dragon, plus small-fleet ones (tiranga, diya, lotus, heart,
-om). Each declares `minDrones`; the gallery's fleet dropdown (100–2,000)
-offers only what reads at that size. Pure TS (no DOM), posed every frame on the CPU and
+*Animated formations* (`src/lib/cultural/`, live on `/design-your-show`
+via `src/components/gallery/CulturalShowcase.tsx`) — drawn figures
+(Ganesha, Shiva, damru, bow, dragon, tiranga, diya, lotus, heart, om), CC0
+scan sculptures (`scan.ts`, `scans/`, made by `scripts/scan-to-formation.mjs`)
+and 3D shapes wrapped from the archived designer (`classic.ts`). Each
+declares `minDrones`; the fleet dropdown (100–2,000) offers only what
+reads at that size. **Every drone stays under 8 m/s** (`MAX_DRONE_SPEED`,
+enforced by `__tests__/speed.test.ts`) — do fast effects with light. Pure TS (no DOM), posed every frame on the CPU and
 written to the swarm with `SwarmHandle.setPose`. See README > Animated
 cultural formations; `scripts/export-formations.ts` exports them.
 
@@ -142,7 +145,8 @@ than writing bespoke markup per section — follow that pattern for new pages.
 | `/shows` | The show in depth (was `/biscope`, redirects) |
 | `/about` | Company mission, honest positioning, founding team |
 | `/vision` | Build status, the two-track vision (shows, then R&D), dated roadmap |
-| `/gallery` | Concept formation renders |
+| `/gallery` | 308 → `/design-your-show` |
 | `/investors` | Curated, PR-safe figures for investors/grant partners |
 | `/contact` | Contact form (posts to `/api/contact`) |
-| `/design-your-show` | 3D show configurator; shared links at `/design-your-show/s/[code]` with OG image |
+| `/design-your-show` | Fleet-size 3D showcase (100–2,000 drones) + quote CTA |
+| `/design-your-show/classic` | ARCHIVED formation-picker configurator (noindex); old share links `/design-your-show/s/[code]` still open it |
