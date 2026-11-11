@@ -160,7 +160,7 @@ export default function Footer() {
         >
           Designed &amp; Developed by{" "}
           <a
-            href="https://harshitcreates.in"
+            href="https://www.harshitcreates.in"
             target="_blank"
             rel="noopener noreferrer"
             className={clsx(
