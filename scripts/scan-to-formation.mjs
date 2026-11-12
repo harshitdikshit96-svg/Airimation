@@ -3,7 +3,7 @@
 // shading normals, ready for src/lib/cultural/scans.ts.
 //
 //   node scripts/scan-to-formation.mjs <in.glb> <id> [--height 84] [--points 2000]
-//        [--rotate-x -90] [--rotate-y 0] [--tilt-x 40] [--box x0,x1,y0,y1,z0,z1] [--only nodeA,nodeB] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."] [--licence "CC BY 4.0"]
+//        [--rotate-x -90] [--rotate-y 0] [--rotate-z 30] [--tilt-x 40] [--max-extent 130] [--box x0,x1,y0,y1,z0,z1] [--only nodeA,nodeB] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."] [--licence "CC BY 4.0"]
 //
 // What it does:
 //   1. Reads every mesh in the GLB (Meshopt/Draco-free GLBs, as museums ship).
@@ -38,13 +38,15 @@ const HEIGHT = Number(opt("height", 84));
 const POINTS = Number(opt("points", 2000));
 const RX = (Number(opt("rotate-x", 0)) * Math.PI) / 180;
 const RY = (Number(opt("rotate-y", 0)) * Math.PI) / 180;
+// In the picture plane, after the turns: e.g. a dolphin mid-leap.
+const RZ = (Number(opt("rotate-z", 0)) * Math.PI) / 180;
 // Applied last: tips the top of an object toward the audience (+z).
 const TX = (Number(opt("tilt-x", 0)) * Math.PI) / 180;
 // Drop the lowest fraction of the figure (a heavy pedestal eats drones).
 const CROP = Number(opt("crop-bottom", 0));
 // Keep only triangles inside a box, as fractions of the bounds after
 // rotation: "x0,x1,y0,y1,z0,z1" (e.g. the Taj Mahal without its garden).
-// Keep only nodes whose name contains one of these (comma-separated), e.g.
+// Keep only nodes with these names (comma-separated; "Name*" = prefix), e.g.
 // the Taj Mahal's building and towers without its garden and trees.
 const ONLY = opt("only", "") ? opt("only", "").split(",") : null;
 const BOX = opt("box", "") ? opt("box", "").split(",").map(Number) : null;
@@ -63,7 +65,7 @@ const mul = (m, p) => [
 for (const node of doc.getRoot().listNodes()) {
   const mesh = node.getMesh();
   if (!mesh) continue;
-  if (ONLY && !ONLY.some((name) => node.getName().includes(name))) continue;
+  if (ONLY && !ONLY.some((o) => (o.endsWith("*") ? node.getName().startsWith(o.slice(0, -1)) : node.getName() === o))) continue;
   const m = node.getWorldMatrix();
   for (const prim of mesh.listPrimitives()) {
     const pos = prim.getAttribute("POSITION");
@@ -81,6 +83,7 @@ const rot = (p) => {
   let [x, y, z] = p;
   [y, z] = [y * Math.cos(RX) - z * Math.sin(RX), y * Math.sin(RX) + z * Math.cos(RX)];
   [x, z] = [x * Math.cos(RY) + z * Math.sin(RY), -x * Math.sin(RY) + z * Math.cos(RY)];
+  [x, y] = [x * Math.cos(RZ) - y * Math.sin(RZ), x * Math.sin(RZ) + y * Math.cos(RZ)];
   [y, z] = [y * Math.cos(TX) - z * Math.sin(TX), y * Math.sin(TX) + z * Math.cos(TX)];
   return [x, y, z];
 };
@@ -161,7 +164,11 @@ for (const i of order) {
   minY = Math.min(minY, cand[i * 3 + 1]); maxY = Math.max(maxY, cand[i * 3 + 1]);
   minZ = Math.min(minZ, cand[i * 3 + 2]); maxZ = Math.max(maxZ, cand[i * 3 + 2]);
 }
-const scale = HEIGHT / (maxY - minY);
+// --max-extent caps the longest side (a whale or a car normalised to 84 m
+// tall would be hundreds of metres long); the figure is then shorter.
+const MAX_EXTENT = Number(opt("max-extent", 0));
+let scale = HEIGHT / (maxY - minY);
+if (MAX_EXTENT > 0) scale = Math.min(scale, MAX_EXTENT / Math.max(maxX - minX, maxY - minY, maxZ - minZ));
 const cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2;
 // int16 over +-128 m: 4 mm resolution, plenty.
 const Q = 32767 / 128;
@@ -179,7 +186,7 @@ const out = {
   label: opt("label", id),
   credit: opt("credit", ""),
   licence: opt("licence", "CC0 1.0"),
-  height: HEIGHT,
+  height: +((maxY - minY) * scale).toFixed(1),
   width: +((maxX - minX) * scale).toFixed(1),
   depth: +((maxZ - minZ) * scale).toFixed(1),
   count: POINTS,

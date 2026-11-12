@@ -39,11 +39,10 @@ const withCredit = (json: unknown, label: string, credit: string) => ({ ...(json
 /** Small objects first (they read at 100 drones), sculptures after. */
 export const SCANS: AnimatedFormation<unknown>[] = [
   scanFormation(f(diya), {
-    blurb: "A terracotta oil lamp, scanned — lit at its spout.",
+    blurb: "A clay diya, its flame flickering.",
     colors: ["#ff6a1f", "#ffc890"],
-    motion: "sway",
-    sway: 24,
     effect: "flame",
+    flameAt: "top",
     minDrones: 100,
   }),
   scanFormation(f(dil), {

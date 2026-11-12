@@ -61,6 +61,8 @@ export type ScanOptions = {
   /** Sway half-angle, degrees. */
   sway?: number;
   effect?: Effect;
+  /** Flame: at the spout (a lamp with a nozzle) or on the wick at the top centre (a round diya). */
+  flameAt?: "spout" | "top";
   minDrones?: number;
   theme?: Theme;
 };
@@ -182,13 +184,27 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
         // spout-sideways by the converter). The flame is ~10% of the fleet,
         // taken from the END of the list so the lamp stays evenly sampled.
         let tip = 0;
-        for (let i = 0; i < m; i++) if (p[i * 3] > p[tip * 3]) tip = i;
-        const tx = p[tip * 3] - W * 0.04;
+        if (opts.flameAt === "top") {
+          // Highest drone near the vertical axis: the wick.
+          let best = -Infinity;
+          for (let i = 0; i < m; i++) {
+            if (Math.hypot(p[i * 3], p[i * 3 + 2]) < W * 0.2 && p[i * 3 + 1] > best) {
+              best = p[i * 3 + 1];
+              tip = i;
+            }
+          }
+        } else {
+          for (let i = 0; i < m; i++) if (p[i * 3] > p[tip * 3]) tip = i;
+        }
+        const tx = p[tip * 3] - (opts.flameAt === "top" ? 0 : W * 0.04);
         const ty = p[tip * 3 + 1] + 1.5;
         const tz = p[tip * 3 + 2];
         const F = Math.max(6, Math.round(n * 0.1));
-        const FH = H * 0.42;
-        const FR = H * 0.09;
+        // A wide, shallow diya sizes its flame by its width, a tall lamp by its height.
+        const ref = opts.flameAt === "top" ? Math.max(H, W * 0.9) : H;
+        // The wick sits low in a bowl, so its flame must rise well clear of the rim.
+        const FH = ref * (opts.flameAt === "top" ? 0.75 : 0.42);
+        const FR = ref * 0.09;
         const golden = Math.PI * (3 - Math.sqrt(5));
         for (let k = 0; k < F; k++) {
           const i = n - F + k;

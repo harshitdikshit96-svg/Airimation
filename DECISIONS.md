@@ -128,6 +128,16 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
 | 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
 
+**From Sketchfab (12 Nov 2026), 29 more** in `scans/sketchfab.ts` — all CC0 or CC BY 4.0, credited on `/credits`:
+- *Culture:* Standing Ganesha (CMA 1970.62, CC0), Temple tower (CMA 1971.167 Sikhara, CC0), and a clay **Diya** with a lit wick (replaces the Roman lamp).
+- *Landmarks:* Charminar, India Gate, Qutub Minar, Eiffel Tower, Burj Khalifa, Statue of Liberty, Big Ben.
+- *Animals:* tiger, elephant, lion, horse (galloping), eagle, owl, butterfly, dolphin (leaping), whale, koi.
+- *Travel:* classic car (the Hindustan Ambassador model — labelled "Classic car", the name is a trademark), auto-rickshaw, bicycle, biplane (CC0), Space Shuttle Discovery (Smithsonian, CC0), hot-air balloon.
+- *Objects:* sitar, violin, rose.
+- Tried and dropped: steam train (flattens to a slab), crown (reads as a dome), junk ship (150 MB).
+
+A **Theme** filter (All / Culture & devotion / Landmarks / Animals / Travel / Objects / Shapes) sits beside Fleet — 55 formations at 2,000 drones. Long models are capped at 130 m (`--max-extent`).
+
 All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are on `/credits`** (linked from the footer, noindex), not on Design a Show (12 Nov 2026) — CC BY 4.0 requires the attribution to be on the site.
 
 **Motion and light.** Models turn on a turntable; flat ones (lamp, heart, bow) sway ±24–30° so they never go edge-on. Effects are light only and add no drones outside the model: diya flame (10% of the fleet, at the spout), heartbeat pulse, drum heads flashing, a pulse running along the arrow, Nataraja's ring of fire. A test checks every drone stays within the model's bounds (the old Dhanush-baan's streak of extra lights is gone).
@@ -246,6 +256,11 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 8
+- **29 formations from Sketchfab** (§3) — Indian and world landmarks, animals, vehicles, instruments; Cleveland Ganesha and Sikhara; a proper clay diya.
+- **Theme filter** on Design a Show.
+- Converter: `--rotate-z`, `--max-extent`, `--only` exact names with `Name*` prefixes.
+
 ### 12 Nov 2026 — round 7
 - **Nine new formations** from §4b: Shankh, Nandi, Taj Mahal (CC BY); Hanuman, Vishnu on Garuda (CC0); Trishul, Kalash, Om, Kamal **modelled by Airimation** in Blender (`scripts/blender/make-symbols.py`, GLBs in `Scans/made/`). 27 formations in all.
 - Dropped *Krishna Lifting Govardhan* (CMA): the scan is a broken fragment (legs missing, mountain a slab) and does not read as drones.
@@ -301,7 +316,7 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 | Command | What it covers | Last run |
 |---|---|---|
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
-| `npm test` | 184 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 184/184, 12 Nov 2026 |
+| `npm test` | 351 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 351/351, 12 Nov 2026 |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 |
 | `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link | ✅ 54/54, 12 Nov 2026 |
 
@@ -322,7 +337,8 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
-- [ ] Next from §4b: Cleveland Ganesha 1970.62 and the Sikhara from Sketchfab (needs your login); a Ram figure and Ram Mandir need a 3D artist.
+- [ ] A Ram figure and Ram Mandir need a 3D artist (no open model).
+- [ ] With 55 formations, consider fewer on small screens or a search box.
 - [ ] Better source model when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) — or model one in Blender.
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
 

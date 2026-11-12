@@ -52,7 +52,9 @@ describe("3D model files", () => {
       if (file.licence === "Airimation") expect(file.credit).toMatch(/Modelled by Airimation/);
       if (file.licence === "CC BY 4.0") expect(file.credit).toMatch(/CC BY 4\.0/);
       expect(file.credit).not.toMatch(/\bNC\b|\bSA\b|\bND\b|non-commercial/i);
-      expect(file.height).toBe(84);
+      expect(file.height).toBeGreaterThan(20);
+      expect(file.height).toBeLessThanOrEqual(84);
+      expect(Math.max(file.width, file.depth)).toBeLessThanOrEqual(150);
       const pos = Buffer.from(file.pos, "base64");
       const nrm = Buffer.from(file.nrm, "base64");
       expect(pos.byteLength).toBe(file.count * 3 * 2);
@@ -76,7 +78,7 @@ describe("light effects never add stray drones", () => {
       // The loosed arrow flies 48 m beyond the bow, so check the bow at rest
       // (t = 0); its flight is tested on its own below.
       const reach = Math.hypot(file.width, file.depth) / 2 + 2;
-      const top = SHOW_ALT + file.height / 2 + (f.id === "diya" ? file.height * 0.45 : 1);
+      const top = SHOW_ALT + file.height / 2 + (f.id === "diya" ? Math.max(file.height, file.width) * 0.8 : 1);
       for (let i = 0; i < n; i++) {
         const [x, y, z] = [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]];
         expect(Math.hypot(x, z), `${f.id} drone ${i}`).toBeLessThanOrEqual(reach);
@@ -115,22 +117,19 @@ describe("light effects never add stray drones", () => {
     expect(moved.length).toBeGreaterThan(2);
   });
 
-  test("the diya has a lit flame above its spout", () => {
+  test("the diya has a lit flame above its wick", () => {
     const f = CULTURAL.find((x) => x.id === "diya")!;
     const n = 500;
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
     f.pose(f.build(n), 1, pos, col);
-    // The flame is the last 10% of the list, standing on the spout tip (the
-    // lamp drone furthest along +x) and rising above it.
+    // The flame is the last 10% of the list, standing on the wick (the
+    // highest lamp drone near the vertical axis) and rising above the lamp.
     const flame = Array.from({ length: 50 }, (_, k) => n - 50 + k);
-    let tip = 0;
-    for (let i = 0; i < n - 50; i++) if (pos[i * 3] > pos[tip * 3]) tip = i;
-    for (const i of flame) {
-      expect(pos[i * 3 + 1]).toBeGreaterThanOrEqual(pos[tip * 3 + 1]);
-      expect(Math.hypot(pos[i * 3] - pos[tip * 3], pos[i * 3 + 2] - pos[tip * 3 + 2])).toBeLessThan(15);
-    }
-    expect(Math.max(...flame.map((i) => pos[i * 3 + 1])) - pos[tip * 3 + 1]).toBeGreaterThan(20);
+    const body = Array.from({ length: n - 50 }, (_, i) => i);
+    const maxBody = Math.max(...body.map((i) => pos[i * 3 + 1]));
+    expect(Math.max(...flame.map((i) => pos[i * 3 + 1]))).toBeGreaterThan(maxBody + 10);
+    for (const i of flame) expect(Math.hypot(pos[i * 3], pos[i * 3 + 2])).toBeLessThan(30);
     for (const i of flame) expect(col[i * 3] + col[i * 3 + 1]).toBeGreaterThan(0.3);
   });
 });

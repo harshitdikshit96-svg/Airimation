@@ -13,6 +13,7 @@ import type { AnimatedFormation } from "./kit";
 import { tiranga } from "./tiranga";
 import { CLASSIC_3D } from "./classic";
 import { SCANS } from "./scans";
+import { SKETCHFAB } from "./scans/sketchfab";
 
 export type { AnimatedFormation } from "./kit";
 export { SHOW_ALT, THEMES, type Theme } from "./kit";
@@ -20,6 +21,7 @@ export { SHOW_ALT, THEMES, type Theme } from "./kit";
 export const CULTURAL: AnimatedFormation<unknown>[] = [
   tiranga,
   ...SCANS,
+  ...SKETCHFAB,
   ...CLASSIC_3D,
 ] as AnimatedFormation<unknown>[];
 

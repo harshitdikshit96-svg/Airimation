@@ -19,6 +19,35 @@ import tajMahal from "../scans/taj-mahal.json";
 import hanuman from "../scans/hanuman.json";
 import vishnuGaruda from "../scans/vishnu-garuda.json";
 
+import charminar from "../scans/charminar.json";
+import indiaGate from "../scans/india-gate.json";
+import qutubMinar from "../scans/qutub-minar.json";
+import sikhara from "../scans/sikhara.json";
+import ganeshaStanding from "../scans/ganesha-standing.json";
+import sitar from "../scans/sitar.json";
+import violin from "../scans/violin.json";
+import rose from "../scans/rose.json";
+import eiffelTower from "../scans/eiffel-tower.json";
+import burjKhalifa from "../scans/burj-khalifa.json";
+import statueOfLiberty from "../scans/statue-of-liberty.json";
+import bigBen from "../scans/big-ben.json";
+import tiger from "../scans/tiger.json";
+import elephant from "../scans/elephant.json";
+import lion from "../scans/lion.json";
+import horse from "../scans/horse.json";
+import eagle from "../scans/eagle.json";
+import owl from "../scans/owl.json";
+import butterfly from "../scans/butterfly.json";
+import dolphin from "../scans/dolphin.json";
+import whale from "../scans/whale.json";
+import koi from "../scans/koi.json";
+import classicCar from "../scans/classic-car.json";
+import autoRickshaw from "../scans/auto-rickshaw.json";
+import bicycle from "../scans/bicycle.json";
+import biplane from "../scans/biplane.json";
+import spaceShuttle from "../scans/space-shuttle.json";
+import hotAirBalloon from "../scans/hot-air-balloon.json";
+
 const files: Record<string, ScanFile> = {
   cmaNataraja: { ...(cmaNataraja as ScanFile), credit: "Cleveland Museum of Art, CC0" },
   miaNataraja: { ...(miaNataraja as ScanFile), credit: "Minneapolis Institute of Art, CC0" },
@@ -29,6 +58,34 @@ const files: Record<string, ScanFile> = {
   dragon: dragon as ScanFile,
   diya: diya as ScanFile,
   dil: dil as ScanFile,
+  charminar: charminar as ScanFile,
+  indiaGate: indiaGate as ScanFile,
+  qutubMinar: qutubMinar as ScanFile,
+  sikhara: sikhara as ScanFile,
+  ganeshaStanding: ganeshaStanding as ScanFile,
+  sitar: sitar as ScanFile,
+  violin: violin as ScanFile,
+  rose: rose as ScanFile,
+  eiffelTower: eiffelTower as ScanFile,
+  burjKhalifa: burjKhalifa as ScanFile,
+  statueOfLiberty: statueOfLiberty as ScanFile,
+  bigBen: bigBen as ScanFile,
+  tiger: tiger as ScanFile,
+  elephant: elephant as ScanFile,
+  lion: lion as ScanFile,
+  horse: horse as ScanFile,
+  eagle: eagle as ScanFile,
+  owl: owl as ScanFile,
+  butterfly: butterfly as ScanFile,
+  dolphin: dolphin as ScanFile,
+  whale: whale as ScanFile,
+  koi: koi as ScanFile,
+  classicCar: classicCar as ScanFile,
+  autoRickshaw: autoRickshaw as ScanFile,
+  bicycle: bicycle as ScanFile,
+  biplane: biplane as ScanFile,
+  spaceShuttle: spaceShuttle as ScanFile,
+  hotAirBalloon: hotAirBalloon as ScanFile,
   shankh: shankh as ScanFile,
   trishul: trishul as ScanFile,
   kalash: kalash as ScanFile,

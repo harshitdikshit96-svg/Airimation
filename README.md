@@ -180,7 +180,7 @@ speed and minimum separation.
 ### Tests
 
 ```bash
-npm test                                   # 184 unit tests (vitest), seconds
+npm test                                   # 351 unit tests (vitest), seconds
 npm run build && npm run start             # then, in another terminal:
 npm run test:e2e -- http://localhost:3000  # 54 checks in Chrome
 ```
