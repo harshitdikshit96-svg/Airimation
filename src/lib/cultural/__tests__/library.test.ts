@@ -70,6 +70,8 @@ describe("light effects never add stray drones", () => {
       const col = new Float32Array(n * 3);
       f.pose(rig, 0, pos, col);
       const file = Object.values(scanFiles).find((s) => s.id === f.id)!;
+      // The loosed arrow flies 48 m beyond the bow, so check the bow at rest
+      // (t = 0); its flight is tested on its own below.
       const reach = Math.hypot(file.width, file.depth) / 2 + 2;
       const top = SHOW_ALT + file.height / 2 + (f.id === "diya" ? file.height * 0.45 : 1);
       for (let i = 0; i < n; i++) {
@@ -80,6 +82,35 @@ describe("light effects never add stray drones", () => {
       }
     });
   }
+
+  test("the bow fires: the arrow draws back, flies off lit, returns dark", () => {
+    const f = CULTURAL.find((x) => x.id === "dhanush-baan")!;
+    const n = 800;
+    const rig = f.build(n);
+    const at = (t: number) => {
+      const pos = new Float32Array(n * 3);
+      const col = new Float32Array(n * 3);
+      f.pose(rig, t, pos, col);
+      return { pos, col };
+    };
+    const rest = at(0);
+    const drawn = at(3.5);
+    const flying = at(9);
+    const returning = at(16);
+    // Arrow drones: those whose x changes during flight.
+    const arrow = Array.from({ length: n }, (_, i) => i).filter((i) => Math.abs(flying.pos[i * 3] - rest.pos[i * 3]) > 20);
+    expect(arrow.length).toBeGreaterThan(10);
+    expect(arrow.length).toBeLessThan(n / 3);
+    for (const i of arrow) {
+      expect(drawn.pos[i * 3]).toBeLessThan(rest.pos[i * 3]); // pulled back
+      expect(flying.pos[i * 3]).toBeGreaterThan(rest.pos[i * 3] + 20); // loosed
+      expect(flying.col[i * 3] + flying.col[i * 3 + 1]).toBeGreaterThan(0.3); // lit in flight
+      expect(returning.col[i * 3] + returning.col[i * 3 + 1] + returning.col[i * 3 + 2]).toBe(0); // dark on the way back
+    }
+    // The string bends back at the nock while drawn.
+    const moved = Array.from({ length: n }, (_, i) => i).filter((i) => !arrow.includes(i) && drawn.pos[i * 3] < rest.pos[i * 3] - 2);
+    expect(moved.length).toBeGreaterThan(2);
+  });
 
   test("the diya has a lit flame above its spout", () => {
     const f = CULTURAL.find((x) => x.id === "diya")!;

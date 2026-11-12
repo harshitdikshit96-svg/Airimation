@@ -2,7 +2,6 @@ import Reveal from "@/components/ui/Reveal";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
 import GlowCard from "@/components/ui/GlowCard";
-import CinematicSwarmHero from "@/components/visual/CinematicSwarmHero";
 import {
   processSteps,
   droneSpecs,
@@ -26,16 +25,12 @@ export default function ShowsPage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative flex min-h-[86vh] items-center overflow-hidden border-b border-line-2 bg-navy px-6">
-        <div className="absolute inset-0">
-          <CinematicSwarmHero />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/60 to-navy/20" />
-        </div>
-
-        <div className="relative mx-auto w-full max-w-[1052px] py-24">
+      {/* Same hero as the other inner pages: copy over the site backdrop. */}
+      <section className="border-b border-line-2 px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>The Show</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-6xl">
+            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               A swarm of light, choreographed to the second.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">

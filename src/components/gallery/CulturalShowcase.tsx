@@ -307,9 +307,6 @@ export default function CulturalShowcase() {
           Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360°
         </p>
       </div>
-      {current.credit && (
-        <p className="mt-2 text-[11px] leading-snug text-dim">Source: {current.credit}</p>
-      )}
 
       <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Formation">

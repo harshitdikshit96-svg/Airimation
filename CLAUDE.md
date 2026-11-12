@@ -118,8 +118,8 @@ Home starts its live scene right after load (not on scroll).
 count or materials (a mid-scroll rebuild is a visible freeze). 2D canvases
 use `visibleRaf` so they sleep off-screen.
 
-*2D (shows hero, academy)* — canvas 2D: `src/lib/swarmShapes.ts`
-generators, `CinematicSwarmHero.tsx`, `AcademySwarmHero.tsx`. (The 2D
+*2D (academy)* — canvas 2D: `src/lib/swarmShapes.ts`
+generators, `AcademySwarmHero.tsx`. (The 2D
 gallery cards were removed in Nov 2026.)
 
 All of it is presented honestly as "concept renders" (gallery copy, the

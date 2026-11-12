@@ -146,9 +146,16 @@ export default function Footer() {
         >
           <span>© {new Date().getFullYear()} {company.legalName}. All rights reserved.</span>
           <span>
-            {isInternal
-              ? "Internal use only — not for external distribution."
-              : "Show visuals are concept renders — our first shows are in preparation."}
+            {isInternal ? (
+              "Internal use only — not for external distribution."
+            ) : (
+              <>
+                Show visuals are concept renders — our first shows are in preparation.{" "}
+                <Link href="/credits" className="underline transition-colors hover:text-ink">
+                  3D model credits
+                </Link>
+              </>
+            )}
           </span>
         </div>
 

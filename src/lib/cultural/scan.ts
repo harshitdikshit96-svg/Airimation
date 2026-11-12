@@ -5,9 +5,9 @@
 // The point list is farthest-point ordered, so the first n points are an
 // even sampling for any fleet size n.
 //
-// Motion (real drone speeds): a slow turntable turn, or for flat objects
-// (a bow, a lamp, a heart) a gentle sway, so they never turn edge-on to
-// the audience. The loop is long enough that the outermost drone stays
+// Motion (real drone speeds): a slow turntable turn; for flat objects (a
+// lamp, a heart) a gentle sway, so they never turn edge-on to the
+// audience; or "still" (the bow, so the shot reads). The loop is long enough that the outermost drone stays
 // under the speed limit.
 //
 // Shading is LIGHT: each drone's brightness follows its surface normal
@@ -19,7 +19,10 @@
 //             of the list, so the lamp itself stays evenly sampled)
 //   beat      a double heartbeat pulse of brightness
 //   strike    the drum's two heads flash in turn
-//   arrow     a pulse of light runs along the arrow to its head
+//   arrow     the bow FIRES: the string and arrow draw back, the arrow is
+//             loosed and flies off at drone speed, then returns in the
+//             dark (LEDs off) and relights on the string. String and
+//             arrow drones are the model's own; nothing is added.
 
 import { AnimatedFormation, MAX_DRONE_SPEED, SHOW_ALT, TAU, clamp, hex, mixRGB, type RGB } from "./kit";
 
@@ -43,7 +46,7 @@ type Rig = {
   n: number;
   p: Float32Array;
   nrm: Float32Array;
-  /** Per drone: 0 model, 1 effect group (ring / flame / drum head / arrow). */
+  /** Per drone: 0 model, 1 effect group (ring / flame / drum head / arrow), 2 bow string. */
   tag: Uint8Array;
   /** Per drone: effect parameter (flame height 0..1, position along arrow 0..1, drum head ±1). */
   e: Float32Array;
@@ -54,7 +57,7 @@ export type ScanOptions = {
   blurb: string;
   /** [base, highlight] hex colours. */
   colors: [string, string];
-  motion?: "turn" | "sway";
+  motion?: "turn" | "sway" | "still";
   /** Sway half-angle, degrees. */
   sway?: number;
   effect?: Effect;
@@ -77,6 +80,45 @@ const FLAME_CORE = hex("#fff4c8");
 const FLAME_EDGE = hex("#ff6a1a");
 const HIGHLIGHT_LIGHT = [-0.45, 0.55, 0.7];
 
+/**
+ * The bow's shot, in seconds of one loop. Every drone stays under the
+ * 8 m/s limit: the draw is 8 m in 3 s, the string springs back over 2 s,
+ * the arrow flies 56 m at 7 m/s, and it returns (dark) over 10 s.
+ */
+const ARROW = {
+  loop: 24,
+  drawEnd: 3,
+  release: 4,
+  stringBack: 2,
+  flightEnd: 12,
+  fadeFrom: 10.5,
+  returnEnd: 22,
+  relit: 23,
+  draw: 8,
+  speed: 7,
+};
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = clamp((x - a) / (b - a), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+
+/** Arrow and string offsets (metres along x) and arrow brightness at time t. */
+export function arrowShot(t: number): { arrow: number; string: number; light: number } {
+  const A = ARROW;
+  const p = ((t % A.loop) + A.loop) % A.loop;
+  const flown = -A.draw + A.speed * (A.flightEnd - A.release);
+  let arrow: number;
+  let light = 1;
+  if (p < A.release) arrow = -A.draw * smoothstep(0, A.drawEnd, p);
+  else if (p < A.flightEnd) arrow = -A.draw + A.speed * (p - A.release);
+  else arrow = flown * (1 - smoothstep(A.flightEnd, A.returnEnd, p));
+  if (p >= A.fadeFrom && p < A.flightEnd) light = 1 - (p - A.fadeFrom) / (A.flightEnd - A.fadeFrom);
+  else if (p >= A.flightEnd && p < A.returnEnd) light = 0;
+  else if (p >= A.returnEnd && p < A.relit) light = p - A.returnEnd;
+  const string = p < A.release ? arrow : -A.draw * (1 - smoothstep(A.release, A.release + A.stringBack, p));
+  return { arrow, string, light };
+}
+
 export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormation<Rig> {
   const motion = opts.motion ?? "turn";
   const swayAmp = ((opts.sway ?? 28) * Math.PI) / 180;
@@ -85,10 +127,14 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
   const reach = Math.hypot(file.width, file.depth) / 2 + (opts.effect === "flame" ? 8 : 0);
   const budget = MAX_DRONE_SPEED - 1;
   const loop =
-    motion === "turn"
-      ? Math.max(48, Math.ceil((TAU * reach) / budget))
-      : // Sway: peak angular speed is amp * 2π / loop.
-        Math.max(16, Math.ceil((reach * swayAmp * TAU) / budget));
+    opts.effect === "arrow"
+      ? ARROW.loop
+      : motion === "turn"
+        ? Math.max(48, Math.ceil((TAU * reach) / budget))
+        : motion === "still"
+          ? 16
+          : // Sway: peak angular speed is amp * 2π / loop.
+            Math.max(16, Math.ceil((reach * swayAmp * TAU) / budget));
   const base = hex(opts.colors[0]);
   const highlight = hex(opts.colors[1]);
   let cache: { pos: Int16Array; nrm: Int8Array } | null = null;
@@ -180,19 +226,40 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
           }
         }
         const ay = yN ? ySum / yN : H / 2;
-        let minX = Infinity;
-        for (let i = 0; i < n; i++) if (Math.abs(p[i * 3 + 1] - ay) < 1.8) minX = Math.min(minX, p[i * 3]);
+        // The string: the straight line at the bow's back. Found at
+        // mid-height (the limb tips reach further back than the string),
+        // it is the rearmost line of drones. Each string drone remembers how
+        // far it is from the nock (0) to the bow tips (1), so the draw
+        // bends it into a V. String drones never fly with the arrow.
+        let backX = Infinity;
         for (let i = 0; i < n; i++) {
-          if (Math.abs(p[i * 3 + 1] - ay) < 1.8) {
+          const dy = Math.abs(p[i * 3 + 1] - ay);
+          if (dy > 3 && dy < H * 0.3) backX = Math.min(backX, p[i * 3]);
+        }
+        const atString = (i: number) => Math.abs(p[i * 3] - backX) < 1.2;
+        let minX = Infinity;
+        for (let i = 0; i < n; i++) if (Math.abs(p[i * 3 + 1] - ay) < 1.8 && !atString(i)) minX = Math.min(minX, p[i * 3]);
+        for (let i = 0; i < n; i++) {
+          if (Math.abs(p[i * 3 + 1] - ay) < 1.8 && !atString(i)) {
             tag[i] = 1;
             e[i] = clamp((p[i * 3] - minX) / Math.max(1, maxX - minX), 0, 1);
+          }
+        }
+        const onString = (i: number) => !tag[i] && atString(i);
+        let half = 1;
+        for (let i = 0; i < n; i++) if (onString(i)) half = Math.max(half, Math.abs(p[i * 3 + 1] - ay));
+        for (let i = 0; i < n; i++) {
+          if (onString(i)) {
+            tag[i] = 2;
+            e[i] = Math.abs(p[i * 3 + 1] - ay) / half;
           }
         }
       }
       return { n, p, nrm, tag, e, h: H };
     },
     pose(rig, t, pos, col) {
-      const a = motion === "turn" ? (TAU * t) / loop : swayAmp * Math.sin((TAU * t) / loop);
+      const a = motion === "turn" ? (TAU * t) / loop : motion === "sway" ? swayAmp * Math.sin((TAU * t) / loop) : 0;
+      const shot = opts.effect === "arrow" ? arrowShot(t) : null;
       const ca = Math.cos(a);
       const sa = Math.sin(a);
       const L = HIGHLIGHT_LIGHT;
@@ -200,8 +267,10 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
       const beatPhase = (t % 1.2) / 1.2;
       const beat = Math.exp(-((beatPhase - 0.08) ** 2) / 0.002) + 0.7 * Math.exp(-((beatPhase - 0.3) ** 2) / 0.002);
       for (let i = 0; i < rig.n; i++) {
-        const x = rig.p[i * 3];
+        let x = rig.p[i * 3];
         const y = rig.p[i * 3 + 1];
+        if (shot && rig.tag[i] === 1) x += shot.arrow;
+        else if (shot && rig.tag[i] === 2) x += shot.string * (1 - rig.e[i]);
         const z = rig.p[i * 3 + 2];
         const rx = x * ca + z * sa;
         const rz = -x * sa + z * ca;
@@ -231,12 +300,11 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
             const hit = rig.e[i] > 0 ? Math.exp(-phase * 9) : Math.exp(-((phase + 0.5) % 1) * 9);
             c = mixRGB(c, hex("#fff6e0"), hit);
             k = k * (0.8 + 1.1 * hit);
-          } else if (opts.effect === "arrow") {
-            // A pulse runs from nock to head every 3 s; the head stays hot.
-            const front = (t % 3) / 3;
-            const glow = Math.exp(-((rig.e[i] - front) ** 2) / 0.004);
-            c = mixRGB(c, hex("#fff2c0"), clamp(glow + (rig.e[i] > 0.9 ? 0.6 : 0), 0, 1));
-            k = 0.8 + 1.0 * glow + (rig.e[i] > 0.9 ? 0.4 : 0);
+          } else if (opts.effect === "arrow" && shot && rig.tag[i] === 1) {
+            // The arrow burns bright, its head white-hot; dark on the way back.
+            const head = rig.e[i] > 0.85 ? 1 : 0;
+            c = mixRGB(c, hex("#fff2c0"), 0.3 + 0.7 * head);
+            k = (1.1 + 0.6 * head) * shot.light;
           }
         }
         if (opts.effect === "beat") k *= 0.7 + 0.55 * beat;

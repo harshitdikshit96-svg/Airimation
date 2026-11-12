@@ -51,10 +51,9 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     minDrones: 100,
   }),
   scanFormation(f(dhanushBaan), {
-    blurb: "A drawn bow, the arrow nocked — light runs to its head.",
+    blurb: "The bow is drawn and the arrow loosed — it flies off and returns, dark, to the string.",
     colors: ["#ffc246", "#fff3d6"],
-    motion: "sway",
-    sway: 30,
+    motion: "still",
     effect: "arrow",
     minDrones: 100,
   }),

@@ -111,7 +111,7 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Diya | "Terracotta lamp", Institute of Classical Studies, London (harlehrenberg) + a light-only flame | CC BY 4.0 | 100 |
 | Dil | Heart-shaped snuffbox, Sosenko Family Foundation / Virtual Małopolska | CC0 | 100 |
 | Damru | "Damru – Small Two Headed Drum" (INDIANMONSTERYT) | CC BY 4.0 | 100 |
-| Dhanush-baan | "Bow & Arrow" (MOJackal); arrow nocked by `scripts/nock-arrow.mjs` | CC BY 4.0 | 100 |
+| Dhanush-baan | "Bow & Arrow" (MOJackal); arrow nocked by `scripts/nock-arrow.mjs`. **Fires:** string and arrow draw back 8 m, the arrow is loosed and flies 56 m at 7 m/s, returns dark, relights (24 s loop) | CC BY 4.0 | 100 |
 | Ganesha | Ganesha, 10th–11th C, Minneapolis Institute of Art | CC0 | 500 |
 | Dragon | "Dragon statuette" (norgeotloic, from a jschmidtcreaform scan) | CC BY 4.0 | 500 |
 | Nataraja | 1930.331, Cleveland Museum of Art (ring of fire) | CC0 | 800 |
@@ -119,7 +119,7 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
 | 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
 
-All GLBs and their record numbers: workspace `Scans/SOURCES.md`.
+All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are on `/credits`** (linked from the footer, noindex), not on Design a Show (12 Nov 2026) — CC BY 4.0 requires the attribution to be on the site.
 
 **Motion and light.** Models turn on a turntable; flat ones (lamp, heart, bow) sway ±24–30° so they never go edge-on. Effects are light only and add no drones outside the model: diya flame (10% of the fleet, at the spout), heartbeat pulse, drum heads flashing, a pulse running along the arrow, Nataraja's ring of fire. A test checks every drone stays within the model's bounds (the old Dhanush-baan's streak of extra lights is gone).
 
@@ -174,6 +174,11 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 6
+- **Dhanush-baan fires** (draw, loose, flight, dark return); bow faces the audience instead of swaying.
+- Model credits moved off Design a Show to **`/credits`**, linked from the footer.
+- **`/shows` hero** now matches the other pages (no own 2D animation or solid background; the site backdrop shows). `CinematicSwarmHero` removed.
+
 ### 12 Nov 2026 — round 5 (branch `feat/showcase-models`)
 - **Home:** the live 3D scene starts right after load, not on the first scroll (the still poster used to "come alive" with a shimmer). Scroll only drives the drones.
 - **Steady backdrop on every page:** the dusk sky, river and skyline the home page settles on (under the team section), darkened the same way. A still image (`public/posters/backdrop*.jpg`, rendered from the live scene), not WebGL. Not on `/internal`.
@@ -219,7 +224,7 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 | Command | What it covers | Last run |
 |---|---|---|
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
-| `npm test` | 129 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 129/129, 12 Nov 2026 |
+| `npm test` | 130 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 130/130, 12 Nov 2026 |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 |
 | `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, LED hues, fleet change | ✅ 47/47, 12 Nov 2026 |
 
