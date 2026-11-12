@@ -3,7 +3,7 @@ import SectionLabel from "@/components/ui/SectionLabel";
 import Button from "@/components/ui/Button";
 import FounderAvatar from "@/components/team/FounderAvatar";
 import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
-import { ArrowRight, ExternalLink, Mail } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -54,17 +54,8 @@ function MemberRow({ member }: { member: TeamMember }) {
               {member.intro}
             </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-x-6 sm:mt-4">
-              {member.email && (
-                <a
-                  href={`mailto:${member.email}`}
-                  className="inline-flex min-h-11 items-center gap-2 text-sm text-dim transition-colors hover:text-ink"
-                >
-                  <Mail size={14} className="shrink-0 text-cyan-soft" />
-                  {member.email}
-                </a>
-              )}
-              {member.profile && (
+            {member.profile && (
+              <div className="mt-3 flex flex-wrap items-center gap-x-6 sm:mt-4">
                 <a
                   href={member.profile}
                   target="_blank"
@@ -74,8 +65,8 @@ function MemberRow({ member }: { member: TeamMember }) {
                   <ExternalLink size={14} className="shrink-0 text-cyan-soft" />
                   Profile
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </Reveal>

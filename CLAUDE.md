@@ -15,6 +15,8 @@ npm run test:e2e -- http://localhost:3000   # Chrome checks against a running si
 
 node scripts/build-skyline.mjs && node scripts/compress-assets.mjs   # skyline GLB
 node scripts/render-poster.mjs http://localhost:3000                 # poster frames
+node scripts/scan-colors.mjs <glb> <id>                              # a formation's real colours
+npx vite-node scripts/preview-formations.ts -- <outDir> 1500 [ids]   # formation contact sheets
 ```
 
 Environment variables live in `.env` / `.env.local` (see `.env.example`).
@@ -48,8 +50,10 @@ roadmap, market figures, client segments, positioning vs. competitors). Pages
 import from it rather than hardcoding text — when the business facts change,
 update `content.ts`, not the individual page files. The figures there are
 sourced from Airimation's business plan / show blueprint / pitch deck and
-are explicitly marked illustrative and assumption-based at the source; treat
-anything on `/investors` as needing founder sign-off before publishing.
+are explicitly marked illustrative and assumption-based at the source; there is
+no `/investors` page (removed Jul 2026); any investor-facing figure needs
+founder sign-off before publishing. The only public email is
+`contactInfo.email` = hello@airimation.in.
 
 **Design system is CSS-variable based**, defined in `src/app/globals.css` via
 Tailwind v4's `@theme inline` block (not a `tailwind.config.js` — this
@@ -101,16 +105,31 @@ via `src/components/gallery/CulturalShowcase.tsx`, maths in
 scans and CC0 / CC BY 4.0 models (`scan.ts`, `scans/`, made by
 `scripts/scan-to-formation.mjs`, credited on the page), the 3D shapes from
 the archived designer (`classic.ts`), and the Tiranga to its official spec
-(`tiranga.ts`). No hand-drawn figures — no model, no formation. Each
+(`tiranga.ts`), plus symbols and figures modelled by us in Blender
+(`scripts/blender/`, incl. Ram and the Ram Mandir). No hand-drawn
+figures — no model, no formation. **Per-drone colour** (`paint` in
+`scan.ts`): the model's real texture colours (`scripts/scan-colors.mjs`
+writes `palette` + `ci` into the JSON) or hand-designed `ramp` / `palette`
+/ `regions` hex codes — never one flat colour (`paint.test.ts`). Each
 declares `minDrones`; a bigger fleet flies a bigger figure; a fleet change
 redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
 `__tests__/speed.test.ts`); the preview plays 1.8× (`PREVIEW_RATE`). Effects
 are light only and never add drones outside the model (tested). LED hues
-recolour by palette. See README > Design a Show formations;
+recolour by palette. The 3D sky is the page's full-width hero (controls
+below, heading after); **the camera moves only when the visitor moves it**
+(no auto-rotate). See README > Design a Show formations;
 `scripts/export-formations.ts` exports them.
 
 *Site backdrop* — every page except home and `/internal` sits on a still of
-the home scene's dusk sky (`SiteBackdrop.tsx`, `public/posters/backdrop*.jpg`).
+the home scene's dusk sky (`SiteBackdrop.tsx`, `public/posters/backdrop*.jpg`),
+under a 55% overlay (white copy still reads).
+
+*Phones* — below 768 px (`src/lib/phone.ts`) every route shows only
+`PhoneGate.tsx`: the home scene's drone animation at the low tier
+(`PhoneGateScene.tsx`, `phoneGateStory.ts`) and a "best seen on a bigger
+screen" note with a hello@airimation.in button. The site is hidden by CSS
+(`.site-shell`), not removed, so the HTML still carries every page.
+
 Home starts its live scene right after load (not on scroll).
 
 *Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
@@ -155,7 +174,8 @@ than writing bespoke markup per section — follow that pattern for new pages.
 | `/about` | Company mission, honest positioning, founding team |
 | `/vision` | Build status, the two-track vision (shows, then R&D), dated roadmap |
 | `/gallery` | 308 → `/design-your-show` |
-| `/investors` | Curated, PR-safe figures for investors/grant partners |
+| `/team` | Directors and advisors |
 | `/contact` | Contact form (posts to `/api/contact`) |
-| `/design-your-show` | Fleet-size 3D showcase (100–2,000 drones) + quote CTA |
+| `/credits` | Credits for the CC BY 3D models (noindex, footer link) |
+| `/design-your-show` | Full-width 3D sky hero (100–2,000 drones, 57 formations), controls below, then copy + quote CTA |
 | `/design-your-show/classic` | ARCHIVED formation-picker configurator (noindex); old share links `/design-your-show/s/[code]` still open it |

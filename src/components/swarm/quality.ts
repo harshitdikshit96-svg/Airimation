@@ -130,6 +130,13 @@ export function hasWebGL(): boolean {
   return webglCache;
 }
 
+/** `?quality=low|mid|high`, if present. */
+export function qualityOverride(): Tier | null {
+  if (typeof window === "undefined") return null;
+  const value = new URLSearchParams(window.location.search).get("quality");
+  return value === "low" || value === "mid" || value === "high" ? value : null;
+}
+
 /**
  * Initial tier guess. `?quality=low|mid|high` overrides it, which is how
  * the tiers are checked on a desktop.
@@ -137,8 +144,8 @@ export function hasWebGL(): boolean {
 export function detectTier(): Tier {
   if (typeof window === "undefined") return "mid";
 
-  const override = new URLSearchParams(window.location.search).get("quality");
-  if (override === "low" || override === "mid" || override === "high") return override;
+  const override = qualityOverride();
+  if (override) return override;
 
   const nav = navigator as Navigator & { deviceMemory?: number };
   const memory = nav.deviceMemory ?? 8;

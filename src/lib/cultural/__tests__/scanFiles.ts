@@ -18,6 +18,8 @@ import nandi from "../scans/nandi.json";
 import tajMahal from "../scans/taj-mahal.json";
 import hanuman from "../scans/hanuman.json";
 import vishnuGaruda from "../scans/vishnu-garuda.json";
+import ram from "../scans/ram.json";
+import ramMandir from "../scans/ram-mandir.json";
 
 import charminar from "../scans/charminar.json";
 import indiaGate from "../scans/india-gate.json";
@@ -95,5 +97,7 @@ const files: Record<string, ScanFile> = {
   tajMahal: tajMahal as ScanFile,
   hanuman: hanuman as ScanFile,
   vishnuGaruda: vishnuGaruda as ScanFile,
+  ram: ram as ScanFile,
+  ramMandir: ramMandir as ScanFile,
 };
 export default files;

@@ -16,7 +16,7 @@ import Water from "@/components/swarm/Water";
 import { cloud, fromText, grid, lotus, sheet } from "@/components/swarm/formations";
 import { matchTargets, radialDelays } from "@/components/swarm/match";
 import { solidColors, stageColors } from "@/components/swarm/colors";
-import type { QualityProfile } from "@/components/swarm/quality";
+import type { QualityProfile, Tier } from "@/components/swarm/quality";
 import { whoosh } from "@/components/swarm/audio";
 
 /**
@@ -247,6 +247,7 @@ export default function HomeSwarm({
   reduced,
   onReady,
   onFail,
+  tier,
 }: {
   story: StoryState;
   caption: React.RefObject<HTMLSpanElement | null>;
@@ -254,6 +255,8 @@ export default function HomeSwarm({
   reduced: boolean;
   onReady: () => void;
   onFail: () => void;
+  /** Fixed quality tier (the phone gate passes "low"); otherwise detected. */
+  tier?: Tier;
 }) {
   return (
     <SwarmCanvas
@@ -263,6 +266,7 @@ export default function HomeSwarm({
       still={reduced}
       onReady={onReady}
       onFail={onFail}
+      tier={tier}
     >
       {(quality) => <Scene quality={quality} story={story} caption={caption} reduced={reduced} />}
     </SwarmCanvas>

@@ -12,18 +12,18 @@ import { ArrowRight } from "lucide-react";
  */
 export default function DesignShowcaseView() {
   return (
-    <main className="mx-auto max-w-[1100px] px-6 pb-24 pt-28">
+    <main className="pb-24">
+      {/* The hero is the sky itself, full width; its controls sit just below. */}
+      <CulturalShowcaseLoader />
+
+      <div className="mx-auto max-w-[1100px] px-6">
       {/* Not <Reveal>: its opacity fade delays LCP until JS runs. */}
-      <div className="hero-enter">
+      <div className="hero-enter mt-16 border-t border-line pt-12">
         <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">{designYourShow.eyebrow}</p>
         <h1 className="mb-6 font-serif text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">
           {designYourShow.title}
         </h1>
         <p className="max-w-[62ch] text-base font-light leading-relaxed text-muted">{designYourShow.intro}</p>
-      </div>
-
-      <div className="mt-10">
-        <CulturalShowcaseLoader />
       </div>
 
       <Reveal>
@@ -45,6 +45,7 @@ export default function DesignShowcaseView() {
           ))}
         </section>
       </Reveal>
+      </div>
     </main>
   );
 }

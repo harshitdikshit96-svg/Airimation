@@ -26,9 +26,11 @@ export default function SiteBackdrop() {
           className="absolute inset-0 h-full w-full object-cover"
         />
       </picture>
-      {/* Same treatment as the home page below its story. */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#03040b]/70 via-[#03040b]/25 to-transparent" />
-      <div className="absolute inset-0 bg-[#03040b]/80" />
+      {/* Lighter than before (was 80% + a 70% side gradient): the sky and
+          skyline now show through. The side gradient sits behind the text
+          column, so white copy keeps its contrast. */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#03040b]/60 via-[#03040b]/25 to-transparent" />
+      <div className="absolute inset-0 bg-[#03040b]/55" />
     </div>
   );
 }

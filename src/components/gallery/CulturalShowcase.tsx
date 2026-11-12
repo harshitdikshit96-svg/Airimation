@@ -80,13 +80,13 @@ function Scene({
     }),
     []
   );
-  const clock = useRef({ key: "", id: "", t: 0, morph: 0, morphTotal: 6, order: null as Uint16Array | null, idle: 0, dolly: true });
+  const clock = useRef({ key: "", id: "", t: 0, morph: 0, morphTotal: 6, order: null as Uint16Array | null, dolly: true });
 
   useEffect(() => {
     const ctl = controls.current;
     if (!ctl) return;
+    // The visitor takes the camera: any reframe in progress stops.
     const wake = () => {
-      clock.current.idle = 0;
       clock.current.dolly = false;
     };
     ctl.addEventListener("start", wake);
@@ -219,11 +219,9 @@ function Scene({
       if (Math.abs(goalD - d) < 0.5 && Math.abs(goalY - ctl.target.y) < 0.2) c.dolly = false;
     }
 
-    // Full 360: the visitor can orbit all the way round. When nobody has
-    // touched it for a few seconds it turns slowly on its own, and stops
-    // the instant they do (OrbitControls "start" resets `idle`).
-    c.idle += dt;
-    if (ctl) ctl.autoRotate = c.idle > 5;
+    // The camera moves only when the visitor moves it (no idle drift, no
+    // auto-rotate). The one exception is the reframe above, right after the
+    // visitor changes the fleet size themselves.
   });
 
   return (
@@ -245,11 +243,12 @@ function Scene({
         dampingFactor={0.06}
         minDistance={70}
         maxDistance={440}
-        autoRotateSpeed={0.35}
-        // The eye is BELOW the figure (an audience looks up), so the polar
-        // angle sits past 90 degrees; 104 keeps the camera above ground at
-        // the furthest zoom.
-        minPolarAngle={THREE.MathUtils.degToRad(68)}
+        autoRotate={false}
+        // Full 360 degrees round the figure (azimuth is unlimited), and from
+        // high overhead (12 degrees off vertical) down to the audience's eye,
+        // BELOW the figure: past 90 degrees, 104 keeps the camera above
+        // ground at the furthest zoom.
+        minPolarAngle={THREE.MathUtils.degToRad(12)}
         maxPolarAngle={THREE.MathUtils.degToRad(104)}
         makeDefault
       />
@@ -288,7 +287,7 @@ export default function CulturalShowcase() {
 
   if (failed) {
     return (
-      <div className="flex h-[62vh] min-h-[380px] items-center justify-center rounded-xl border border-line bg-black p-6 text-center text-sm text-muted">
+      <div className="flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center bg-black p-6 text-center text-sm text-muted">
         This browser can&apos;t run the 3D preview. Ask us for a recording instead.
       </div>
     );
@@ -296,7 +295,8 @@ export default function CulturalShowcase() {
 
   return (
     <div>
-      <div className="relative h-[62vh] min-h-[400px] overflow-hidden rounded-xl border border-line bg-black">
+      {/* The hero: the sky, full width, straight under the header. */}
+      <div className="relative h-[calc(100svh-64px)] min-h-[480px] w-full overflow-hidden bg-black">
         <SwarmCanvas
           className="absolute inset-0"
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
@@ -305,17 +305,22 @@ export default function CulturalShowcase() {
           {(quality) => <Scene quality={quality} id={current.id} count={count} playing={playing} hues={hues} />}
         </SwarmCanvas>
 
-        <div className="pointer-events-none absolute left-4 top-4 pr-4 sm:left-6 sm:top-5">
-          <p className="font-serif text-2xl text-ink sm:text-3xl">{current.label}</p>
-          <p className="mt-1 max-w-[34ch] text-sm text-muted">{current.blurb}</p>
+        <div className="pointer-events-none absolute inset-x-0 top-0">
+          <div className="mx-auto max-w-[1100px] px-6 pt-6">
+            <p className="font-serif text-3xl text-ink drop-shadow sm:text-4xl">{current.label}</p>
+            <p className="mt-1 max-w-[40ch] text-sm text-muted drop-shadow">{current.blurb}</p>
+          </div>
         </div>
-        <p className="pointer-events-none absolute bottom-3 left-4 right-4 text-right font-mono text-[10px] uppercase tracking-[0.16em] text-dim">
-          Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360°
-        </p>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent">
+          <p className="mx-auto max-w-[1100px] px-6 pb-4 pt-10 text-right font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+            Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360° · scroll for controls
+          </p>
+        </div>
       </div>
 
-      <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Formation">
+      <div className="mx-auto max-w-[1100px] px-6">
+      <div className="mt-6 flex flex-col gap-5">
+        <div className="order-2 flex flex-wrap gap-2" role="tablist" aria-label="Formation">
           {list.map((item) => (
             <button
               key={item.id}
@@ -333,7 +338,7 @@ export default function CulturalShowcase() {
             </button>
           ))}
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <div className="order-1 flex flex-wrap items-center gap-2">
           <label htmlFor="theme" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Theme
           </label>
@@ -404,6 +409,7 @@ export default function CulturalShowcase() {
             </button>
           );
         })}
+      </div>
       </div>
     </div>
   );

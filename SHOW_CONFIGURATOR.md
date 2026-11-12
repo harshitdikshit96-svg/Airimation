@@ -2,9 +2,17 @@
 
 Read this before touching `src/lib/show/` or `src/components/show/`.
 
+> **Status (12 Nov 2026): archived.** This configurator lives at
+> `/design-your-show/classic` (noindex, not linked) and still opens old share
+> links (`/design-your-show/s/[code]`, `?s=`). The live `/design-your-show`
+> is the 3D showcase in `src/components/gallery/CulturalShowcase.tsx` and
+> `src/lib/cultural/` — see README > Design a Show formations and
+> DECISIONS.md §3. The notes below are kept for the archived tool; the
+> rendering lessons still apply to both.
+
 ## What it is
 
-A public tool (route `/design-your-show`, not yet built) letting a visitor pick a
+A public tool (originally at `/design-your-show`, now archived at `/classic`) letting a visitor pick a
 drone count and a sequence of formations and watch the show in 3D. It answers the
 two questions a first-time buyer cannot answer alone: *how many drones do I need*
 and *what do the formations look like*.

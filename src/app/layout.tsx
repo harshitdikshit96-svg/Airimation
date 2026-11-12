@@ -15,7 +15,8 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SiteBackdrop from "@/components/layout/SiteBackdrop";
-import { company, site } from "@/lib/content";
+import { organizationJsonLd } from "@/lib/jsonld";
+import PhoneGate from "@/components/layout/PhoneGate";
 
 export const metadata: Metadata = {
   title: "Airimation | Drone-Swarm Light Shows — Noida, Delhi NCR",
@@ -41,30 +42,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Organization structured data — declares the registered legal entity
-// (`legalName`) distinctly from the public-facing brand (`name`), the way
-// search engines expect when the two differ. Statutory detail — legal
-// name, CIN, GSTIN, Udyam, DPIIT — lives on `company` in content.ts.
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: site.name,
-  legalName: company.legalName,
-  url: "https://airimation.in",
-  logo: "https://airimation.in/brand/airimation-logo-512.png",
-  email: company.email,
-  foundingDate: "2026-08-22",
-  areaServed: "IN",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Greater Noida",
-    addressRegion: "Uttar Pradesh",
-    addressCountry: "IN",
-  },
-  // Statutory identifiers are deliberately NOT published here while the
-  // site masks them (content.ts > revealRegistrationNumbers).
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -77,10 +54,15 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <SiteBackdrop />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {/* The site itself. On phones (< 768 px) globals.css hides it — it
+            stays in the HTML for search engines — and shows the PhoneGate. */}
+        <div className="site-shell">
+          <SiteBackdrop />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
+        <PhoneGate />
       </body>
     </html>
   );

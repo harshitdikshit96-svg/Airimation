@@ -6,7 +6,7 @@ import { onLoadedAndNear } from "@/components/swarm/defer";
 
 function Placeholder() {
   return (
-    <div className="flex h-[62vh] min-h-[400px] items-center justify-center rounded-xl border border-line bg-black">
+    <div className="flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center bg-black">
       <p className="rounded bg-black/50 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-dim">
         Preparing the sky…
       </p>

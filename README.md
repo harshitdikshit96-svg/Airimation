@@ -17,9 +17,9 @@ accent colours, IBM Plex Sans / Serif / Mono typography, and a starfield
 ambient background. Fonts are self-hosted via `@fontsource` (no external
 Google Fonts request at runtime).
 
-The hero and gallery visuals are canvas-based particle simulations — a swarm
-of points that assembles into formations (a lotus, the Airimation monogram,
-concentric rings, a flight chevron). **These are concept renders, not real
+The drone visuals are rendered live in 3D (React Three Fiber): the home
+page's scroll story and the Design a Show simulator, where formations made
+from real 3D models fly over a dusk skyline. **These are concept renders, not real
 show footage** — Airimation's first live shows are still in preparation, and
 the site says so plainly rather than implying otherwise. Swap in real
 photography/video once available (see "Replacing the visuals" below).
@@ -43,13 +43,20 @@ npm run lint    # eslint
 
 | Route | Purpose |
 |---|---|
-| `/` | Home — cinematic scroll-driven experience, swarm canvas tied to scroll position |
-| `/biscope` | The flagship product in depth |
+| `/` | Home — live 3D scroll story over the dusk skyline |
+| `/shows` | The show in depth (`/biscope` redirects here) |
 | `/about` | Company mission, honest positioning, founding team |
-| `/team` | Full founder bios and photos |
-| `/vision` | Airimation Academy (Year 2+) and UAV R&D (Year 4+) |
-| `/gallery` | Concept formation renders |
+| `/team` | Directors and advisors, bios and photos |
+| `/vision` | Build status, the two tracks (shows, then R&D), dated roadmap |
+| `/design-your-show` | 3D simulator: full-width sky hero, fleet 100–2,000, 57 formations (`/gallery` redirects here) |
+| `/design-your-show/classic` | Archived formation-picker configurator (noindex; old share links) |
+| `/credits` | Credits for the CC BY 3D models |
 | `/contact` | Contact form (posts to `/api/contact`) |
+| `/internal` | Internal academy (own light theme) |
+
+**Phones** (< 768 px) see only the live drone animation and a note to open
+the site on a bigger screen, with a hello@airimation.in button
+(`src/components/layout/PhoneGate.tsx`). The pages stay in the HTML.
 
 ## Contact form → database
 
@@ -87,14 +94,11 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 
 ## Before this goes live — checklist
 
-- [ ] Point `contactInfo.email` in `src/lib/content.ts` at your real
-      Google Workspace address (currently a placeholder: `hello@airimation.in`).
+- [ ] Make sure `hello@airimation.in` (the only public address,
+      `contactInfo.email` in `src/lib/content.ts`) actually receives mail.
 - [ ] Set up Neon (above) so contact-form leads aren't lost.
-- [ ] Replace concept formation renders on `/gallery` with real photography
-      or footage once Airimation's first shows are delivered.
-- [ ] Add real founder headshots: drop files in `public/team/` and set each
-      founder's `photo` path in `src/lib/content.ts` (see `public/team/README.md`).
-      Until then, `/` and `/team` show initials placeholders instead of photos.
+- [ ] Replace the concept renders with real footage once Airimation's first
+      shows are delivered (and drop the "concept render" labels then).
 - [ ] Update `metadataBase` in `src/app/layout.tsx` if the production domain
       differs from `airimation.in`.
 - [ ] Deploy (Vercel is the path of least resistance for Next.js) and add the
@@ -103,8 +107,8 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 ## Replacing the visuals
 
 The home page story and `/design-your-show` render the drone swarm in
-real time with React Three Fiber (`src/components/swarm/`); /shows uses
-the older 2D canvas (`src/lib/swarmShapes.ts`). See
+real time with React Three Fiber (`src/components/swarm/`); the internal
+academy hero uses the 2D canvas (`src/lib/swarmShapes.ts`). See
 CLAUDE.md for the map. When real show footage exists, it replaces the
 posters and the hero, and the "concept render" labels can go.
 
@@ -155,15 +159,29 @@ node scripts/scan-to-formation.mjs path/to/model.glb my-id \
   [--licence "CC BY 4.0"] [--rotate-x 90] [--rotate-y 90] [--tilt-x 40] [--crop-bottom 0.12]
 ```
 
-then register `scans/my-id.json` in `src/lib/cultural/scans/index.ts`
-with `scanFormation(file, { blurb, colors, motion, effect, minDrones })`,
+then give it colour — so its features read, not one flat light:
+
+```bash
+node scripts/scan-colors.mjs path/to/model.glb my-id   # the model's real texture colours
+```
+
+and register `scans/my-id.json` in `src/lib/cultural/scans/index.ts`
+with `scanFormation(file, { blurb, colors, paint, motion, effect, minDrones })`.
+`paint` (see `Paint` in `scan.ts`) is the per-drone colour config: `mode:
+"texture"` (the real colours, LED-bright), a `ramp` of hex codes dark → light
+(a bronze: deep amber folds, gold highlights), a `palette` replacing the
+model's own colours one for one, and `regions` — a hex code per box of the
+figure (fractions of its bounds: `x`, `y`, `z`, `r`), the only option for an
+untextured model. Look before you ship:
+`npx vite-node scripts/preview-formations.ts -- /tmp/sheets 1500 my-id`
+writes contact sheets (PNG, via the local Chrome). Then
 and add it to `src/lib/cultural/__tests__/scanFiles.ts`. **Licences:
 CC0 / public domain, or CC BY 4.0 with the credit** (shown on the page).
 Never NC, ND or SA. Record the source in `Airimation/Scans/SOURCES.md`.
-Symbols with no open model (trishul, kalash, Om, lotus) are modelled by
-script in Blender — `Blender --background --python
-scripts/blender/make-symbols.py -- ../Scans/made` — then converted the
-same way with `--licence "Airimation"`.
+Symbols with no open model (trishul, kalash, Om, lotus) and the Ram figure
+and Ram Mandir are modelled by script in Blender —
+`Blender --background --python scripts/blender/make-symbols.py -- ../Scans/made`
+(and `make-ram.py`) — then converted the same way with `--licence "Airimation"`.
 `npm test` then checks the licence, credit, file and that no drone
 strays outside the model.
 
@@ -180,9 +198,9 @@ speed and minimum separation.
 ### Tests
 
 ```bash
-npm test                                   # 351 unit tests (vitest), seconds
+npm test                                   # 458 unit tests (vitest), seconds
 npm run build && npm run start             # then, in another terminal:
-npm run test:e2e -- http://localhost:3000  # 54 checks in Chrome
+npm run test:e2e -- http://localhost:3000  # 68 checks in Chrome
 ```
 
 Run both before pushing. What each covers, and the rule behind it, is in

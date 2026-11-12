@@ -38,6 +38,48 @@ export type ScanFile = {
   quant: number;
   pos: string;
   nrm: string;
+  /** The model's own colours (sRGB hex), from scripts/scan-colors.mjs. */
+  palette?: string[];
+  /** Per point: base64 Uint8 index into `palette`. */
+  ci?: string;
+};
+
+/**
+ * Where a colour goes, in fractions of the model's bounding box (0..1):
+ * x left to right, y base to top, z back to front, r = distance from the
+ * vertical axis (0 centre .. 1 the widest point). Omitted = any.
+ */
+export type Region = {
+  hex: string;
+  /** Brightness, 0..1.5 (default 1). */
+  level?: number;
+  x?: [number, number];
+  y?: [number, number];
+  z?: [number, number];
+  r?: [number, number];
+};
+
+/**
+ * Per-drone colour — so a figure's features read, not one flat colour.
+ *
+ *   texture  the model's REAL colours (photographed texture or artist's
+ *            paint, sampled by scripts/scan-colors.mjs), made LED-bright:
+ *            each keeps its hue, brightness follows how light it is.
+ *   ramp     hex codes from dark to light; each drone takes the colour at
+ *            its texture brightness (a bronze's raised face bright gold,
+ *            its folds deep amber). Works for any scanned texture.
+ *   palette  hex codes replacing the model's own palette one for one
+ *            (same order as the file's `palette`).
+ *   regions  colours by position, applied last (later rules win). The
+ *            only option for models with no texture.
+ */
+export type Paint = {
+  mode?: "texture" | "ramp" | "flat";
+  ramp?: string[];
+  palette?: string[];
+  regions?: Region[];
+  /** Brightness of the darkest drones, 0..1 (default 0.3). Never 0: a dark drone still draws the shape. */
+  floor?: number;
 };
 
 type Effect = "fireRing" | "flame" | "beat" | "strike" | "arrow";
@@ -45,6 +87,8 @@ type Effect = "fireRing" | "flame" | "beat" | "strike" | "arrow";
 type Rig = {
   n: number;
   p: Float32Array;
+  /** Per drone base colour (linear rgb, brightness folded in). */
+  c: Float32Array;
   nrm: Float32Array;
   /** Per drone: 0 model, 1 effect group (ring / flame / drum head / arrow), 2 bow string. */
   tag: Uint8Array;
@@ -55,8 +99,10 @@ type Rig = {
 
 export type ScanOptions = {
   blurb: string;
-  /** [base, highlight] hex colours. */
+  /** [base, highlight] hex colours. Base is the fallback where paint says nothing. */
   colors: [string, string];
+  /** Per-drone colours: see `Paint`. */
+  paint?: Paint;
   motion?: "turn" | "sway" | "still";
   /** Sway half-angle, degrees. */
   sway?: number;
@@ -122,6 +168,95 @@ export function arrowShot(t: number): { arrow: number; string: number; light: nu
   return { arrow, string, light };
 }
 
+const luma = (c: RGB) => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+
+/** A real (often dull) surface colour as an LED would show it: same hue, full saturation-ish, full brightness. */
+function ledHue(c: RGB): RGB {
+  const peak = Math.max(c[0], c[1], c[2]) || 1;
+  const n: RGB = [c[0] / peak, c[1] / peak, c[2] / peak];
+  // Push away from grey a little: LEDs are saturated, textures are not.
+  const m = (n[0] + n[1] + n[2]) / 3;
+  const sat = 1.35;
+  return [clamp(m + (n[0] - m) * sat, 0, 1), clamp(m + (n[1] - m) * sat, 0, 1), clamp(m + (n[2] - m) * sat, 0, 1)];
+}
+
+function rampAt(ramp: RGB[], t: number): RGB {
+  if (ramp.length === 1) return ramp[0];
+  const s = clamp(t, 0, 1) * (ramp.length - 1);
+  const k = Math.min(ramp.length - 2, Math.floor(s));
+  return mixRGB(ramp[k], ramp[k + 1], s - k);
+}
+
+/**
+ * Base colour per model point (linear rgb, brightness included), from the
+ * texture palette and the paint config. Pure and deterministic.
+ */
+export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallback: string, paint: Paint = {}): Float32Array {
+  const out = new Float32Array(m * 3);
+  const floor = paint.floor ?? 0.3;
+  const real = file.palette && file.ci && file.palette.length > 1 ? file.palette.map(hex) : null;
+  const idx = real ? decode(file.ci!) : null;
+  const mode = paint.mode ?? (paint.ramp ? "ramp" : real ? "texture" : "flat");
+  const base = hex(fallback);
+
+  // Brightness rank of each palette entry: its position in the cumulative
+  // share of drones, darkest first, so contrast is spread evenly.
+  let rank: number[] = [];
+  if (real && idx) {
+    const share = real.map(() => 0);
+    for (let i = 0; i < Math.min(m, idx.length); i++) share[idx[i]]++;
+    const byLum = real.map((_, k) => k).sort((a, b) => luma(real[a]) - luma(real[b]));
+    rank = real.map(() => 0);
+    let acc = 0;
+    const total = share.reduce((a, b) => a + b, 0) || 1;
+    for (const k of byLum) {
+      rank[k] = (acc + share[k] / 2) / total;
+      acc += share[k];
+    }
+  }
+  const ramp = paint.ramp?.map(hex);
+  const override = paint.palette?.map(hex);
+  const maxL = real ? Math.max(...real.map(luma)) || 1 : 1;
+
+  for (let i = 0; i < m; i++) {
+    let c: RGB = base;
+    let level = 1;
+    if (real && idx) {
+      const k = idx[i % idx.length];
+      if (override && override[k]) {
+        c = override[k];
+        level = 1;
+      } else if (mode === "ramp" && ramp) {
+        c = rampAt(ramp, rank[k]);
+        level = floor + (1 - floor) * rank[k];
+      } else if (mode === "texture") {
+        c = ledHue(real[k]);
+        level = floor + (1 - floor) * Math.pow(luma(real[k]) / maxL, 0.6);
+      }
+    } else if (mode === "ramp" && ramp) {
+      // No texture: ramp up the figure, base to top.
+      c = rampAt(ramp, pts[i * 3 + 1] / Math.max(1, file.height));
+    }
+    if (paint.regions?.length) {
+      const fx = pts[i * 3] / Math.max(1e-6, file.width) + 0.5;
+      const fy = pts[i * 3 + 1] / Math.max(1e-6, file.height);
+      const fz = pts[i * 3 + 2] / Math.max(1e-6, file.depth) + 0.5;
+      const fr = Math.hypot(pts[i * 3], pts[i * 3 + 2]) / Math.max(1e-6, Math.max(file.width, file.depth) / 2);
+      const inR = (v: number, r?: [number, number]) => !r || (v >= r[0] && v <= r[1]);
+      for (const g of paint.regions) {
+        if (inR(fx, g.x) && inR(fy, g.y) && inR(fz, g.z) && inR(fr, g.r)) {
+          c = hex(g.hex);
+          level = g.level ?? 1;
+        }
+      }
+    }
+    out[i * 3] = c[0] * level;
+    out[i * 3 + 1] = c[1] * level;
+    out[i * 3 + 2] = c[2] * level;
+  }
+  return out;
+}
+
 export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormation<Rig> {
   const motion = opts.motion ?? "turn";
   const swayAmp = ((opts.sway ?? 28) * Math.PI) / 180;
@@ -138,7 +273,6 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
           ? 16
           : // Sway: peak angular speed is amp * 2π / loop.
             Math.max(16, Math.ceil((reach * swayAmp * TAU) / budget));
-  const base = hex(opts.colors[0]);
   const highlight = hex(opts.colors[1]);
   let cache: { pos: Int16Array; nrm: Int8Array } | null = null;
 
@@ -273,7 +407,16 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
           }
         }
       }
-      return { n, p, nrm, tag, e, h: H };
+      // Per-drone colour (extras that double up take their twin's colour).
+      const painted = paintPoints(file, p, m, opts.colors[0], opts.paint);
+      const c = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const j = i < m ? i : i % m;
+        c[i * 3] = painted[j * 3];
+        c[i * 3 + 1] = painted[j * 3 + 1];
+        c[i * 3 + 2] = painted[j * 3 + 2];
+      }
+      return { n, p, c, nrm, tag, e, h: H };
     },
     pose(rig, t, pos, col) {
       const a = motion === "turn" ? (TAU * t) / loop : motion === "sway" ? swayAmp * Math.sin((TAU * t) / loop) : 0;
@@ -299,8 +442,9 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
         const diffuse = Math.abs(nx * L[0] + ny * L[1] + nz * L[2]);
         // Only the brightest-lit surfaces lean toward the highlight, so the
         // object keeps its own colour under bloom.
-        let c: RGB = mixRGB(base, highlight, clamp((diffuse - 0.8) / 0.2, 0, 1) * 0.35);
-        let k = 0.22 + 0.78 * diffuse;
+        const own: RGB = [rig.c[i * 3], rig.c[i * 3 + 1], rig.c[i * 3 + 2]];
+        let c: RGB = mixRGB(own, highlight, clamp((diffuse - 0.8) / 0.2, 0, 1) * 0.3);
+        let k = 0.3 + 0.7 * diffuse;
 
         if (rig.tag[i]) {
           if (opts.effect === "fireRing") {

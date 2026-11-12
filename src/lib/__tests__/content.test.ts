@@ -1,6 +1,9 @@
 import { describe, expect, test } from "vitest";
 import { advisors, designTeaser, designYourShow, directors, team, teamConfig, visibleAdvisors } from "../content";
 import { CULTURAL } from "../cultural";
+import * as content from "../content";
+import { contactInfo } from "../content";
+import { organizationJsonLd } from "../jsonld";
 
 // Content rules from DECISIONS.md. Retired words are checked by
 // `npm run lint` (scripts/check-brand-spelling.mjs).
@@ -45,5 +48,23 @@ describe("Design a Show copy", () => {
     expect(copy).toMatch(/simulation/i);
     expect(copy).toMatch(/faster|sped up/i);
     expect(copy).not.toMatch(/at the speed real drones move/i);
+  });
+});
+
+describe("one public email", () => {
+  const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
+  const found = (value: unknown) => new Set(JSON.stringify(value).match(EMAIL) ?? []);
+
+  test("is hello@airimation.in", () => {
+    expect(contactInfo.email).toBe("hello@airimation.in");
+  });
+
+  test("no other address appears in any content.ts export", () => {
+    expect([...found(content)]).toEqual(["hello@airimation.in"]);
+  });
+
+  test("the JSON-LD publishes the same address and no other", () => {
+    expect(organizationJsonLd.email).toBe(contactInfo.email);
+    expect([...found(organizationJsonLd)]).toEqual(["hello@airimation.in"]);
   });
 });

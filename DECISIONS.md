@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 12 November 2026 (round 5).*
+the change log. Last updated: 12 November 2026 (round 9).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -19,6 +19,7 @@ Read this before changing copy, team, branding or the 3D swarm.
 | **Never use the word "government"** in any Airimation material — say "civic" or "public". | 7 Nov 2026 |
 | HQ wording: **Noida, Uttar Pradesh (Delhi NCR)**. (Older docs said Lucknow, then New Delhi — both superseded.) | Nov 2026 |
 | Registration numbers (CIN, GSTIN, Udyam, DPIIT) are **not shown in full on the website** — masked. Full values are kept in `src/lib/registration.ts`, which no page imports. | 9 Nov 2026 |
+| One public email: **hello@airimation.in** — footer, contact, JSON-LD and the phone screen. No personal addresses on the site. | 12 Nov 2026 |
 | ⚠️ The CIN as supplied reads `…UW2026…`; UP is `UP`. Verify against the Certificate of Incorporation. | open |
 | Logo: the drone-with-dotted-swirl mark. Colour and black versions exist; the no-colour one goes on the office name board. Vectorised from the black version (9 Nov 2026) — see §4. | Oct 2026 |
 
@@ -80,9 +81,14 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 - `/biscope` → `/shows` (permanent redirect in `next.config.ts`).
 - No full registration numbers or street address anywhere the browser receives (footer, contact page, JSON-LD).
 
+**Phones** (12 Nov 2026)
+- Below 768 px wide the site shows only the home scene's live drone animation (low quality tier, poster first) and a gentle note: "Airimation is best seen on a bigger screen", with a hello@airimation.in button (`PhoneGate.tsx`, `src/lib/phone.ts`). The pages stay in the server HTML (hidden by CSS) so search engines still read them; the gate's 3D loads only on phones.
+
 **Design**
 - Dark near-black base, IBM Plex fonts self-hosted, amber as the single highlight colour.
 - Home page copy stays monochrome and borderless over the swarm.
+- Inner-page backdrop overlay: 55% plus a 60% left gradient behind the text (was 80% + 70%), so the dusk sky shows while white copy stays legible.
+- **Design a Show:** the 3D sky is the hero — full width, straight under the header; controls below it; the heading and copy after.
 - Logo: white mark on dark surfaces, black mark on the light `/internal` theme.
 
 **3D performance rules** (don't regress these)
@@ -91,10 +97,10 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 - The runtime monitor may lower DPR, then bloom — **never** drone count or materials (a mid-scroll rebuild is a visible freeze).
 - Bloom chain at half resolution. No `backdrop-filter` over a live canvas.
 - 2D canvases sleep off-screen (`visibleRaf`).
-- Orbit views allow a **full 360°**; idle auto-rotate stops the moment the visitor touches it and never pulls the camera back.
+- Orbit views allow a **full 360°** round the figure and from 12° off vertical down to the audience's eye. **The camera moves only when the visitor moves it** — no idle auto-rotate (removed 12 Nov 2026). The one reframe is right after the visitor changes the fleet size, and it stops the moment they touch the view.
 
 **Git / deploy**
-- Work on `feat/3d-swarm`. Commits made by Claude land in the local repo; **pushing is done from Harshit's machine** (`git push origin feat/3d-swarm`), then Vercel deploys.
+- Work on `feat/showcase-models` (merges to `main` later; `feat/3d-swarm` is the earlier branch). Commits made by Claude land in the local repo; **pushing is done from Harshit's machine** (`git push origin feat/3d-swarm`), then Vercel deploys.
 - macOS is case-insensitive and git can keep stale casing (`sandeep.JPG` incident): check `git ls-files` when a renamed file 404s on Vercel.
 
 ---
@@ -126,6 +132,8 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Vishnu on Garuda | 12–13th C bronze, Minneapolis Institute of Art | CC0 | 800 |
 | Dancing Shiva | Shiva Nataraja, Minneapolis Institute of Art | CC0 | 800 |
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
+| **Ram** | modelled by Airimation (`scripts/blender/make-ram.py`): standing, Kodanda bow in the left hand, arrow in the right, crown and halo | own | 500 |
+| **Ram Mandir** | modelled by Airimation from published dimensions (380 × 250 ft, 161 ft shikhara, five mandapas, Nagara style) | own | 800 |
 | 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
 
 **From Sketchfab (12 Nov 2026), 29 more** in `scans/sketchfab.ts` — all CC0 or CC BY 4.0, credited on `/credits`:
@@ -146,9 +154,14 @@ All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are o
 
 **Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×2 at 2,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
 
+**Per-drone colour** (12 Nov 2026) — so a figure's features read instead of one flat colour. Two sources, set per formation in `paint` (`scan.ts > Paint`):
+- **The model's real colours.** `scripts/scan-colors.mjs` samples each source GLB's texture (the museum's photograph, or the artist's paint) at every drone, and stores a short hex palette plus a per-drone index in the formation JSON. The formation points were made with unrecorded orientation options, so the script finds the alignment itself (24 right-angle starts + ICP); fit error is printed (most < 1% of height; butterfly 2.4%, Somaskanda 3.8%). Done for 38 models.
+- **Hand-designed config**, from photographs of the real subject: a `ramp` (hex codes dark → light: a bronze's folds deep amber, its raised face gold; the white-tiger model flown as an orange tiger with dark stripes), a `palette` override (Ambassador white, auto-rickshaw green and yellow, India Gate buff with red base) and `regions` by position (Qutub Minar red sandstone below, marble storeys above; Taj white marble with gold finials; trishul, kalash, Om, kamal, Hanuman, Ram's blue skin / yellow pitambar / gold crown and bow). Untextured models use regions only.
+Brightness follows texture brightness (never below a floor, so a dark drone still draws the shape), then surface shading. Tested: every scanned figure has varied colour (`paint.test.ts`). Check by eye with `npx vite-node scripts/preview-formations.ts -- <outDir> 1500` (contact sheets in Chrome).
+
 **LED hues** (restored 12 Nov 2026): Per formation, Diwali gold, Royal, Moonlight, Tiranga, Wedding rose. A palette keeps each drone's brightness and takes the hue from a top-to-bottom gradient (`showcaseMath.ts > applyHues`).
 
-**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] [--box …] [--only nodeA,nodeB] --label … --credit … [--licence "CC BY 4.0" | "Airimation"]`, then register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit and bounds.
+**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] [--box …] [--only nodeA,nodeB] --label … --credit … [--licence "CC BY 4.0" | "Airimation"]`, then `node scripts/scan-colors.mjs <glb> <id>` for its real colours, give it a `paint` config, and register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit, bounds, palette indices and that it isn't one flat colour.
 
 **Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`): Skybrush zipped CSV + static CSV + points JSON + preview SVG + `REPORT.md` per formation (unchanged).
 
@@ -256,6 +269,16 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 9
+- **Design a Show:** the 3D sky is now the full-width hero straight under the header; Theme / Fleet / Play, the formation list and LED hues sit below it; the heading, intro and quote CTA after.
+- **Camera moves only when the visitor moves it:** idle auto-rotate removed; tilt range widened (12°–104°), orbit 360° round.
+- **Per-drone colour** for every scanned formation (§3): real texture colours (`scripts/scan-colors.mjs`, 38 models) and hand-designed ramps / palettes / regions; shading contrast raised. Preview tool `scripts/preview-formations.ts`.
+- **Ram** and **Ram Mandir** added, modelled by Airimation in Blender (`scripts/blender/make-ram.py`; GLBs in workspace `Scans/made/`). 57 formations at 2,000 drones.
+- **Lighter backdrop overlay** on inner pages (80% → 55%).
+- **Phones:** the live drone animation and a "best seen on a bigger screen" note with the email button, on every route (§2).
+- **One email, hello@airimation.in**, everywhere: JSON-LD's Gmail address and the personal team addresses (/team) removed; JSON-LD moved to `src/lib/jsonld.ts` and tested.
+- Docs: README, CLAUDE.md, SHOW_CONFIGURATOR.md brought up to date; workspace `Airimation_Context_Brief.md` rewritten from this file (no more Biscope / New Delhi / Sandeep).
+
 ### 12 Nov 2026 — round 8
 - **29 formations from Sketchfab** (§3) — Indian and world landmarks, animals, vehicles, instruments; Cleveland Ganesha and Sikhara; a proper clay diya.
 - **Theme filter** on Design a Show.
@@ -315,30 +338,34 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 | Command | What it covers | Last run |
 |---|---|---|
-| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
-| `npm test` | 351 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 351/351, 12 Nov 2026 |
-| `npm run build` | type check + production build | ✅ 12 Nov 2026 |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link | ✅ 54/54, 12 Nov 2026 |
+| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 (round 9) |
+| `npm test` | 458 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); one public email in content and JSON-LD; phone-gate story | ✅ 458/458, 12 Nov 2026 (round 9) |
+| `npm run build` | type check + production build | ✅ 12 Nov 2026 (round 9) |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only email; Design a Show hero full width, then controls, then heading | ✅ 68/68, 12 Nov 2026 (round 9) |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
 ---
 
 ## 7. Open items
-- [ ] Push `feat/3d-swarm` and check the Vercel preview on a real phone and a MacBook.
+- [ ] Push `feat/showcase-models`, check the Vercel preview on a real phone (the gate) and a MacBook, then merge to `main`.
 - [ ] Verify the CIN state code ("UW" vs "UP").
-- [ ] Iconography review of Ganesha, Mahadev and Om before promoting them.
+- [ ] Iconography review of Ganesha, Om, and the new **Ram** figure and **Ram Mandir** model before promoting them (Mahadev was removed).
 - [ ] Test-import one `*.skybrush.zip` in Skybrush Studio for Blender.
 - [x] CC0 scans → 3D formations (Nataraja ×2, Somaskanda shipped, 10 Nov).
-- [ ] A CC0 or licensed Ganesha 3D scan, if one turns up (none free on Zenodo).
+- [x] A Ganesha 3D scan: Cleveland 1970.62 from Sketchfab (CC0) shipped as Standing Ganesha (12 Nov).
 - [ ] Widen spacing to ≥2 m in Skybrush for the drawn figures before any real flight (speeds are already real).
-- [ ] `Airimation_Context_Brief.md` in the workspace is stale (Biscope, New Delhi, Sandeep) — update before sharing.
+- [x] `Airimation_Context_Brief.md` updated from this file (12 Nov, round 9).
 - [ ] Choose a new flagship show name (or decide not to have one).
-- [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
+- [x] One public email: hello@airimation.in everywhere (12 Nov, round 9).
+- [ ] **Make sure hello@airimation.in actually receives mail before launch** — on phones it is now the only way to reach us.
+- [ ] Decide whether the directors' personal emails should come back on /team (removed with the one-email change).
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
-- [ ] A Ram figure and Ram Mandir need a 3D artist (no open model).
-- [ ] With 55 formations, consider fewer on small screens or a search box.
-- [ ] Better source model when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) — or model one in Blender.
+- [x] Ram figure and Ram Mandir: modelled by Airimation in Blender (12 Nov, round 9). A professional 3D artist could still improve the face, dhoti folds and the Mandir's carving; the Mandir reads from 800 drones.
+- [ ] With 57 formations, consider a search box (phones now see the gate, so it's a desktop-only question).
+- [x] Clay diya: Sketchfab "Diya in Blender" (CC BY) replaced the Roman lamp (12 Nov).
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
+- [ ] Phones: watch analytics and Search Console after launch — a phone visitor sees only the gate, which may weigh on mobile ranking; revisit if most traffic is mobile.
+- [ ] Store the converter options with each formation (`scan-to-formation.mjs` doesn't record them; `scan-colors.mjs` had to re-find the alignment).
 

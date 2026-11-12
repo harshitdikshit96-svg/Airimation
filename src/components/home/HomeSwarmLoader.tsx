@@ -6,6 +6,7 @@ import type { StoryState } from "./HomeSwarm";
 import { hasWebGL } from "@/components/swarm/quality";
 import { onEngageOrIdle } from "@/components/swarm/defer";
 import SoundToggle from "@/components/swarm/SoundToggle";
+import { isPhone, PHONE_QUERY } from "@/lib/phone";
 
 // three, R3F, postprocessing and GSAP all live behind this import. It is
 // requested as soon as the page has loaded and the main thread is idle —
@@ -24,6 +25,12 @@ function subscribeReducedMotion(cb: () => void) {
   return () => mq.removeEventListener("change", cb);
 }
 const readReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function subscribePhone(cb: () => void) {
+  const mq = window.matchMedia(PHONE_QUERY);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
 
 /**
  * `?swarmBeat=2.5` freezes the story at that beat (0 ground ... 4 wordmark)
@@ -71,14 +78,17 @@ export default function HomeSwarmLoader() {
 
   const reduced = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, () => false);
   const webgl = useSyncExternalStore(noopSubscribe, hasWebGL, () => true);
+  // Phones see only the PhoneGate (which runs its own copy of this scene);
+  // the page is hidden there, so never start a second WebGL context.
+  const phone = useSyncExternalStore(subscribePhone, isPhone, () => false);
 
   useEffect(() => {
-    if (!webgl) return;
+    if (!webgl || phone) return;
     // Start right after load (at the first idle moment), not on the first
     // scroll: waiting left a still poster on screen that "came alive" with a
     // shimmer when the visitor scrolled.
     return onEngageOrIdle(() => setMounted(true), 0);
-  }, [webgl]);
+  }, [webgl, phone]);
 
   // Scroll wiring loads with the scene, never on reduced motion.
   useEffect(() => {

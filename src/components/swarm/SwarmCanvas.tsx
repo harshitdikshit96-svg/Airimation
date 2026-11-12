@@ -5,7 +5,7 @@ import { Canvas, useThree, type CanvasProps } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { AgXToneMapping } from "three";
 import Effects from "./Effects";
-import { detectTier, MAX_FPS, mergeProfile, stepDown, type QualityProfile, type Tier } from "./quality";
+import { detectTier, MAX_FPS, qualityOverride, mergeProfile, stepDown, type QualityProfile, type Tier } from "./quality";
 
 /**
  * Drives a `frameloop="demand"` canvas at no more than `fps`. On a 60 Hz
@@ -46,6 +46,8 @@ type Props = {
   onFail?: () => void;
   /** Called after the first frame, so a poster can fade out. */
   onReady?: () => void;
+  /** Fixed starting tier (the phone gate uses "low"); `?quality=` still wins. */
+  tier?: Tier;
 };
 
 /**
@@ -60,9 +62,9 @@ type Props = {
  * - On context loss, hands control back to the parent's fallback rather
  *   than leaving a black rectangle.
  */
-export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady }: Props) {
+export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady, tier }: Props) {
   // Content tier: chosen once. Render tier: stepped down at runtime.
-  const [contentTier] = useState<Tier>(detectTier);
+  const [contentTier] = useState<Tier>(() => (tier ? (qualityOverride() ?? tier) : detectTier()));
   const [renderTier, setRenderTier] = useState<Tier>(contentTier);
   const [visible, setVisible] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
