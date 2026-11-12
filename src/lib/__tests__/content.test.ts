@@ -51,7 +51,7 @@ describe("Design a Show copy", () => {
   });
 });
 
-describe("one public email", () => {
+describe("public email addresses", () => {
   const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
   const found = (value: unknown) => new Set(JSON.stringify(value).match(EMAIL) ?? []);
 
@@ -59,8 +59,10 @@ describe("one public email", () => {
     expect(contactInfo.email).toBe("hello@airimation.in");
   });
 
-  test("no other address appears in any content.ts export", () => {
-    expect([...found(content)]).toEqual(["hello@airimation.in"]);
+  test("content.ts publishes hello@ and the team's own @airimation.in addresses only", () => {
+    const team = [...directors, ...advisors].map((m) => m.email).filter(Boolean);
+    expect(team.sort()).toEqual(["gaurav@airimation.in", "harshit@airimation.in", "madhuri@airimation.in"]);
+    expect([...found(content)].sort()).toEqual(["hello@airimation.in", ...team].sort());
   });
 
   test("the JSON-LD publishes the same address and no other", () => {

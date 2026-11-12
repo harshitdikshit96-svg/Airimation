@@ -19,7 +19,7 @@ Read this before changing copy, team, branding or the 3D swarm.
 | **Never use the word "government"** in any Airimation material — say "civic" or "public". | 7 Nov 2026 |
 | HQ wording: **Noida, Uttar Pradesh (Delhi NCR)**. (Older docs said Lucknow, then New Delhi — both superseded.) | Nov 2026 |
 | Registration numbers (CIN, GSTIN, Udyam, DPIIT) are **not shown in full on the website** — masked. Full values are kept in `src/lib/registration.ts`, which no page imports. | 9 Nov 2026 |
-| One public email: **hello@airimation.in** — footer, contact, JSON-LD and the phone screen. No personal addresses on the site. | 12 Nov 2026 |
+| Company email: **hello@airimation.in** — footer, contact, JSON-LD and the phone screen. The team's own addresses (harshit@, madhuri@, gaurav@airimation.in) stay on /team. The old Gmail address is gone. | 12 Nov 2026 |
 | ⚠️ The CIN as supplied reads `…UW2026…`; UP is `UP`. Verify against the Certificate of Incorporation. | open |
 | Logo: the drone-with-dotted-swirl mark. Colour and black versions exist; the no-colour one goes on the office name board. Vectorised from the black version (9 Nov 2026) — see §4. | Oct 2026 |
 
@@ -276,7 +276,7 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 - **Ram** and **Ram Mandir** added, modelled by Airimation in Blender (`scripts/blender/make-ram.py`; GLBs in workspace `Scans/made/`). 57 formations at 2,000 drones.
 - **Lighter backdrop overlay** on inner pages (80% → 55%).
 - **Phones:** the live drone animation and a "best seen on a bigger screen" note with the email button, on every route (§2).
-- **One email, hello@airimation.in**, everywhere: JSON-LD's Gmail address and the personal team addresses (/team) removed; JSON-LD moved to `src/lib/jsonld.ts` and tested.
+- **One company email, hello@airimation.in**: JSON-LD's Gmail address removed; JSON-LD moved to `src/lib/jsonld.ts` and tested. The team's own addresses stay on /team (briefly removed, restored the same day at Harshit's request).
 - Docs: README, CLAUDE.md, SHOW_CONFIGURATOR.md brought up to date; workspace `Airimation_Context_Brief.md` rewritten from this file (no more Biscope / New Delhi / Sandeep).
 
 ### 12 Nov 2026 — round 8
@@ -339,9 +339,9 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 | Command | What it covers | Last run |
 |---|---|---|
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 (round 9) |
-| `npm test` | 458 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); one public email in content and JSON-LD; phone-gate story | ✅ 458/458, 12 Nov 2026 (round 9) |
+| `npm test` | 458 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story | ✅ 458/458, 12 Nov 2026 (round 9) |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 (round 9) |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only email; Design a Show hero full width, then controls, then heading | ✅ 68/68, 12 Nov 2026 (round 9) |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls, then heading | ✅ 68/68, 12 Nov 2026 (round 9) |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
@@ -359,7 +359,6 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] Choose a new flagship show name (or decide not to have one).
 - [x] One public email: hello@airimation.in everywhere (12 Nov, round 9).
 - [ ] **Make sure hello@airimation.in actually receives mail before launch** — on phones it is now the only way to reach us.
-- [ ] Decide whether the directors' personal emails should come back on /team (removed with the one-email change).
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
 - [x] Ram figure and Ram Mandir: modelled by Airimation in Blender (12 Nov, round 9). A professional 3D artist could still improve the face, dhoti folds and the Mandir's carving; the Mandir reads from 800 drones.

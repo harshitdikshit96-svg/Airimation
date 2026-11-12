@@ -387,6 +387,8 @@ export type TeamMember = {
   /** A fuller paragraph, for the /team page. */
   intro: string;
   photo?: string;
+  /** Personal work address, shown on /team. */
+  email?: string;
   /** Public profile, for verification. */
   profile?: string;
   /** Kept in config, never rendered. */
@@ -434,6 +436,7 @@ export const advisors: TeamMember[] = [
     intro:
       "Dr. Gaurav Tripathi advises on operations and communication — keeping partners, the team and every stakeholder working to one plan, and on the permissions and safety case that decide whether a show actually flies. He holds a PhD from IIIT Lucknow and is an Assistant Professor at Bennett University.",
     photo: "/team/gaurav.jpg",
+    email: "gaurav@airimation.in",
   },
   {
     name: "Dr. Neeraj Jain",
@@ -455,6 +458,7 @@ export const directors: TeamMember[] = [
     intro:
       "Harshit Dixit co-founded Airimation and is its full-time director. He runs the hardware build — the prototype now being taken into the Nano category — alongside licences, compliance and the team, and builds the software pipeline that turns a client's occasion into a choreographed show. A BTech from IIIT Lucknow with five years of product engineering behind him.",
     photo: "/team/harshit.jpg",
+    email: "harshit@airimation.in",
   },
   {
     name: "Madhuri Mishra",
@@ -463,6 +467,7 @@ export const directors: TeamMember[] = [
     intro:
       "Madhuri Mishra co-founded Airimation and leads research and strategy, keeping the R&D work on track and setting the direction for where the company flies next. She holds a PhD from IIIT Lucknow and is an Assistant Professor at UPES Dehradun.",
     photo: "/team/madhuri.png",
+    email: "madhuri@airimation.in",
   },
 ];
 
@@ -544,9 +549,10 @@ export const credentials = [
 ];
 
 /**
- * The one public email address. Every mailto, the footer, the contact page,
- * the phone note and the JSON-LD read it from here; no other address is
- * published (src/lib/__tests__/content.test.ts).
+ * The company's public email address. Every company mailto, the footer, the
+ * contact page, the phone note and the JSON-LD read it from here. The only
+ * other addresses published are the team's own @airimation.in addresses on
+ * /team (src/lib/__tests__/content.test.ts).
  */
 export const contactInfo = {
   email: "hello@airimation.in",

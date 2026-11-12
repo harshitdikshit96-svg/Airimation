@@ -9,7 +9,7 @@
 //   - every page loads (200) with no uncaught errors; old URLs redirect
 //   - phones (390 px) see only the phone gate (site hidden, not removed),
 //     no sideways scroll; laptops (1456 px) see the site, never the gate
-//   - hello@airimation.in is the only email address in any page
+//   - hello@airimation.in is the only company email; /team also shows the team's own @airimation.in addresses
 //   - page headings line up with the header's left edge
 //   - every inner page has the steady dusk backdrop; home has its live scene
 //   - home: the 3D scene starts on load, before any scroll
@@ -99,11 +99,12 @@ for (const path of PAGES) {
     await phoneGateCheck(path);
   });
 
-  await check("hello@airimation.in is the only email address", async () => {
+  await check("hello@ is the only company email (team addresses on /team only)", async () => {
     const { page } = await open(path);
     const found = new Set((await page.content()).match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g) ?? []);
     found.delete("you@example.com"); // the contact form's placeholder
-    assert([...found].every((e) => e === "hello@airimation.in"), `found ${[...found].join(", ")}`);
+    const team = path === "/team" ? ["harshit@airimation.in", "madhuri@airimation.in", "gaurav@airimation.in"] : [];
+    assert([...found].every((e) => e === "hello@airimation.in" || team.includes(e)), `found ${[...found].join(", ")}`);
     await page.close();
   });
 
