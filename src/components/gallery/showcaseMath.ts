@@ -17,10 +17,11 @@ const REFERENCE_FLEET = 500;
  * How big a figure is flown for a fleet. Real shows keep drones a fixed
  * distance apart, so more drones means a BIGGER picture, not just a denser
  * one: size grows with the square root of the count (spacing stays put).
- * Clamped so 100 drones still reads and 2,000 still fits the sky.
+ * Clamped so 100 drones still reads (x0.5); 5,000 flies a figure ~3.2x the
+ * 500-drone size, so each fleet step is a clear visual difference.
  */
 export function fleetScale(count: number): number {
-  return Math.min(2, Math.max(0.5, Math.sqrt(count / REFERENCE_FLEET)));
+  return Math.min(3.2, Math.max(0.5, Math.sqrt(count / REFERENCE_FLEET)));
 }
 
 /**
@@ -37,7 +38,9 @@ export function showAltitude(count: number): number {
  * fleet both fills more of the frame and shows finer detail.
  */
 export function viewDistance(count: number): number {
-  return 230 * Math.sqrt(fleetScale(count));
+  // Exponent 0.8: at 5,000 drones (a figure ~3.2x as big) the camera backs
+  // off ~2.5x, so the figure is bigger on screen but still fits the frame.
+  return 230 * Math.pow(fleetScale(count), 0.8);
 }
 
 /** Drone cruise speed for transitions, m/s, at the preview rate. */

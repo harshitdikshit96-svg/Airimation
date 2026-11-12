@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 12 November 2026 (round 10).*
+the change log. Last updated: 12 November 2026 (round 11).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -138,7 +138,7 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
 | **Ram** | modelled by Airimation (`scripts/blender/make-ram.py`): standing, Kodanda bow in the left hand, arrow in the right, crown and halo | own | 500 |
 | **Ram Mandir** | modelled by Airimation from published dimensions (380 × 250 ft, 161 ft shikhara, five mandapas, Nagara style) | own | 800 |
-| 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
+| 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst — **modelled by Airimation in Blender** (`scripts/blender/make-shapes.py`; lines are thin tubes) since round 11, replacing the code-generated `classic.ts` | own | 100 (globe, atom, spiral 500) |
 
 **From Sketchfab (12 Nov 2026), 29 more** in `scans/sketchfab.ts` — all CC0 or CC BY 4.0, credited on `/credits`:
 - *Culture:* Standing Ganesha (CMA 1970.62, CC0), Temple tower (CMA 1971.167 Sikhara, CC0), and a clay **Diya** with a lit wick (replaces the Roman lamp).
@@ -148,7 +148,11 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 - *Objects:* sitar, violin, rose.
 - Tried and dropped: steam train (flattens to a slab), crown (reads as a dome), junk ship (150 MB).
 
-A **Theme** filter (All / Culture & devotion / Landmarks / Animals / Travel / Objects / Shapes) sits beside Fleet — 55 formations at 2,000 drones. Long models are capped at 130 m (`--max-extent`).
+A **Theme** filter (All / Culture & devotion / Landmarks / Animals / Travel / Objects / Shapes) sits beside Fleet — 57 formations at 1,500 drones and up.
+
+**Every formation is a 3D model** (round 11). The only exception is the Tiranga, drawn to the Flag Code of India specification (an exact spec, not a hand drawing; it waves and its chakra turns).
+
+**One scale for every model** (round 11): each figure is fitted into the same frame — 110 m wide × 84 m tall (140 m deep at most) — at 500 drones, whatever size it was converted at (`scan.ts > fitScale`), so a tall tower and a wide tiger look equally big. Tested.
 
 All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are on `/credits`** (linked from the footer, noindex), not on Design a Show (12 Nov 2026) — CC BY 4.0 requires the attribution to be on the site.
 
@@ -156,7 +160,7 @@ All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are o
 
 **Speeds.** Choreography stays under **8 m/s** (speed test). The **preview plays 1.8× faster** (12 Nov 2026: "mid-way between the old fast version and real speed"); the page copy says it is sped up. Transitions 4.5–14 s.
 
-**Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×2 at 2,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
+**Fleets: 100 / 500 / 1,500 / 3,000 / 5,000** (round 11, was 100–2,000 in six steps), so each step is a clear visual difference. Every model holds 5,000 points. **Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×3.2 at 5,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
 
 **Per-drone colour** (12 Nov 2026) — so a figure's features read instead of one flat colour. Two sources, set per formation in `paint` (`scan.ts > Paint`):
 - **The model's real colours.** `scripts/scan-colors.mjs` samples each source GLB's texture (the museum's photograph, or the artist's paint) at every drone, and stores a short hex palette plus a per-drone index in the formation JSON. The formation points were made with unrecorded orientation options, so the script finds the alignment itself (24 right-angle starts + ICP); fit error is printed (most < 1% of height; butterfly 2.4%, Somaskanda 3.8%). Done for 38 models.
@@ -165,7 +169,7 @@ Brightness follows texture brightness (never below a floor, so a dark drone stil
 
 **LED hues** (restored 12 Nov 2026): Per formation, Diwali gold, Royal, Moonlight, Tiranga, Wedding rose. A palette keeps each drone's brightness and takes the hue from a top-to-bottom gradient (`showcaseMath.ts > applyHues`).
 
-**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] [--box …] [--only nodeA,nodeB] --label … --credit … [--licence "CC BY 4.0" | "Airimation"]`, then `node scripts/scan-colors.mjs <glb> <id>` for its real colours, `node scripts/scan-manifest.mjs` to list it, give it a `paint` config, and register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit, bounds, palette indices and that it isn't one flat colour.
+**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] [--box …] [--only nodeA,nodeB] --label … --credit … [--licence "CC BY 4.0" | "Airimation"]`, then `node scripts/scan-colors.mjs <glb> <id>` for its real colours (the converter now writes 5,000 points and records its options in the JSON's `source`; `scan-colors.mjs --points 5000` re-samples an older file in place), `node scripts/scan-manifest.mjs` to list it, give it a `paint` config, and register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit, bounds, palette indices and that it isn't one flat colour.
 
 **Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`): Skybrush zipped CSV + static CSV + points JSON + preview SVG + `REPORT.md` per formation (unchanged).
 
@@ -273,6 +277,17 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 11
+- **Shankh** remodelled by Airimation in Blender (`scripts/blender/make-shankh.py`): the CC BY conch was a featureless teardrop. Now a real conch — spire of whorls up, body whorl, siphonal canal down, lip toward the audience.
+- **Kamal** upright: a lotus seen from the side, petals opening upward (it had been tipped 90° to face the audience).
+- **Diya:** one flame. The model's own flame (and its two duplicate lamps and ground plane) are left out (`--only`); our flickering flame is a short teardrop (was 75% of the lamp's size, now ~30%).
+- **The 9 shapes are 3D models** made in Blender; `classic.ts` removed. Every formation is now a 3D model except the Tiranga (exact spec).
+- **One scale** for every model (fitted to 110 × 84 m); the biplane turned side-on.
+- **Fleets 100 / 500 / 1,500 / 3,000 / 5,000**; every model re-sampled at 5,000 points (`scan-colors.mjs --points`, aligned to the existing formation); the camera backs off further for big fleets.
+- **Colour:** drone brightness capped (LED_MAX 0.85), no white core, half bloom on Design a Show; no colour region brighter than 1.
+- Converter records its options in each JSON (`source`), defaults to 5,000 points, and no longer counts zero-area triangles as area 0.5 (that bug had bunched the Trishul's and Ram's drones; both reconverted).
+- Shankh needs 500 drones (at 100 it is only a spindle outline).
+
 ### 12 Nov 2026 — round 10
 - **Scrolling fixed:** the wheel over the full-screen sky scrolls the page; Ctrl/⌘ + wheel (or pinch) and new +/− buttons zoom.
 - **Figures hold still** (every scanned model and the 3D shapes); only light effects animate.
@@ -348,10 +363,10 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 | Command | What it covers | Last run |
 |---|---|---|
-| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 (round 10) |
-| `npm test` | 459 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story; manifest in sync with the model files | ✅ 459/459, 12 Nov 2026 (round 10) |
-| `npm run build` | type check + production build | ✅ 12 Nov 2026 (round 10) |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls, then heading; wheel over the sky scrolls the page, Ctrl+wheel zooms | ✅ 69/69, 12 Nov 2026 (round 10) |
+| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 (round 11) |
+| `npm test` | 485 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story; manifest in sync with the model files | ✅ 485/485, 12 Nov 2026 (round 11) |
+| `npm run build` | type check + production build | ✅ 12 Nov 2026 (round 11) |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls, then heading; wheel over the sky scrolls the page, Ctrl+wheel zooms | ✅ 69/69, 12 Nov 2026 (round 11) |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 

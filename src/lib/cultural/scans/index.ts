@@ -74,10 +74,11 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     minDrones: 100,
   }),
   scanFormation(f(shankh), {
-    paint: { ramp: ["#ffb89a", "#ffe6d6", "#fffaf4"], regions: [{ hex: "#ff9a7a", level: 0.8, r: [0, 0.35], z: [0.5, 1] }] },
-    blurb: "The conch, sounded at the start of every puja.",
-    colors: ["#fff1dc", "#ffffff"],
-    minDrones: 100,
+    // Ivory body, peach-pink opening, an amber line along the spire's spiral.
+    paint: { palette: ["#fff4e0", "#ff9a8a", "#e8a33a"] },
+    blurb: "The shankh, spire up — the conch sounded at the start of every puja. Modelled by Airimation.",
+    colors: ["#fff4e0", "#fff4e0"],
+    minDrones: 500,
   }),
   scanFormation(f(trishul), {
     paint: { regions: [{ hex: "#9fb6d0", level: 0.85 }, { hex: "#e8f4ff", y: [0.7, 1] }, { hex: "#ffb02e", y: [0.56, 0.7], r: [0, 0.5] }, { hex: "#ff3a2a", y: [0.5, 0.56], r: [0, 0.4] }] },

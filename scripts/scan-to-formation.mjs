@@ -35,7 +35,8 @@ const opt = (name, def) => {
   return i >= 0 ? rest[i + 1] : def;
 };
 const HEIGHT = Number(opt("height", 84));
-const POINTS = Number(opt("points", 2000));
+// 5,000: the largest fleet on the site; any prefix is an even sampling.
+const POINTS = Number(opt("points", 5000));
 const RX = (Number(opt("rotate-x", 0)) * Math.PI) / 180;
 const RY = (Number(opt("rotate-y", 0)) * Math.PI) / 180;
 // In the picture plane, after the turns: e.g. a dolphin mid-leap.
@@ -117,8 +118,11 @@ for (const [a, b, c] of tris) {
   const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
   const v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
   const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
-  const len = Math.hypot(...n) || 1;
-  total += len / 2;
+  // A zero-area (degenerate) triangle must add no area — not 0.5, which
+  // would swamp the weighting and pile samples onto it.
+  const area = Math.hypot(...n) / 2;
+  const len = area * 2 || 1;
+  total += area;
   cum.push(total);
   normals.push([n[0] / len, n[1] / len, n[2] / len]);
 }
@@ -193,6 +197,8 @@ const out = {
   quant: 1 / Q,
   pos: Buffer.from(posQ.buffer).toString("base64"),
   nrm: Buffer.from(nrmQ.buffer).toString("base64"),
+  // How this file was made, so it can be regenerated exactly.
+  source: { glb: input.replace(/^.*?(Scans\/)/, "$1"), args: rest },
 };
 const dir = join(import.meta.dirname, "..", "src", "lib", "cultural", "scans");
 mkdirSync(dir, { recursive: true });

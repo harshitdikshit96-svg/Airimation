@@ -42,7 +42,7 @@ const f = (src: ScanSource) => src;
 
 export const SKETCHFAB: AnimatedFormation<unknown>[] = [
   scanFormation(f(charminar), {
-    paint: { ramp: ["#ff9a40", "#ffc070", "#ffe2b8"], regions: [{ hex: "#ffb04a", y: [0.86, 1] }, { hex: "#fff0d0", level: 1.2, y: [0.56, 0.6] }] },
+    paint: { ramp: ["#ff9a40", "#ffc070", "#ffe2b8"], regions: [{ hex: "#ffb04a", y: [0.86, 1] }, { hex: "#fff0d0", y: [0.56, 0.6] }] },
     blurb: "Hyderabad's Charminar — four minarets around the arch.",
     colors: ["#fff1dc", "#ffffff"],
     theme: "landmarks",
@@ -56,7 +56,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(qutubMinar), {
-    paint: { ramp: ["#c8381a", "#ff6a3d"], regions: [{ hex: "#fff3e6", y: [0.72, 0.97] }, { hex: "#ffd27a", y: [0.97, 1] }, { hex: "#ffd0a0", level: 1.2, y: [0.33, 0.36] }, { hex: "#ffd0a0", level: 1.2, y: [0.56, 0.59] }] },
+    paint: { ramp: ["#c8381a", "#ff6a3d"], regions: [{ hex: "#fff3e6", y: [0.72, 0.97] }, { hex: "#ffd27a", y: [0.97, 1] }, { hex: "#ffd0a0", y: [0.33, 0.36] }, { hex: "#ffd0a0", y: [0.56, 0.59] }] },
     blurb: "Qutub Minar, its five storeys rising.",
     colors: ["#ffb27a", "#fff0d0"],
     theme: "landmarks",
@@ -98,7 +98,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(eiffelTower), {
-    paint: { ramp: ["#ff9a2e", "#ffd27a", "#fff4d6"], regions: [{ hex: "#ffffff", level: 1.4, y: [0.97, 1] }] },
+    paint: { ramp: ["#ff9a2e", "#ffd27a", "#fff4d6"], regions: [{ hex: "#ffffff", y: [0.97, 1] }] },
     blurb: "The Eiffel Tower.",
     colors: ["#ffcf7a", "#fff3d6"],
     theme: "landmarks",
@@ -112,14 +112,14 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 100,
   }),
   scanFormation(f(statueOfLiberty), {
-    paint: { palette: ["#5fe0b0", "#7ff0c8", "#3fc898", "#ffcf3a", "#2a9a78"], regions: [{ hex: "#ffb02e", level: 1.4, y: [0.95, 1] }] },
+    paint: { palette: ["#5fe0b0", "#7ff0c8", "#3fc898", "#ffcf3a", "#2a9a78"], regions: [{ hex: "#ffb02e", y: [0.95, 1] }] },
     blurb: "The Statue of Liberty.",
     colors: ["#5fe0b0", "#e8fff4"],
     theme: "landmarks",
     minDrones: 500,
   }),
   scanFormation(f(bigBen), {
-    paint: { ramp: ["#7a4a10", "#e0942e", "#ffcc70", "#fff0d0"], regions: [{ hex: "#fff6d0", level: 1.3, y: [0.66, 0.74], z: [0.75, 1] }] },
+    paint: { ramp: ["#7a4a10", "#e0942e", "#ffcc70", "#fff0d0"], regions: [{ hex: "#fff6d0", y: [0.66, 0.74], z: [0.75, 1] }] },
     blurb: "Big Ben's clock tower.",
     colors: ["#ffd27a", "#fff3d6"],
     theme: "landmarks",

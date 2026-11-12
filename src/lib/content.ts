@@ -188,7 +188,7 @@ export const designYourShow = {
 export const designTeaser = {
   eyebrow: "04 · DESIGN A SHOW",
   title: "How many drones does your sky need?",
-  body: "Pick a fleet size — 100 to 2,000 drones — and watch what it can fly, from the Tiranga to a scanned Ganesha, live in 3D.",
+  body: "Pick a fleet size — 100 to 5,000 drones — and watch what it can fly, from the Tiranga to a scanned Ganesha, live in 3D.",
   cta: "Design your show",
 };
 

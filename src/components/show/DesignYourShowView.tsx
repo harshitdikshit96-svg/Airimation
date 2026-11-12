@@ -16,7 +16,7 @@ export default function DesignYourShowView({ code, archived = true }: { code?: s
         <p className="mb-8 rounded-lg border border-line-2 px-4 py-3 text-sm text-muted">
           This is our earlier show designer, kept so shared links still work.{" "}
           <Link href="/design-your-show" className="text-amber-soft underline-offset-4 hover:underline">
-            Try the new one — 100 to 2,000 drones, in 3D →
+            Try the new one — 100 to 5,000 drones, in 3D →
           </Link>
         </p>
       )}

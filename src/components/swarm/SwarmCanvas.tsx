@@ -54,6 +54,8 @@ type Props = {
    * saturation, for scenes where per-drone colour must read (Design a Show).
    */
   toneMapping?: ToneMap;
+  /** Bloom strength multiplier (default 1, the home look). */
+  bloom?: number;
 };
 
 /**
@@ -68,7 +70,7 @@ type Props = {
  * - On context loss, hands control back to the parent's fallback rather
  *   than leaving a black rectangle.
  */
-export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady, tier, toneMapping = "agx" }: Props) {
+export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady, tier, toneMapping = "agx", bloom = 1 }: Props) {
   // Content tier: chosen once. Render tier: stepped down at runtime.
   const [contentTier] = useState<Tier>(() => (tier ? (qualityOverride() ?? tier) : detectTier()));
   const [renderTier, setRenderTier] = useState<Tier>(contentTier);
@@ -123,7 +125,7 @@ export default function SwarmCanvas({ children, className, camera, active = true
         )}
         {running && !still && <FrameLimiter fps={MAX_FPS} />}
         {children(quality)}
-        <Effects quality={quality} toneMapping={toneMapping} />
+        <Effects quality={quality} toneMapping={toneMapping} bloom={bloom} />
       </Canvas>
     </div>
   );

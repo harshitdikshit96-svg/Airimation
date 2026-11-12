@@ -221,11 +221,12 @@ await check("flat formation list, LED hues, instant fleet change", async () => {
   assert(hues.length >= 4, `only ${hues.length} hue options`);
   await hues[1].click();
   assert((await hues[1].getAttribute("aria-checked")) === "true", "hue not selected");
+  await page.selectOption("#fleet", "100");
   const before = await page.$$eval('[role="tab"]', (t) => t.length);
-  await page.selectOption("#fleet", "2000");
+  await page.selectOption("#fleet", "5000");
   const after = await page.$$eval('[role="tab"]', (t) => t.length);
-  assert(after > before, `fleet 2000 lists ${after} formations, was ${before}`);
-  assert(/2,000 drones/.test(await page.textContent("body")), "caption did not update");
+  assert(after > before, `fleet 5000 lists ${after} formations, was ${before}`);
+  assert(/5,000 drones/.test(await page.textContent("body")), "caption did not update");
   assert(errors.length === 0, errors.join("; "));
   await page.close();
 });

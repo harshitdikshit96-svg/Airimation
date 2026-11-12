@@ -20,6 +20,15 @@ import hanuman from "../scans/hanuman.json";
 import vishnuGaruda from "../scans/vishnu-garuda.json";
 import ram from "../scans/ram.json";
 import ramMandir from "../scans/ram-mandir.json";
+import shape_globe from "../scans/shape-globe.json";
+import shape_helix from "../scans/shape-helix.json";
+import shape_atom from "../scans/shape-atom.json";
+import shape_knot from "../scans/shape-knot.json";
+import shape_cube from "../scans/shape-cube.json";
+import shape_spiral from "../scans/shape-spiral.json";
+import shape_diamond from "../scans/shape-diamond.json";
+import shape_pyramid from "../scans/shape-pyramid.json";
+import shape_starburst from "../scans/shape-starburst.json";
 
 import charminar from "../scans/charminar.json";
 import indiaGate from "../scans/india-gate.json";
@@ -99,5 +108,14 @@ const files: Record<string, ScanFile> = {
   vishnuGaruda: vishnuGaruda as ScanFile,
   ram: ram as ScanFile,
   ramMandir: ramMandir as ScanFile,
+  shape_globe: shape_globe as ScanFile,
+  shape_helix: shape_helix as ScanFile,
+  shape_atom: shape_atom as ScanFile,
+  shape_knot: shape_knot as ScanFile,
+  shape_cube: shape_cube as ScanFile,
+  shape_spiral: shape_spiral as ScanFile,
+  shape_diamond: shape_diamond as ScanFile,
+  shape_pyramid: shape_pyramid as ScanFile,
+  shape_starburst: shape_starburst as ScanFile,
 };
 export default files;

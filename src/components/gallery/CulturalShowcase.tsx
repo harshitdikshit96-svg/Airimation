@@ -24,15 +24,17 @@ import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphS
  * Fleet sizes on offer, every device. Each shows only the formations that
  * actually read at that size (`minDrones`), at least four even at 100.
  */
-const FLEETS = [100, 200, 500, 800, 1500, 2000];
+const FLEETS = [100, 500, 1500, 3000, 5000];
 /** Starting fleet: a showy one where the device can afford it. */
 function defaultFleet(): number {
   const tier = detectTier();
-  return tier === "high" ? 800 : 500;
+  return tier === "high" ? 1500 : 500;
 }
-const CAPACITY = 2000;
+const CAPACITY = 5000;
 const MIN_DIST = 70;
-const MAX_DIST = 440;
+const MAX_DIST = 900;
+/** Brightest a drone may be (linear): keeps its colour instead of a white, blooming core. */
+const LED_MAX = 0.85;
 /** Formations per fleet size, for the Fleet menu (computed once). */
 const FLEET_COUNTS = new Map(FLEETS.map((n) => [n, formationsFor(n).length]));
 
@@ -152,6 +154,17 @@ function Scene({
       buffers.pos[i * 3 + 2] *= scale;
     }
     applyHues(buffers.pos, buffers.col, count, getPalette(hues).colors);
+    // No drone brighter than an LED at ~85%: brighter values only bloom and
+    // turn white, and the drone's own colour is lost.
+    for (let i = 0; i < count; i++) {
+      const m = Math.max(buffers.col[i * 3], buffers.col[i * 3 + 1], buffers.col[i * 3 + 2]);
+      if (m > LED_MAX) {
+        const k = LED_MAX / m;
+        buffers.col[i * 3] *= k;
+        buffers.col[i * 3 + 1] *= k;
+        buffers.col[i * 3 + 2] *= k;
+      }
+    }
   };
 
   useFrame((state, delta) => {
@@ -257,8 +270,8 @@ function Scene({
     u.uLit.value = 1;
     // Colour fidelity: each drone's own colour must read (a white-hot core
     // under AgX tone mapping turns every colour to white).
-    u.uWhiten.value = 0.12;
-    u.uCoreGain.value = 0.6;
+    u.uWhiten.value = 0;
+    u.uCoreGain.value = 0.42;
     u.uHaloGain.value = 2.6;
     u.uDissolve.value = 0;
     u.uMotion.value = 0;
@@ -387,6 +400,8 @@ export default function CulturalShowcase() {
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
           // Neutral tone mapping keeps each drone's colour (AgX turns orange to salmon).
           toneMapping="neutral"
+          // Half the home page's bloom: a glow, not a white flare.
+          bloom={0.5}
           onFail={() => setFailed(true)}
         >
           {(quality) => <Scene quality={quality} id={readyId} count={count} playing={playing} hues={hues} zoomRef={zoomRef} />}

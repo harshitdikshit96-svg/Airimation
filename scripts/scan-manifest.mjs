@@ -13,7 +13,8 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const dir = join(import.meta.dirname, "..", "src", "lib", "cultural", "scans");
-const files = readdirSync(dir).filter((f) => f.endsWith(".json")).sort();
+// Work files (tmp-*, *-test) are not formations.
+const files = readdirSync(dir).filter((f) => f.endsWith(".json") && !f.startsWith("tmp-") && !f.endsWith("-test.json")).sort();
 const META = ["id", "label", "credit", "licence", "height", "width", "depth", "count", "quant"];
 
 const rows = files.map((f) => {

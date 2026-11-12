@@ -105,7 +105,7 @@ via `src/components/gallery/CulturalShowcase.tsx`, maths in
 `showcaseMath.ts`) — **only formations made from a real 3D model**: museum
 scans and CC0 / CC BY 4.0 models (`scan.ts`, `scans/`, made by
 `scripts/scan-to-formation.mjs`, credited on the page), the 3D shapes from
-the archived designer (`classic.ts`), and the Tiranga to its official spec
+the archived designer (now Blender models, `scans/shapes.ts`), and the Tiranga to its official spec
 (`tiranga.ts`), plus symbols and figures modelled by us in Blender
 (`scripts/blender/`, incl. Ram and the Ram Mandir). No hand-drawn
 figures — no model, no formation. **Per-drone colour** (`paint` in
@@ -180,5 +180,5 @@ than writing bespoke markup per section — follow that pattern for new pages.
 | `/team` | Directors and advisors |
 | `/contact` | Contact form (posts to `/api/contact`) |
 | `/credits` | Credits for the CC BY 3D models (noindex, footer link) |
-| `/design-your-show` | Full-width 3D sky hero (100–2,000 drones, 57 formations), controls below, then copy + quote CTA |
+| `/design-your-show` | Full-width 3D sky hero (100 / 500 / 1,500 / 3,000 / 5,000 drones, 57 formations), controls below, then copy + quote CTA |
 | `/design-your-show/classic` | ARCHIVED formation-picker configurator (noindex); old share links `/design-your-show/s/[code]` still open it |

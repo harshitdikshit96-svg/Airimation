@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { applyHues, fleetScale, MORPH_MAX, MORPH_MIN, morphSeconds, PREVIEW_RATE, showAltitude, viewDistance } from "../showcaseMath";
 
-const FLEETS = [100, 200, 500, 800, 1500, 2000];
+const FLEETS = [100, 500, 1500, 3000, 5000];
 /** Designed figure height at scale 1, metres (scripts/scan-to-formation.mjs --height). */
 const FIGURE_HEIGHT = 84;
 
@@ -10,7 +10,7 @@ describe("Design a Show preview maths", () => {
     for (let k = 1; k < FLEETS.length; k++) expect(fleetScale(FLEETS[k])).toBeGreaterThan(fleetScale(FLEETS[k - 1]));
     expect(fleetScale(500)).toBe(1);
     expect(fleetScale(50)).toBe(0.5);
-    expect(fleetScale(10_000)).toBe(2);
+    expect(fleetScale(10_000)).toBe(3.2);
   });
 
   test("every figure's base stays well above the skyline", () => {

@@ -7,6 +7,7 @@ import { CULTURAL, formationsFor } from "../index";
 import { tiranga } from "../tiranga";
 import { SHOW_ALT, TAU } from "../kit";
 import scanFiles from "./scanFiles";
+import { FIT_D, FIT_H, FIT_W, fitScale } from "../scan";
 
 // The Design a Show library rules (DECISIONS.md §3):
 //  - every formation comes from a real 3D model, an exact geometric shape,
@@ -14,7 +15,7 @@ import scanFiles from "./scanFiles";
 //  - only CC0 / public-domain or CC BY 4.0 models, and CC BY ones are credited
 //  - every fleet size on offer has formations to show
 
-const FLEETS = [100, 200, 500, 800, 1500, 2000];
+const FLEETS = [100, 500, 1500, 3000, 5000];
 // Hand-drawn figures replaced by model-based ones (Om and Kamal came back
 // as Airimation-modelled symbols, under new code).
 const REMOVED = ["lotus", "mahadev", "shiva", "heartbeat"];
@@ -57,13 +58,19 @@ describe("3D model files", () => {
       if (file.licence === "CC BY 4.0") expect(file.credit).toMatch(/CC BY 4\.0/);
       expect(file.credit).not.toMatch(/\bNC\b|\bSA\b|\bND\b|non-commercial/i);
       expect(file.height).toBeGreaterThan(20);
-      expect(file.height).toBeLessThanOrEqual(84);
-      expect(Math.max(file.width, file.depth)).toBeLessThanOrEqual(150);
+      // Positions are int16 over +-128 m.
+      expect(Math.max(file.width, file.height, file.depth)).toBeLessThanOrEqual(250);
+      // Shown at one common scale: fitted into FIT_W x FIT_H, touching one side.
+      const k = fitScale(file);
+      expect(file.width * k).toBeLessThanOrEqual(FIT_W + 0.01);
+      expect(file.height * k).toBeLessThanOrEqual(FIT_H + 0.01);
+      expect(file.depth * k).toBeLessThanOrEqual(FIT_D + 0.01);
+      expect(Math.max(file.width * k - FIT_W, file.height * k - FIT_H, file.depth * k - FIT_D)).toBeGreaterThan(-0.01);
       const pos = Buffer.from(file.pos, "base64");
       const nrm = Buffer.from(file.nrm, "base64");
       expect(pos.byteLength).toBe(file.count * 3 * 2);
       expect(nrm.byteLength).toBe(file.count * 3);
-      expect(file.count).toBeGreaterThanOrEqual(2000);
+      expect(file.count).toBeGreaterThanOrEqual(5000);
     });
   }
 });
@@ -71,14 +78,16 @@ describe("3D model files", () => {
 describe("light effects never add stray drones", () => {
   // The old bow drew a streak of extra lights behind the arrow. Every drone
   // must now sit on the model (or the diya's flame, just above it).
-  for (const f of CULTURAL.filter((x) => !x.id.startsWith("classic-") && x.id !== "tiranga")) {
+  for (const f of CULTURAL.filter((x) => x.id !== "tiranga")) {
     test(`${f.id}: every drone inside the model's bounds`, () => {
       const n = Math.max(f.minDrones, 800);
       const rig = f.build(n);
       const pos = new Float32Array(n * 3);
       const col = new Float32Array(n * 3);
       f.pose(rig, 0, pos, col);
-      const file = Object.values(scanFiles).find((s) => s.id === f.id)!;
+      const raw = Object.values(scanFiles).find((s) => s.id === f.id)!;
+      const fit = fitScale(raw);
+      const file = { ...raw, width: raw.width * fit, height: raw.height * fit, depth: raw.depth * fit };
       // The loosed arrow flies 48 m beyond the bow, so check the bow at rest
       // (t = 0); its flight is tested on its own below.
       const reach = Math.hypot(file.width, file.depth) / 2 + 2;
@@ -144,7 +153,7 @@ describe("Tiranga", () => {
     expect(formationsFor(100).some((f) => f.id === "tiranga")).toBe(false);
   });
 
-  for (const n of [200, 500, 800, 2000]) {
+  for (const n of [200, 500, 1500, 5000]) {
     test(`${n} drones: the chakra has 24 spokes, each a straight line of 2+ drones`, () => {
       const rig = tiranga.build(n);
       expect(rig.u.length).toBe(n);

@@ -269,6 +269,17 @@ export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallba
   return out;
 }
 
+/** The common frame every model is fitted into (metres, front view). */
+export const FIT_W = 110;
+export const FIT_H = 84;
+/** Depth limit, so a deep model stays inside the show volume. */
+export const FIT_D = 140;
+
+/** Scale that fits a model into FIT_W x FIT_H (x FIT_D deep), keeping its proportions. */
+export function fitScale(m: { width: number; height: number; depth?: number }): number {
+  return Math.min(FIT_H / Math.max(1e-6, m.height), FIT_W / Math.max(1e-6, m.width), FIT_D / Math.max(1e-6, m.depth ?? 0));
+}
+
 export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFormation<Rig> {
   // Metadata now; points when loaded (already there for a full ScanFile).
   let file: ScanFile | null = source.pos && source.nrm ? (source as ScanFile) : null;
@@ -280,7 +291,10 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
   const swayAmp = ((opts.sway ?? 28) * Math.PI) / 180;
   // Outermost radius from the turn axis, for the speed budget (flame and
   // arrow sit inside the model's bounds or close to them).
-  const reach = Math.hypot(meta.width, meta.depth) / 2 + (opts.effect === "flame" ? 8 : 0);
+  // Every model is shown at the same scale: fitted into one frame, FIT_W
+  // wide and FIT_H tall (front view), whatever size it was converted at.
+  const fit = fitScale(meta);
+  const reach = (Math.hypot(meta.width, meta.depth) / 2) * fit + (opts.effect === "flame" ? 8 : 0);
   const budget = MAX_DRONE_SPEED - 1;
   const loop =
     opts.effect === "arrow"
@@ -330,13 +344,14 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
         // More drones than model points: extras double up on a small offset.
         const j = i < m ? i : i % m;
         const off = i < m ? 0 : 0.6;
-        p[i * 3] = cache.pos[j * 3] * file.quant + off;
-        p[i * 3 + 1] = cache.pos[j * 3 + 1] * file.quant;
-        p[i * 3 + 2] = cache.pos[j * 3 + 2] * file.quant + off;
+        p[i * 3] = cache.pos[j * 3] * file.quant * fit + off;
+        p[i * 3 + 1] = cache.pos[j * 3 + 1] * file.quant * fit;
+        p[i * 3 + 2] = cache.pos[j * 3 + 2] * file.quant * fit + off;
         for (let k = 0; k < 3; k++) nrm[i * 3 + k] = cache.nrm[j * 3 + k] / 127;
       }
-      const W = file.width;
-      const H = file.height;
+      const W = file.width * fit;
+      const H = file.height * fit;
+      const D = file.depth * fit;
 
       if (opts.effect === "fireRing") {
         // The aureole: the outer band, far from the figure's middle.
@@ -368,8 +383,9 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
         // A wide, shallow diya sizes its flame by its width, a tall lamp by its height.
         const ref = opts.flameAt === "top" ? Math.max(H, W * 0.9) : H;
         // The wick sits low in a bowl, so its flame must rise well clear of the rim.
-        const FH = ref * (opts.flameAt === "top" ? 0.75 : 0.42);
-        const FR = ref * 0.09;
+        // A teardrop, not a spike: about a third of the lamp's size tall.
+        const FH = ref * (opts.flameAt === "top" ? 0.3 : 0.42);
+        const FR = ref * (opts.flameAt === "top" ? 0.085 : 0.09);
         const golden = Math.PI * (3 - Math.sqrt(5));
         for (let k = 0; k < F; k++) {
           const i = n - F + k;
@@ -439,7 +455,7 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
         }
       }
       // Per-drone colour (extras that double up take their twin's colour).
-      const painted = paintPoints(file, p, m, opts.colors[0], opts.paint);
+      const painted = paintPoints({ ...file, width: W, height: H, depth: D }, p, m, opts.colors[0], opts.paint);
       const c = new Float32Array(n * 3);
       for (let i = 0; i < n; i++) {
         const j = i < m ? i : i % m;

@@ -32,7 +32,7 @@ describe("model colours (scripts/scan-colors.mjs)", () => {
 });
 
 describe("every scanned figure has more than one colour", () => {
-  const scans = CULTURAL.filter((f) => f.credit && !f.id.startsWith("classic"));
+  const scans = CULTURAL.filter((f) => f.credit);
   for (const f of scans) {
     test(`${f.id}: varied colour`, () => {
       const n = Math.max(500, f.minDrones);

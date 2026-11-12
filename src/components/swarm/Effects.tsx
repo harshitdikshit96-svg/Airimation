@@ -19,7 +19,7 @@ import type { QualityProfile } from "./quality";
  */
 export type ToneMap = "agx" | "neutral";
 
-export default function Effects({ quality, toneMapping = "agx" }: { quality: QualityProfile; toneMapping?: ToneMap }) {
+export default function Effects({ quality, toneMapping = "agx", bloom = 1 }: { quality: QualityProfile; toneMapping?: ToneMap; bloom?: number }) {
   if (!quality.bloom) return null;
   return (
     <EffectComposer multisampling={quality.multisampling} frameBufferType={HalfFloatType}>
@@ -29,7 +29,7 @@ export default function Effects({ quality, toneMapping = "agx" }: { quality: Qua
         resolutionScale={0.5}
         luminanceThreshold={0.9}
         luminanceSmoothing={0.3}
-        intensity={quality.tier === "high" ? 1.7 : 1.35}
+        intensity={(quality.tier === "high" ? 1.7 : 1.35) * bloom}
         radius={0.78}
       />
       <ToneMapping mode={toneMapping === "neutral" ? ToneMappingMode.NEUTRAL : ToneMappingMode.AGX} />
