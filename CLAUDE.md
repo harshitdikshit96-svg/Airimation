@@ -16,6 +16,7 @@ npm run test:e2e -- http://localhost:3000   # Chrome checks against a running si
 node scripts/build-skyline.mjs && node scripts/compress-assets.mjs   # skyline GLB
 node scripts/render-poster.mjs http://localhost:3000                 # poster frames
 node scripts/scan-colors.mjs <glb> <id>                              # a formation's real colours
+node scripts/scan-manifest.mjs                                       # after adding/re-converting a model
 npx vite-node scripts/preview-formations.ts -- <outDir> 1500 [ids]   # formation contact sheets
 ```
 
@@ -117,7 +118,9 @@ redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
 are light only and never add drones outside the model (tested). LED hues
 recolour by palette. The 3D sky is the page's full-width hero (controls
 below, heading after); **the camera moves only when the visitor moves it**
-(no auto-rotate). See README > Design a Show formations;
+(no auto-rotate); figures hold still; a plain wheel scrolls the page,
+Ctrl/⌘ + wheel zooms. Model points load on demand (`scans/manifest.ts`);
+Neutral tone mapping here, AgX on home. See README > Design a Show formations;
 `scripts/export-formations.ts` exports them.
 
 *Site backdrop* — every page except home and `/internal` sits on a still of

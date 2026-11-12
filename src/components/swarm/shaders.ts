@@ -114,6 +114,9 @@ export const droneFragmentShader = /* glsl */ `
   uniform float uHalo;
   uniform float uHaloWidth;
   uniform float uOpacity;
+  uniform float uWhiten;
+  uniform float uCoreGain;
+  uniform float uHaloGain;
 
   varying vec3 vColor;
   varying float vIntensity;
@@ -127,8 +130,8 @@ export const droneFragmentShader = /* glsl */ `
     // pushed toward white as it saturates, the way an over-exposed LED is.
     float core = exp(-r2 * 26.0);
     float halo = exp(-r2 * uHaloWidth);
-    vec3 hot = mix(vColor, vec3(1.0), core * 0.55);
-    vec3 col = hot * core * uCore + vColor * halo * uHalo;
+    vec3 hot = mix(vColor, vec3(1.0), core * uWhiten);
+    vec3 col = hot * core * uCore * uCoreGain + vColor * halo * uHalo * uHaloGain;
 
     gl_FragColor = vec4(col * vIntensity * uOpacity, 1.0);
     // Tone mapping only runs when drawing straight to the screen (low tier,

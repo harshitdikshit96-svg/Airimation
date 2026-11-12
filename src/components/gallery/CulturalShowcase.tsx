@@ -5,7 +5,7 @@
  * are only mutated in effects and the render loop, never during render. */
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
@@ -16,7 +16,7 @@ import Skyline from "@/components/swarm/Skyline";
 import { detectTier, type QualityProfile } from "@/components/swarm/quality";
 import { assign } from "@/lib/show/assign";
 import type { Vec3 } from "@/lib/show/types";
-import { SHOW_ALT, THEMES, culturalById, formationsFor, type AnimatedFormation } from "@/lib/cultural";
+import { SHOW_ALT, THEMES, culturalById, formationsFor, isReady, loadFormation, type AnimatedFormation } from "@/lib/cultural";
 import { PALETTES, getPalette } from "@/lib/show/palettes";
 import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphSeconds, MORPH_MAX } from "./showcaseMath";
 
@@ -31,6 +31,10 @@ function defaultFleet(): number {
   return tier === "high" ? 800 : 500;
 }
 const CAPACITY = 2000;
+const MIN_DIST = 70;
+const MAX_DIST = 440;
+/** Formations per fleet size, for the Fleet menu (computed once). */
+const FLEET_COUNTS = new Map(FLEETS.map((n) => [n, formationsFor(n).length]));
 
 const STAGGER = 0.1;
 const LOOPS_PER_FIGURE = 2;
@@ -58,7 +62,10 @@ function Scene({
   count,
   playing,
   hues,
+  zoomRef,
 }: {
+  /** Set by the scene: zoom the camera in (< 1) or out (> 1). */
+  zoomRef: { current: ((factor: number) => void) | null };
   quality: QualityProfile;
   id: string;
   count: number;
@@ -80,7 +87,48 @@ function Scene({
     }),
     []
   );
-  const clock = useRef({ key: "", id: "", t: 0, morph: 0, morphTotal: 6, order: null as Uint16Array | null, dolly: true });
+  const clock = useRef({
+    key: "",
+    id: "",
+    t: 0,
+    morph: 0,
+    morphTotal: 6,
+    order: null as Uint16Array | null,
+    dolly: true,
+    /** For a static figure: the (figure, fleet, hues) already on screen, so nothing is re-posed or re-uploaded. */
+    posed: "",
+  });
+  const gl = useThree((s) => s.gl);
+  const camera = useThree((s) => s.camera);
+
+  // Scrolling over the sky scrolls the PAGE (the hero is full screen; a
+  // captured wheel would trap the visitor). Zoom is Ctrl/⌘ + wheel — a
+  // trackpad pinch arrives as exactly that — or the +/− buttons. On touch
+  // screens a vertical swipe scrolls the page; a sideways drag orbits.
+  useEffect(() => {
+    const el = gl.domElement;
+    const zoom = (factor: number) => {
+      const ctl = controls.current;
+      if (!ctl) return;
+      const off = camera.position.clone().sub(ctl.target);
+      off.setLength(THREE.MathUtils.clamp(off.length() * factor, MIN_DIST, MAX_DIST));
+      camera.position.copy(ctl.target).add(off);
+      clock.current.dolly = false;
+      ctl.update();
+    };
+    zoomRef.current = zoom;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return; // let the page scroll
+      e.preventDefault();
+      zoom(Math.exp(THREE.MathUtils.clamp(e.deltaY, -60, 60) * 0.004));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.style.touchAction = "pan-y";
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      zoomRef.current = null;
+    };
+  }, [gl, camera, zoomRef]);
 
   useEffect(() => {
     const ctl = controls.current;
@@ -169,6 +217,7 @@ function Scene({
       }
       c.key = key;
       c.id = f.id;
+      c.posed = "";
     }
 
     if (c.morph < c.morphTotal) {
@@ -180,26 +229,37 @@ function Scene({
       // Live: pose the figure every frame. The clock runs at the preview
       // rate, slowed for bigger (scaled-up) figures so drone speeds match.
       if (playing) c.t = (c.t + (dt * PREVIEW_RATE) / fleetScale(count)) % f.loop;
-      poseInto(f, rigFor(f, count), c.t);
-      api.setPose(buffers.pos, buffers.col, count, c.order ?? undefined);
       u.uProgress.value = 1;
       u.uArc.value = 0;
-      // Keep a copy of what is shown, slot order, for the next morph.
-      const order = c.order!;
-      for (let i = 0; i < count; i++) {
-        const j = order[i] * 3;
-        buffers.shown[i * 3] = buffers.pos[j];
-        buffers.shown[i * 3 + 1] = buffers.pos[j + 1];
-        buffers.shown[i * 3 + 2] = buffers.pos[j + 2];
-        buffers.shownCol[i * 3] = buffers.col[j];
-        buffers.shownCol[i * 3 + 1] = buffers.col[j + 1];
-        buffers.shownCol[i * 3 + 2] = buffers.col[j + 2];
+      // A static figure is the same picture every frame: pose and upload it
+      // once (per fleet and hue), then the GPU just keeps drawing it.
+      const posedKey = `${key}:${hues}`;
+      if (!(f.static && c.posed === posedKey)) {
+        poseInto(f, rigFor(f, count), c.t);
+        api.setPose(buffers.pos, buffers.col, count, c.order ?? undefined);
+        // Keep a copy of what is shown, slot order, for the next morph.
+        const order = c.order!;
+        for (let i = 0; i < count; i++) {
+          const j = order[i] * 3;
+          buffers.shown[i * 3] = buffers.pos[j];
+          buffers.shown[i * 3 + 1] = buffers.pos[j + 1];
+          buffers.shown[i * 3 + 2] = buffers.pos[j + 2];
+          buffers.shownCol[i * 3] = buffers.col[j];
+          buffers.shownCol[i * 3 + 1] = buffers.col[j + 1];
+          buffers.shownCol[i * 3 + 2] = buffers.col[j + 2];
+        }
+        c.posed = f.static ? posedKey : "";
       }
     }
     u.uTime.value = state.clock.elapsedTime;
     u.uHover.value = 0.12;
     u.uTwinkle.value = 0.04;
     u.uLit.value = 1;
+    // Colour fidelity: each drone's own colour must read (a white-hot core
+    // under AgX tone mapping turns every colour to white).
+    u.uWhiten.value = 0.12;
+    u.uCoreGain.value = 0.6;
+    u.uHaloGain.value = 2.6;
     u.uDissolve.value = 0;
     u.uMotion.value = 0;
     u.uCentre.value.set(0, showAltitude(count), 0);
@@ -239,10 +299,12 @@ function Scene({
         ref={controls}
         target={[0, showAltitude(count) + 4, 0]}
         enablePan={false}
+        // Wheel zoom is handled above (Ctrl/⌘ only), so a plain wheel scrolls the page.
+        enableZoom={false}
         enableDamping
         dampingFactor={0.06}
-        minDistance={70}
-        maxDistance={440}
+        minDistance={MIN_DIST}
+        maxDistance={MAX_DIST}
         autoRotate={false}
         // Full 360 degrees round the figure (azimuth is unlimited), and from
         // high overhead (12 degrees off vertical) down to the audience's eye,
@@ -264,14 +326,37 @@ export default function CulturalShowcase() {
   const [auto, setAuto] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [failed, setFailed] = useState(false);
+  const zoomRef = useRef<((factor: number) => void) | null>(null);
   const all = useMemo(() => formationsFor(count), [count]);
   // A theme with nothing at this fleet size falls back to everything.
   const list = useMemo(() => {
     const themed = formationsFor(count, theme);
     return themed.length ? themed : all;
   }, [count, theme, all]);
+  const themeCounts = useMemo(() => new Map(THEMES.map((t) => [t.id, all.filter((f) => f.theme === t.id).length])), [all]);
   // A formation that doesn't read at this fleet size falls back to the first that does.
   const current = list.find((f) => f.id === id) ?? list[0];
+
+  // A scanned model's points download the first time it is shown (~20 KB
+  // each, instead of 1.3 MB for all of them up front). The sky keeps the
+  // previous figure until the new one is ready, and the next one in the
+  // list is fetched in the background so auto-advance never waits.
+  const [readyId, setReadyId] = useState(() => (isReady(current) ? current.id : "tiranga"));
+  useEffect(() => {
+    let live = true;
+    loadFormation(current)
+      .then(() => {
+        if (live) setReadyId(current.id);
+        const k = list.findIndex((f) => f.id === current.id);
+        const next = list[(k + 1) % list.length];
+        if (next && !isReady(next)) loadFormation(next).catch(() => {});
+      })
+      .catch((err) => console.warn(`Could not load ${current.id}`, err));
+    return () => {
+      live = false;
+    };
+  }, [current, list]);
+  const loading = readyId !== current.id;
 
   // Auto-advance through the fleet's set until the visitor picks one.
   useEffect(() => {
@@ -300,21 +385,40 @@ export default function CulturalShowcase() {
         <SwarmCanvas
           className="absolute inset-0"
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
+          // Neutral tone mapping keeps each drone's colour (AgX turns orange to salmon).
+          toneMapping="neutral"
           onFail={() => setFailed(true)}
         >
-          {(quality) => <Scene quality={quality} id={current.id} count={count} playing={playing} hues={hues} />}
+          {(quality) => <Scene quality={quality} id={readyId} count={count} playing={playing} hues={hues} zoomRef={zoomRef} />}
         </SwarmCanvas>
 
         <div className="pointer-events-none absolute inset-x-0 top-0">
           <div className="mx-auto max-w-[1100px] px-6 pt-6">
             <p className="font-serif text-3xl text-ink drop-shadow sm:text-4xl">{current.label}</p>
             <p className="mt-1 max-w-[40ch] text-sm text-muted drop-shadow">{current.blurb}</p>
+            {loading && <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-dim">Bringing the drones in…</p>}
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent">
           <p className="mx-auto max-w-[1100px] px-6 pb-4 pt-10 text-right font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-            Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360° · scroll for controls
+            Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360° · Ctrl/⌘ + scroll to zoom
           </p>
+        </div>
+        <div className="absolute bottom-12 right-4 flex flex-col gap-2 sm:right-6">
+          {[
+            { label: "Zoom in", sign: "+", f: 0.8 },
+            { label: "Zoom out", sign: "−", f: 1.25 },
+          ].map((b) => (
+            <button
+              key={b.label}
+              type="button"
+              aria-label={b.label}
+              onClick={() => zoomRef.current?.(b.f)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line-2 bg-black/60 font-mono text-lg text-ink transition-colors hover:border-amber hover:text-amber-soft"
+            >
+              {b.sign}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -353,7 +457,7 @@ export default function CulturalShowcase() {
           >
             <option value="all">All · {all.length}</option>
             {THEMES.map((t) => {
-              const k = all.filter((f) => f.theme === t.id).length;
+              const k = themeCounts.get(t.id) ?? 0;
               return k ? (
                 <option key={t.id} value={t.id}>
                   {t.label} · {k}
@@ -372,7 +476,7 @@ export default function CulturalShowcase() {
           >
             {FLEETS.map((n) => (
               <option key={n} value={n}>
-                {n.toLocaleString("en-IN")} drones · {formationsFor(n).length} formations
+                {n.toLocaleString("en-IN")} drones · {FLEET_COUNTS.get(n)} formations
               </option>
             ))}
           </select>

@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Canvas, useThree, type CanvasProps } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
-import { AgXToneMapping } from "three";
-import Effects from "./Effects";
+import { AgXToneMapping, NeutralToneMapping } from "three";
+import Effects, { type ToneMap } from "./Effects";
 import { detectTier, MAX_FPS, qualityOverride, mergeProfile, stepDown, type QualityProfile, type Tier } from "./quality";
 
 /**
@@ -48,6 +48,12 @@ type Props = {
   onReady?: () => void;
   /** Fixed starting tier (the phone gate uses "low"); `?quality=` still wins. */
   tier?: Tier;
+  /**
+   * "agx" (default): filmic, the home look — bright colours roll off to
+   * white. "neutral" (Khronos PBR Neutral): keeps each colour's hue and
+   * saturation, for scenes where per-drone colour must read (Design a Show).
+   */
+  toneMapping?: ToneMap;
 };
 
 /**
@@ -62,7 +68,7 @@ type Props = {
  * - On context loss, hands control back to the parent's fallback rather
  *   than leaving a black rectangle.
  */
-export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady, tier }: Props) {
+export default function SwarmCanvas({ children, className, camera, active = true, still = false, onFail, onReady, tier, toneMapping = "agx" }: Props) {
   // Content tier: chosen once. Render tier: stepped down at runtime.
   const [contentTier] = useState<Tier>(() => (tier ? (qualityOverride() ?? tier) : detectTier()));
   const [renderTier, setRenderTier] = useState<Tier>(contentTier);
@@ -97,7 +103,7 @@ export default function SwarmCanvas({ children, className, camera, active = true
         gl={{ antialias: false, alpha: false, stencil: false, powerPreference: "high-performance" }}
         onCreated={({ gl }) => {
           // Only used when drawing straight to screen (no composer).
-          gl.toneMapping = AgXToneMapping;
+          gl.toneMapping = toneMapping === "neutral" ? NeutralToneMapping : AgXToneMapping;
           gl.setClearColor("#03040b", 1);
           gl.domElement.addEventListener("webglcontextlost", (event) => {
             event.preventDefault();
@@ -117,7 +123,7 @@ export default function SwarmCanvas({ children, className, camera, active = true
         )}
         {running && !still && <FrameLimiter fps={MAX_FPS} />}
         {children(quality)}
-        <Effects quality={quality} />
+        <Effects quality={quality} toneMapping={toneMapping} />
       </Canvas>
     </div>
   );

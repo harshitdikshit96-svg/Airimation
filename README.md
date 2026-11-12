@@ -165,7 +165,9 @@ then give it colour — so its features read, not one flat light:
 node scripts/scan-colors.mjs path/to/model.glb my-id   # the model's real texture colours
 ```
 
-and register `scans/my-id.json` in `src/lib/cultural/scans/index.ts`
+then `node scripts/scan-manifest.mjs` (the page ships only this manifest
+of names and sizes; each model's points load the first time it is shown),
+and register `SCAN_SOURCES["my-id"]` in `src/lib/cultural/scans/index.ts`
 with `scanFormation(file, { blurb, colors, paint, motion, effect, minDrones })`.
 `paint` (see `Paint` in `scan.ts`) is the per-drone colour config: `mode:
 "texture"` (the real colours, LED-bright), a `ramp` of hex codes dark → light
@@ -198,9 +200,9 @@ speed and minimum separation.
 ### Tests
 
 ```bash
-npm test                                   # 458 unit tests (vitest), seconds
+npm test                                   # 459 unit tests (vitest), seconds
 npm run build && npm run start             # then, in another terminal:
-npm run test:e2e -- http://localhost:3000  # 68 checks in Chrome
+npm run test:e2e -- http://localhost:3000  # 69 checks in Chrome
 ```
 
 Run both before pushing. What each covers, and the rule behind it, is in

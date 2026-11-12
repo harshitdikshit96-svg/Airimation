@@ -6,16 +6,16 @@
 // The archived designer's library itself is left untouched: it is
 // version-pinned for old share links.
 //
-// Motion: one turntable revolution per loop, loop sized so the outermost
-// drone stays under the drone speed limit. Colour: a height gradient
-// through a palette, with a slow sweep of light rising through the shape.
+// Motion: the shape holds still (the visitor orbits the camera). Colour: a
+// height gradient through a palette, with a slow sweep of light rising
+// through the shape.
 
 import type { FormationDef, Vec3 } from "../show/types";
 import { SHOW_SCALE } from "../show/constants";
 import { makeRand, hashSeed } from "../show/formations/sampling";
 import { cube, spiral, starburst } from "../show/formations/geometric";
 import { atom, diamond, globe, helix, knot, pyramid } from "../show/formations/playful";
-import { AnimatedFormation, MAX_DRONE_SPEED, SHOW_ALT, TAU, hex, mixRGB, type RGB } from "./kit";
+import { AnimatedFormation, SHOW_ALT, hex, type RGB } from "./kit";
 
 type Rig = { n: number; p: Float32Array; h: Float32Array; reach: number };
 
@@ -92,33 +92,27 @@ function wrap(def: FormationDef): AnimatedFormation<Rig> {
       return { n, p, h, reach };
     },
     pose(rig, t, pos, col) {
-      // Whole revolutions per loop, as many as the speed budget allows
-      // (at least one): seamless, and never faster than a drone can fly.
-      const turns = Math.max(1, Math.floor(((MAX_DRONE_SPEED - 1) * loop) / (TAU * rig.reach)));
-      const a = (TAU * turns * t) / loop;
-      const ca = Math.cos(a);
-      const sa = Math.sin(a);
-      const sweep = (t / loop) * 2 % 1;
+      // The shape holds still (the visitor orbits the camera); a band of
+      // light rises through it. Allocation-free.
+      const sweep = ((t / loop) * 2) % 1;
+      pos.set(rig.p.subarray(0, rig.n * 3));
       for (let i = 0; i < rig.n; i++) {
-        const x = rig.p[i * 3];
-        const z = rig.p[i * 3 + 2];
-        pos[i * 3] = x * ca + z * sa;
-        pos[i * 3 + 1] = rig.p[i * 3 + 1];
-        pos[i * 3 + 2] = -x * sa + z * ca;
-        const d = Math.abs(rig.h[i] - sweep);
+        const h = rig.h[i];
+        const d = Math.abs(h - sweep);
         const glow = d < 0.12 ? 1 - d / 0.12 : 0;
-        const c = mixRGB(mixRGB(lo, hi, rig.h[i]), hex("#ffffff"), glow * 0.5);
+        const w = glow * 0.5;
         const k = 0.85 + glow * 0.5;
-        col[i * 3] = c[0] * k;
-        col[i * 3 + 1] = c[1] * k;
-        col[i * 3 + 2] = c[2] * k;
+        col[i * 3] = (lo[0] + (hi[0] - lo[0]) * h) * (1 - w) * k + w * k;
+        col[i * 3 + 1] = (lo[1] + (hi[1] - lo[1]) * h) * (1 - w) * k + w * k;
+        col[i * 3 + 2] = (lo[2] + (hi[2] - lo[2]) * h) * (1 - w) * k + w * k;
       }
     },
   };
 }
 
 /**
- * Speed note: a radius R turning once per 48 s moves at 2πR/48 — 36 m
+ * Speed note: the shapes hold still now; only the light moves. (They used to
+ * turn: a radius R turning once per 48 s moves at 2πR/48 — 36 m
  * (globe) is 4.7 m/s. `turns` keeps any larger shape at one revolution, so
  * the limit holds only if R stays under ~53 m; the speed test checks it.
  */

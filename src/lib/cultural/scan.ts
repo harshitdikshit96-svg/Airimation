@@ -5,10 +5,10 @@
 // The point list is farthest-point ordered, so the first n points are an
 // even sampling for any fleet size n.
 //
-// Motion (real drone speeds): a slow turntable turn; for flat objects (a
-// lamp, a heart) a gentle sway, so they never turn edge-on to the
-// audience; or "still" (the bow, so the shot reads). The loop is long enough that the outermost drone stays
-// under the speed limit.
+// Motion: figures hold STILL, facing the audience — the visitor orbits the
+// camera to see them in the round (12 Nov 2026). A slow turntable "turn"
+// and a gentle "sway" remain available; their loops are sized so the
+// outermost drone stays under the speed limit.
 //
 // Shading is LIGHT: each drone's brightness follows its surface normal
 // against a fixed light, so the form reads as solid while it turns.
@@ -43,6 +43,16 @@ export type ScanFile = {
   /** Per point: base64 Uint8 index into `palette`. */
   ci?: string;
 };
+
+/** A formation's small metadata, known before its point data is loaded. */
+export type ScanMeta = Pick<ScanFile, "id" | "label" | "credit" | "licence" | "height" | "width" | "depth" | "count" | "quant">;
+
+/**
+ * Metadata plus a loader for the heavy point data (scans/manifest.ts), so
+ * the page downloads a model only when it is first shown. A full ScanFile
+ * (tests, scripts) is also accepted and counts as loaded.
+ */
+export type ScanSource = ScanMeta & { load?: () => Promise<ScanFile>; pos?: string; nrm?: string };
 
 /**
  * Where a colour goes, in fractions of the model's bounding box (0..1):
@@ -128,6 +138,8 @@ const FIRE_B = hex("#ffd36a");
 const FLAME_CORE = hex("#fff4c8");
 const FLAME_EDGE = hex("#ff6a1a");
 const HIGHLIGHT_LIGHT = [-0.45, 0.55, 0.7];
+const STRIKE = hex("#fff6e0");
+const ARROW_HOT = hex("#fff2c0");
 
 /**
  * The bow's shot, in seconds of one loop. Every drone stays under the
@@ -176,7 +188,7 @@ function ledHue(c: RGB): RGB {
   const n: RGB = [c[0] / peak, c[1] / peak, c[2] / peak];
   // Push away from grey a little: LEDs are saturated, textures are not.
   const m = (n[0] + n[1] + n[2]) / 3;
-  const sat = 1.35;
+  const sat = 1.6;
   return [clamp(m + (n[0] - m) * sat, 0, 1), clamp(m + (n[1] - m) * sat, 0, 1), clamp(m + (n[2] - m) * sat, 0, 1)];
 }
 
@@ -193,7 +205,7 @@ function rampAt(ramp: RGB[], t: number): RGB {
  */
 export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallback: string, paint: Paint = {}): Float32Array {
   const out = new Float32Array(m * 3);
-  const floor = paint.floor ?? 0.3;
+  const floor = paint.floor ?? 0.55;
   const real = file.palette && file.ci && file.palette.length > 1 ? file.palette.map(hex) : null;
   const idx = real ? decode(file.ci!) : null;
   const mode = paint.mode ?? (paint.ramp ? "ramp" : real ? "texture" : "flat");
@@ -257,12 +269,18 @@ export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallba
   return out;
 }
 
-export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormation<Rig> {
-  const motion = opts.motion ?? "turn";
+export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFormation<Rig> {
+  // Metadata now; points when loaded (already there for a full ScanFile).
+  let file: ScanFile | null = source.pos && source.nrm ? (source as ScanFile) : null;
+  let pending: Promise<void> | null = null;
+  const meta: ScanMeta = source;
+  // Still by default (12 Nov 2026): figures face the audience and the
+  // visitor orbits the camera. "turn" and "sway" remain for future use.
+  const motion = opts.motion ?? "still";
   const swayAmp = ((opts.sway ?? 28) * Math.PI) / 180;
   // Outermost radius from the turn axis, for the speed budget (flame and
   // arrow sit inside the model's bounds or close to them).
-  const reach = Math.hypot(file.width, file.depth) / 2 + (opts.effect === "flame" ? 8 : 0);
+  const reach = Math.hypot(meta.width, meta.depth) / 2 + (opts.effect === "flame" ? 8 : 0);
   const budget = MAX_DRONE_SPEED - 1;
   const loop =
     opts.effect === "arrow"
@@ -277,14 +295,27 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
   let cache: { pos: Int16Array; nrm: Int8Array } | null = null;
 
   return {
-    id: file.id,
-    label: file.label,
+    id: meta.id,
+    label: meta.label,
     blurb: opts.blurb,
-    credit: file.credit,
+    credit: meta.credit,
     theme: opts.theme ?? "culture",
     loop,
     minDrones: opts.minDrones ?? 500,
+    // Held still with no light effect: every frame is the same picture.
+    static: motion === "still" && !opts.effect,
+    isLoaded: () => file !== null,
+    load() {
+      if (file) return Promise.resolve();
+      // One request however many callers; the label/credit overrides in
+      // the registry (meta) win over the file's own.
+      pending ??= source.load!().then((f) => {
+        file = { ...f, label: meta.label, credit: meta.credit };
+      });
+      return pending;
+    },
     build(n) {
+      if (!file) throw new Error(`${meta.id}: point data not loaded (await load() first)`);
       if (!cache) {
         const pb = decode(file.pos);
         const nb = decode(file.nrm);
@@ -419,66 +450,82 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
       return { n, p, c, nrm, tag, e, h: H };
     },
     pose(rig, t, pos, col) {
+      // Allocation-free: runs for every drone, every frame.
       const a = motion === "turn" ? (TAU * t) / loop : motion === "sway" ? swayAmp * Math.sin((TAU * t) / loop) : 0;
       const shot = opts.effect === "arrow" ? arrowShot(t) : null;
       const ca = Math.cos(a);
       const sa = Math.sin(a);
-      const L = HIGHLIGHT_LIGHT;
+      const L0 = HIGHLIGHT_LIGHT[0];
+      const L1 = HIGHLIGHT_LIGHT[1];
+      const L2 = HIGHLIGHT_LIGHT[2];
+      const [h0, h1, h2] = highlight;
       // Heartbeat: two quick pulses, then rest (~1.2 s).
       const beatPhase = (t % 1.2) / 1.2;
       const beat = Math.exp(-((beatPhase - 0.08) ** 2) / 0.002) + 0.7 * Math.exp(-((beatPhase - 0.3) ** 2) / 0.002);
+      const strikePhase = (t % 0.9) / 0.9;
+      const baseY = SHOW_ALT - rig.h / 2;
       for (let i = 0; i < rig.n; i++) {
-        let x = rig.p[i * 3];
-        const y = rig.p[i * 3 + 1];
+        const i3 = i * 3;
+        let x = rig.p[i3];
+        const y = rig.p[i3 + 1];
         if (shot && rig.tag[i] === 1) x += shot.arrow;
         else if (shot && rig.tag[i] === 2) x += shot.string * (1 - rig.e[i]);
-        const z = rig.p[i * 3 + 2];
-        const rx = x * ca + z * sa;
-        const rz = -x * sa + z * ca;
-        const nx = rig.nrm[i * 3] * ca + rig.nrm[i * 3 + 2] * sa;
-        const ny = rig.nrm[i * 3 + 1];
-        const nz = -rig.nrm[i * 3] * sa + rig.nrm[i * 3 + 2] * ca;
+        const z = rig.p[i3 + 2];
+        const nx = rig.nrm[i3] * ca + rig.nrm[i3 + 2] * sa;
+        const ny = rig.nrm[i3 + 1];
+        const nz = -rig.nrm[i3] * sa + rig.nrm[i3 + 2] * ca;
         // Two-sided diffuse: a scan's normals can face either way.
-        const diffuse = Math.abs(nx * L[0] + ny * L[1] + nz * L[2]);
-        // Only the brightest-lit surfaces lean toward the highlight, so the
-        // object keeps its own colour under bloom.
-        const own: RGB = [rig.c[i * 3], rig.c[i * 3 + 1], rig.c[i * 3 + 2]];
-        let c: RGB = mixRGB(own, highlight, clamp((diffuse - 0.8) / 0.2, 0, 1) * 0.3);
-        let k = 0.3 + 0.7 * diffuse;
+        const diffuse = Math.abs(nx * L0 + ny * L1 + nz * L2);
+        // Only the brightest-lit surfaces lean (a little) toward the
+        // highlight, so the drone keeps its own colour under bloom.
+        const lean = clamp((diffuse - 0.85) / 0.15, 0, 1) * 0.15;
+        let r = rig.c[i3] + (h0 - rig.c[i3]) * lean;
+        let g = rig.c[i3 + 1] + (h1 - rig.c[i3 + 1]) * lean;
+        let b = rig.c[i3 + 2] + (h2 - rig.c[i3 + 2]) * lean;
+        let k = 0.4 + 0.6 * diffuse;
 
         if (rig.tag[i]) {
           if (opts.effect === "fireRing") {
             const flick = 0.5 + 0.5 * Math.sin(t * 7 + i * 1.7) * Math.sin(t * 3.1 + i * 0.37);
-            c = mixRGB(FIRE_A, FIRE_B, flick);
+            r = FIRE_A[0] + (FIRE_B[0] - FIRE_A[0]) * flick;
+            g = FIRE_A[1] + (FIRE_B[1] - FIRE_A[1]) * flick;
+            b = FIRE_A[2] + (FIRE_B[2] - FIRE_A[2]) * flick;
             k = 0.75 + 0.6 * flick;
           } else if (opts.effect === "flame") {
             const s = rig.e[i];
             const flick = 0.5 + 0.5 * Math.sin(t * 9 + i * 2.3) * Math.sin(t * 4.3 + i * 0.7);
-            c = mixRGB(FLAME_CORE, FLAME_EDGE, clamp(s * 1.3 - 0.1 + flick * 0.25, 0, 1));
+            const m = clamp(s * 1.3 - 0.1 + flick * 0.25, 0, 1);
+            r = FLAME_CORE[0] + (FLAME_EDGE[0] - FLAME_CORE[0]) * m;
+            g = FLAME_CORE[1] + (FLAME_EDGE[1] - FLAME_CORE[1]) * m;
+            b = FLAME_CORE[2] + (FLAME_EDGE[2] - FLAME_CORE[2]) * m;
             k = (1.5 - s * 0.6) * (0.75 + 0.35 * flick);
           } else if (opts.effect === "strike") {
             // Heads flash in turn, like the two beads striking them.
-            const phase = (t % 0.9) / 0.9;
-            const hit = rig.e[i] > 0 ? Math.exp(-phase * 9) : Math.exp(-((phase + 0.5) % 1) * 9);
-            c = mixRGB(c, hex("#fff6e0"), hit);
+            const hit = rig.e[i] > 0 ? Math.exp(-strikePhase * 9) : Math.exp(-((strikePhase + 0.5) % 1) * 9);
+            r += (STRIKE[0] - r) * hit;
+            g += (STRIKE[1] - g) * hit;
+            b += (STRIKE[2] - b) * hit;
             k = k * (0.8 + 1.1 * hit);
           } else if (opts.effect === "arrow" && shot && rig.tag[i] === 1) {
             // The arrow burns bright, its head white-hot; dark on the way back.
             const head = rig.e[i] > 0.85 ? 1 : 0;
-            c = mixRGB(c, hex("#fff2c0"), 0.3 + 0.7 * head);
+            const m = 0.3 + 0.7 * head;
+            r += (ARROW_HOT[0] - r) * m;
+            g += (ARROW_HOT[1] - g) * m;
+            b += (ARROW_HOT[2] - b) * m;
             k = (1.1 + 0.6 * head) * shot.light;
           }
         }
         if (opts.effect === "beat") k *= 0.7 + 0.55 * beat;
 
         // Rotation is about the vertical axis only, so the flame stays
-        // upright above the spout as the lamp sways.
-        pos[i * 3] = rx;
-        pos[i * 3 + 1] = SHOW_ALT - rig.h / 2 + y;
-        pos[i * 3 + 2] = rz;
-        col[i * 3] = c[0] * k;
-        col[i * 3 + 1] = c[1] * k;
-        col[i * 3 + 2] = c[2] * k;
+        // upright above the spout.
+        pos[i3] = x * ca + z * sa;
+        pos[i3 + 1] = baseY + y;
+        pos[i3 + 2] = -x * sa + z * ca;
+        col[i3] = r * k;
+        col[i3 + 1] = g * k;
+        col[i3 + 2] = b * k;
       }
     },
   };

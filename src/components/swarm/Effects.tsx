@@ -17,7 +17,9 @@ import type { QualityProfile } from "./quality";
  * the gradient banding in the sky and makes the frame read as photographed
  * rather than rendered.
  */
-export default function Effects({ quality }: { quality: QualityProfile }) {
+export type ToneMap = "agx" | "neutral";
+
+export default function Effects({ quality, toneMapping = "agx" }: { quality: QualityProfile; toneMapping?: ToneMap }) {
   if (!quality.bloom) return null;
   return (
     <EffectComposer multisampling={quality.multisampling} frameBufferType={HalfFloatType}>
@@ -30,7 +32,7 @@ export default function Effects({ quality }: { quality: QualityProfile }) {
         intensity={quality.tier === "high" ? 1.7 : 1.35}
         radius={0.78}
       />
-      <ToneMapping mode={ToneMappingMode.AGX} />
+      <ToneMapping mode={toneMapping === "neutral" ? ToneMappingMode.NEUTRAL : ToneMappingMode.AGX} />
       <Vignette offset={0.22} darkness={0.6} />
       <Noise opacity={0.035} blendFunction={BlendFunction.OVERLAY} />
     </EffectComposer>

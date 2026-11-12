@@ -1,4 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, beforeAll } from "vitest";
+import { loadAll } from "../index";
+
+// Scanned models load on demand; tests need them all.
+beforeAll(() => loadAll());
 import { CULTURAL, formationsFor } from "../index";
 import { tiranga } from "../tiranga";
 import { SHOW_ALT, TAU } from "../kit";

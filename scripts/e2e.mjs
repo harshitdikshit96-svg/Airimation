@@ -246,6 +246,26 @@ await check("hero: full-width sky first, controls below, then the heading", asyn
   await page.close();
 });
 
+await check("wheel over the sky scrolls the page; Ctrl+wheel zooms instead", async () => {
+  const { page, errors } = await open("/design-your-show");
+  await page.waitForSelector("main canvas", { timeout: 30000 });
+  await page.mouse.move(700, 450);
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(600);
+  const y1 = await page.evaluate(() => scrollY);
+  assert(y1 > 200, `page did not scroll over the canvas (scrollY ${y1})`);
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await page.keyboard.down("Control");
+  await page.mouse.wheel(0, -300);
+  await page.keyboard.up("Control");
+  await page.waitForTimeout(400);
+  assert((await page.evaluate(() => scrollY)) === 0, "Ctrl+wheel scrolled the page");
+  assert(await page.$('button[aria-label="Zoom in"]'), "zoom buttons missing");
+  assert(errors.length === 0, errors.join("; "));
+  await page.close();
+});
+
 await browser.close();
 console.log(`\n${passed} passed, ${failures.length} failed`);
 if (failures.length) {

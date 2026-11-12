@@ -12,7 +12,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chromium } from "playwright-core";
-import { CULTURAL, SHOW_ALT } from "../src/lib/cultural";
+import { CULTURAL, SHOW_ALT, loadAll } from "../src/lib/cultural";
+
+await loadAll();
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
 const OUT = resolve(args[0] ?? "preview");

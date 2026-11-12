@@ -479,6 +479,17 @@ export type AnimatedFormation<R = unknown> = {
   loop: number;
   /** Fewest drones at which this figure still reads. */
   minDrones: number;
+  /**
+   * True when `pose` returns the same picture at every t (a still figure
+   * with no light effect). Renderers pose it once and skip per-frame work.
+   */
+  static?: boolean;
+  /**
+   * Formations whose data is fetched on demand (scanned models): call
+   * `load()` before `build`. Others are always ready.
+   */
+  load?: () => Promise<void>;
+  isLoaded?: () => boolean;
   build(n: number): R;
   pose(rig: R, t: number, pos: Float32Array, col: Float32Array): void;
 };

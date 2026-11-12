@@ -24,6 +24,14 @@ export type SwarmUniforms = {
   uMotion: { value: number };
   uCentre: { value: THREE.Vector3 };
   uWaterY: { value: number };
+  /**
+   * Colour fidelity, for a driver that needs each drone's own colour to
+   * read (Design a Show). Defaults keep the original white-hot LED look:
+   * uWhiten 0.55 (how far the core blends to white), uCoreGain 1, uHaloGain 1.
+   */
+  uWhiten: { value: number };
+  uCoreGain: { value: number };
+  uHaloGain: { value: number };
 };
 
 export type Transition = {
@@ -135,6 +143,9 @@ export default function DroneSwarm({ capacity, quality, reflection = false, size
       uMotion: { value: 0 },
       uCentre: { value: new THREE.Vector3(0, 85, 0) },
       uWaterY: { value: 0 },
+      uWhiten: { value: 0.55 },
+      uCoreGain: { value: 1 },
+      uHaloGain: { value: 1 },
     };
 
     const passes: { material: THREE.ShaderMaterial; order: number; size: number }[] = [];

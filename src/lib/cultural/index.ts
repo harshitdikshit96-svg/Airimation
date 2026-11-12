@@ -33,3 +33,18 @@ export function formationsFor(drones: number, theme?: string): AnimatedFormation
 export function culturalById(id: string): AnimatedFormation<unknown> | undefined {
   return CULTURAL.find((f) => f.id === id);
 }
+
+/** True when `build` can run now (its model data is downloaded). */
+export function isReady(f: AnimatedFormation<unknown>): boolean {
+  return f.isLoaded ? f.isLoaded() : true;
+}
+
+/** Fetch a formation's model data, if it has any to fetch. */
+export function loadFormation(f: AnimatedFormation<unknown>): Promise<void> {
+  return f.load ? f.load() : Promise.resolve();
+}
+
+/** Everything (tests, export scripts). */
+export function loadAll(): Promise<void> {
+  return Promise.all(CULTURAL.map(loadFormation)).then(() => undefined);
+}

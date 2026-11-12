@@ -12,32 +12,33 @@
 // is lost in points of light).
 
 import type { AnimatedFormation } from "../kit";
-import { scanFormation, type ScanFile } from "../scan";
+import { scanFormation, type ScanSource } from "../scan";
+import { SCAN_SOURCES } from "./manifest";
 import { BRONZE } from "./paints";
-import cmaNataraja from "./cma-nataraja.json";
-import miaNataraja from "./mia-nataraja.json";
-import somaskanda from "./somaskanda.json";
-import ganesha from "./ganesha.json";
-import damru from "./damru.json";
-import dhanushBaan from "./dhanush-baan.json";
-import dragon from "./dragon.json";
-import diya from "./diya.json";
-import dil from "./dil.json";
-import shankh from "./shankh.json";
-import trishul from "./trishul.json";
-import kalash from "./kalash.json";
-import kamal from "./kamal.json";
-import om from "./om.json";
-import nandi from "./nandi.json";
-import ram from "./ram.json";
-import ramMandir from "./ram-mandir.json";
-import tajMahal from "./taj-mahal.json";
-import hanuman from "./hanuman.json";
-import vishnuGaruda from "./vishnu-garuda.json";
+const cmaNataraja = SCAN_SOURCES["cma-nataraja"];
+const miaNataraja = SCAN_SOURCES["mia-nataraja"];
+const somaskanda = SCAN_SOURCES["somaskanda"];
+const ganesha = SCAN_SOURCES["ganesha"];
+const damru = SCAN_SOURCES["damru"];
+const dhanushBaan = SCAN_SOURCES["dhanush-baan"];
+const dragon = SCAN_SOURCES["dragon"];
+const diya = SCAN_SOURCES["diya"];
+const dil = SCAN_SOURCES["dil"];
+const shankh = SCAN_SOURCES["shankh"];
+const trishul = SCAN_SOURCES["trishul"];
+const kalash = SCAN_SOURCES["kalash"];
+const kamal = SCAN_SOURCES["kamal"];
+const om = SCAN_SOURCES["om"];
+const nandi = SCAN_SOURCES["nandi"];
+const ram = SCAN_SOURCES["ram"];
+const ramMandir = SCAN_SOURCES["ram-mandir"];
+const tajMahal = SCAN_SOURCES["taj-mahal"];
+const hanuman = SCAN_SOURCES["hanuman"];
+const vishnuGaruda = SCAN_SOURCES["vishnu-garuda"];
 
-const f = (json: unknown) => json as ScanFile;
+const f = (src: ScanSource) => src;
 // Older files carry no credit field of their own.
-const withCredit = (json: unknown, label: string, credit: string) => ({ ...(json as ScanFile), label, credit });
+const withCredit = (src: ScanSource, label: string, credit: string): ScanSource => ({ ...src, label, credit });
 
 /** Small objects first (they read at 100 drones), sculptures after. */
 export const SCANS: AnimatedFormation<unknown>[] = [
@@ -54,8 +55,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     blurb: "A heart, from a scanned heart-shaped box — beating in light.",
     theme: "objects",
     colors: ["#ff1744", "#ff9db0"],
-    motion: "sway",
-    sway: 30,
     effect: "beat",
     minDrones: 100,
   }),
@@ -84,8 +83,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     paint: { regions: [{ hex: "#9fb6d0", level: 0.85 }, { hex: "#e8f4ff", y: [0.7, 1] }, { hex: "#ffb02e", y: [0.56, 0.7], r: [0, 0.5] }, { hex: "#ff3a2a", y: [0.5, 0.56], r: [0, 0.4] }] },
     blurb: "Shiva's trident, a damru tied below its head.",
     colors: ["#9fd8ff", "#ffffff"],
-    motion: "sway",
-    sway: 30,
     minDrones: 100,
   }),
   scanFormation(f(kalash), {
@@ -98,16 +95,12 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     paint: { ramp: ["#ff6a12", "#ff9933", "#ffc46a"], regions: [{ hex: "#ffe7a0", y: [0.84, 1] }] },
     blurb: "Om, turning slowly to face every seat.",
     colors: ["#ff9933", "#fff0d0"],
-    motion: "sway",
-    sway: 32,
     minDrones: 200,
   }),
   scanFormation(f(kamal), {
     paint: { ramp: ["#c0205e", "#ff6fa8", "#ffe0ec"], regions: [{ hex: "#2fbf6a", level: 0.7, y: [0, 0.12] }, { hex: "#ffd84a", r: [0, 0.16], y: [0.3, 1] }] },
     blurb: "A lotus in bloom, its petals opening to the sky.",
     colors: ["#ff6fa8", "#ffe0ec"],
-    motion: "sway",
-    sway: 30,
     minDrones: 200,
   }),
   scanFormation(f(tajMahal), {
@@ -130,8 +123,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     },
     blurb: "Lord Ram, the Kodanda bow in his left hand and an arrow in his right. Modelled by Airimation.",
     colors: ["#3d7bff", "#e0ecff"],
-    motion: "sway",
-    sway: 30,
     minDrones: 500,
   }),
   scanFormation(f(ramMandir), {
@@ -142,8 +133,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     blurb: "Ayodhya's Ram Mandir in the Nagara style: five mandapas rising to the shikhara over the sanctum. Modelled by Airimation.",
     theme: "landmarks",
     colors: ["#ffa898", "#fff0ea"],
-    motion: "sway",
-    sway: 25,
     minDrones: 800,
   }),
   scanFormation(f(nandi), {
@@ -159,7 +148,7 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     minDrones: 500,
   }),
   scanFormation(f(ganesha), {
-    paint: { ramp: ["#4a1205", "#d0400f", "#ff8a2a", "#ffd890"], floor: 0.4 },
+    paint: { ramp: ["#5a2205", "#e8600f", "#ffa030", "#ffe0a0"] },
     blurb: "Ganesha, from a thousand-year-old stone sculpture, scanned in the round.",
     colors: ["#ff8a3d", "#ffe2a8"],
     minDrones: 500,

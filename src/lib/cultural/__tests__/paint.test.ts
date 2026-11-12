@@ -1,5 +1,9 @@
 // Per-drone colour: figures must show their features, not one flat colour.
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, beforeAll } from "vitest";
+import { loadAll } from "..";
+
+// Scanned models load on demand; tests need them all.
+beforeAll(() => loadAll());
 import files from "./scanFiles";
 import { CULTURAL } from "..";
 import { paintPoints } from "../scan";
@@ -42,4 +46,19 @@ describe("every scanned figure has more than one colour", () => {
       expect(seen.size).toBeGreaterThan(6);
     });
   }
+});
+
+describe("scans/manifest.ts (scripts/scan-manifest.mjs)", () => {
+  test("matches every model file — re-run the script after converting a model", async () => {
+    const { SCAN_SOURCES } = await import("../scans/manifest");
+    const byId = Object.values(files);
+    expect(Object.keys(SCAN_SOURCES).length).toBe(byId.length);
+    for (const file of byId) {
+      const src = Object.values(SCAN_SOURCES).find((s) => s.id === file.id)!;
+      expect(src, file.id).toBeTruthy();
+      for (const k of ["height", "width", "depth", "count", "quant", "licence"] as const) expect(src[k], `${file.id}.${k}`).toBe(file[k]);
+      const loaded = await src.load!();
+      expect(loaded.pos).toBe(file.pos);
+    }
+  });
 });
