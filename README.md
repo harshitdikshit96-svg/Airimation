@@ -178,7 +178,7 @@ speed and minimum separation.
 ```bash
 npm test                                   # 129 unit tests (vitest), seconds
 npm run build && npm run start             # then, in another terminal:
-npm run test:e2e -- http://localhost:3000  # 47 checks in Chrome
+npm run test:e2e -- http://localhost:3000  # 54 checks in Chrome
 ```
 
 Run both before pushing. What each covers, and the rule behind it, is in

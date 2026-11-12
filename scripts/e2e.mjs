@@ -20,7 +20,7 @@
 import { chromium } from "playwright-core";
 
 const base = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "");
-const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show"];
+const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show", "/credits"];
 const failures = [];
 let passed = 0;
 
@@ -108,6 +108,16 @@ for (const [from, to] of [["/biscope", "/shows"], ["/gallery", "/design-your-sho
   });
 }
 
+console.log("credits");
+await check("/credits lists every credited model and is linked from the footer", async () => {
+  const { page } = await open("/credits");
+  const text = await page.textContent("main");
+  for (const label of ["Diya", "Damru", "Dhanush-baan", "Dragon", "Ganesha", "Nataraja"]) assert(text.includes(label), `${label} missing`);
+  assert(/CC BY 4\.0/.test(text), "CC BY credits missing");
+  assert(await page.$('footer a[href="/credits"]'), "footer link missing");
+  await page.close();
+});
+
 console.log("home");
 await check("3D scene starts on load, before any scroll", async () => {
   const { page } = await open("/");
@@ -129,6 +139,7 @@ await check("flat formation list, LED hues, instant fleet change", async () => {
   const body = await page.textContent("body");
   for (const old of ["Story & culture", "Sculptures — real 3D scans", "3D shapes"]) assert(!body.includes(old), `old heading "${old}"`);
   for (const gone of ["Mahadev", "Kamal"]) assert(!(await page.$(`[role="tab"]:text-is("${gone}")`)), `removed formation "${gone}" listed`);
+  assert(!/Source: /.test(body), "model credit shown on Design a Show (it lives on /credits)");
   assert(await page.$('[role="radiogroup"][aria-label="LED hues"]'), "LED hues picker missing");
   const hues = await page.$$('[role="radio"]');
   assert(hues.length >= 4, `only ${hues.length} hue options`);

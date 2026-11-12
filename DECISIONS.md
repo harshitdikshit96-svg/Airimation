@@ -172,6 +172,69 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 | Ghat / Taj Mahal / India Gate models | ⏸ no free CC0 source; commercial licence needed — your call. |
 | Competitive risk (Deepotsav, 2,100 drones) | ℹ strategy, not a site change — see §4. |
 
+## 4b. Research — what Indian drone shows fly, and which have open 3D models (12 Nov 2026)
+
+### What has been flown in India (reported)
+| Event | Fleet | Formations reported | Source |
+|---|---|---|---|
+| Beating Retreat 2022 (BotLab) | ~1,000 | globe, map of India, Indian flag | [Careers360](https://news.careers360.com/republic-day-2022-iit-delhi-startup-behind-drone-show-at-beating-retreat-ceremony) |
+| Beating Retreat 2023 (BotLab) | 3,500 | not itemised in coverage | [Wikipedia — Drone art](https://en.wikipedia.org/wiki/Drone_art) |
+| Maha Kumbh, Prayagraj, Jan 2025 (UP Tourism) | "hundreds" (2,000 planned) | Samudra Manthan, Amrit Kalash, deities drinking amrit, Mahakumbh + UP logos, tricolour | [Outlook Traveller](https://www.outlooktraveller.com/whats-new/all-about-the-prayagraj-maha-kumbh-2025-drone-show), [India TV](https://www.indiatvnews.com/uttar-pradesh/mahakumbh-drone-show-at-kumbh-mela-a-visual-spectacle-as-prayagraj-night-sky-lights-up-2025-01-24-972966) |
+| Ayodhya Deepotsav 2024 | 500 | Ram, Lakshman, Hanuman, Ravan vadh (+ lasers, voiceover) | [Asianet](https://newsable.asianetnews.com/india/ayodhya-deepotsav-2024-spectacular-500-drone-show-to-dazzle-devotees-gcw-sljw0q) |
+| Ayodhya Deepotsav 2025 | 1,000+ | Ram holding his bow, Hanuman carrying Sanjeevani, building the Ram Setu, Ram Janmabhoomi temple | [The Statesman](https://www.thestatesman.com/india/ayodhya-deepotsav-2025-to-feature-spectacular-1000-drone-show-on-october-19-1503480891.html), [Organiser](https://organiser.org/2025/10/19/321760/bharat/deepawali-2025-ayodhya-lights-up-with-special-drone-show/) |
+| Ayodhya Deepotsav 2026 | 2,100 | 12 Ramayana scenes: Ram heroic pose, Ravana's killing, Pushpak Viman, Ram Darbar, temple, Lakshman, Hanuman, Valmiki, Tulsidas | [ThePrint](https://theprint.in/india/ayodhyas-deepotsav-draws-foreign-tourists-drone-show-recreates-ramayana-scenes/3093454/) |
+| IPL Final 2026, Ahmedabad (BotLab) | — | trishul, damru, Nataraja, IPL trophy | [OfficeChai](https://officechai.com/startups/iit-delhi-incubated-botlab-dynamics-lights-up-skies-with-its-lord-shiva-themed-drone-show-during-ipl-final/) |
+| Mysuru Dasara 2025 / 2026 (BotLab) | 3,000 / 3,473 | tiger (Guinness record), peacock (Guinness record) | [Outlook Business](https://www.outlookbusiness.com/spotlight/pr-wire/mysuru-dasara-drone-shows-by-botlab-dynamics-sets-guinness-world-record-with-a-spectacular-3473-drone-peacock) |
+| Durga Puja, Eden Gardens (BotLab) | 3,000 | Durga Puja theme (company claim, no itemised list) | [Tribune](https://www.tribuneindia.com/news/business/botlab-dynamics-performs-landmark-ipl-final-drone-show-captivating-128000-fans-in-the-stadium-and-millions-more-online/) |
+| Crunchyroll Ani-May, Mumbai, May 2026 | — | anime (licensed: One Piece and others) | [Outlook Respawn](https://respawn.outlookindia.com/pop-culture/pop-culture-news/crunchyroll-brings-ani-may-anime-party-and-drone-show-to-mumbai) |
+
+Most coverage is press releases from the operators (mainly BotLab), so counts are self-reported. Not found: itemised Ganesh Chaturthi or Krishna (Janmashtami) shows, or a Chandrayaan formation.
+
+**Pattern:** Indian shows are **narrative** — a story in 8–12 scenes (Ramayana, Samudra Manthan), each a figure plus a symbol — not loose abstract patterns. Big operators win on scale (2,000–3,500 drones, Guinness records). At 100–200 drones, Airimation competes on **symbols and small scenes**: diya, kalash, conch, trishul + damru, bow and arrow, a deity bust, a temple, a name.
+
+### Which motifs have usable open 3D models
+Found by searching Zenodo's mirrors of Sketchfab and museum releases (GLB, direct download, no login), checked record by record. CC0 = free, no credit needed; CC BY 4.0 = free, credit on `/credits`.
+
+| Motif | Best model found | Licence | Verdict |
+|---|---|---|---|
+| **Krishna** | *1973.106 Krishna Lifting Mount Govardhan*, Cleveland Museum of Art (Zenodo 10310709) | CC0 | **Add** — a classic scene, true 3D |
+| **Vishnu on Garuda** | Minneapolis Institute of Art, 12–13th C bronze (10313308) | CC0 | **Add** |
+| **Hanuman** | *Hanuman Conversing*, Scan the World (21172993) | CC0 | **Add** (check pose reads; 838 KB) |
+| **Garuda** | Cambodian bronze terminal, MIA (10289935) | CC0 | maybe |
+| **Stupa** | *Miniature Votive Stupa*, CMA (10229791) | CC0 | maybe (Buddhist events) |
+| **Eagle**, **rearing horse**, **lion** | Golden eagle (21370003), Hunt Museum horse (21355020), stone lion (10319589) | CC0 | abstract/civic options |
+| **Nandi** | *Nandi Bull*, Chola c. 13th C, Dallas Museum of Art scan (10228512) | CC BY 4.0 | **Add** (pairs with Nataraja) |
+| **Conch (shankh)** | *Hindu God Conch Shell* (10362732) | CC BY 4.0 | **Add** — small, reads at 100 |
+| **Lakshmi** | statue (10285416) | CC BY 4.0 | check quality |
+| **Durga** | student model, Balinese-styled (10236060) | CC BY 4.0 | weak — iconography off for Durga Puja |
+| **Krishna–Radha** | (10290127) | CC BY 4.0 | check quality |
+| **Taj Mahal** | (10334151, low-poly 10294785) | CC BY 4.0 | **Add** for weddings/tourism |
+| **Hampi, Hazara Rama temple wall** | (10329748) | CC BY 4.0 | relief; weak as drones |
+| Peacock | only a Tiffany-style *Peacock Table Lamp*, CMA (10244114, CC0) | CC0 | not a peacock figure — **no good model** |
+| Tiger, elephant | "Tiger 1" is a tank; elephant is a Zimbabwean serpentine sculpture | CC BY | **no good model** |
+| Ram (with bow), Sita, Lakshman, Ram Mandir, Pushpak Viman, Amrit Kalash, trishul, Om, lotus, kalash, kite, Chandrayaan | none open | — | **none found** |
+| Anime characters | fan models exist, but the characters are the studios' copyright/trademark | — | **never from open models** — see below |
+
+**Other open sources to try next** (need a browser/login or format conversion):
+- **Sketchfab CC0 filter** — Cleveland Museum of Art's *Ganesha 1970.62* and *1971.167 Model of a Sikhara* (temple tower) are CC0 there but not on Zenodo. Needs your Sketchfab login to download.
+- **Smithsonian 3D** (3d.si.edu, CC0, GLB) — mostly science/history; few Indian objects. [FAQ](https://dashboard.si.edu/openaccess/faq)
+- **NASA 3D Resources** (free, GLB; credit NASA, no insignia) — rockets, satellites, Moon/ISS for a space theme. [nasa.gov/3d-resources](https://www.nasa.gov/3d-resources/)
+- **Quaternius / Kenney / Poly Pizza** (CC0 game assets; FBX → convert) — generic animals, no tiger/elephant/peacock found. [Quaternius](https://quaternius.itch.io/lowpoly-animated-animals)
+- **Scan the World** — per-object licences; several Ganesha scans there are **CC BY-NC-SA → not usable**.
+
+**Make it ourselves.** Simple symbols with no open model — **trishul, kalash, Om, lotus, diya, kite, Amrit Kalash** — are an hour each in Blender (free). A model we make is a real 3D model, owned outright; it is the right route for these. Figures like Ram or Ram Mandir need a sculptor/3D artist (or a commissioned scan) — budget it per show.
+
+### Anime and brands
+Anime drone shows are real and popular (Yokohama STARDANCE 2023: Demon Slayer, Evangelion, Ultraman — [Siliconera](https://www.siliconera.com/stardance-parade-drones-make-demon-slayer-and-evangelion-characters/); Pokémon; Netflix's One Piece 2023; Crunchyroll Mumbai 2026). All of them are **licensed by the rights holder** (e.g. Toei for a 2026 DoReMi show). A CC-licensed fan model on Sketchfab does **not** license the character. Rule: **no anime or brand characters in the public library**; only for a client who holds the licence, built for that show. Same for logos and trophies (IPL trophy, Mahakumbh logo).
+
+### Abstract
+Industry guidance favours animation and story over still images, and 3D shapes need 300+ drones to read ([Sky Elements](https://skyelementsdrones.com/custom-drone-shows)). Our 9 geometric shapes cover the abstract set (globe, helix, atom, knot, cube, spiral, diamond, pyramid, starburst); next abstract wins would be **transitions** between them and music-reactive light, not more static shapes.
+
+### Recommended next formations (in order)
+1. Krishna lifting Govardhan (CC0) · 2. Conch (CC BY, reads at 100) · 3. Nandi (CC BY) · 4. Vishnu on Garuda (CC0) · 5. Hanuman (CC0) · 6. Taj Mahal (CC BY) · 7. Blender-made trishul, kalash, Om, lotus · 8. Cleveland Ganesha 1970.62 and Sikhara from Sketchfab (your login).
+
+---
+
 ## 5. Change log
 
 ### 12 Nov 2026 — round 6
@@ -226,7 +289,7 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
 | `npm test` | 130 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 130/130, 12 Nov 2026 |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, LED hues, fleet change | ✅ 47/47, 12 Nov 2026 |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link | ✅ 54/54, 12 Nov 2026 |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
@@ -245,6 +308,7 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
+- [ ] Add the next formations from §4b (Krishna–Govardhan, conch, Nandi, Vishnu–Garuda, Hanuman, Taj Mahal); model trishul / kalash / Om / lotus in Blender.
 - [ ] Better source models when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) and a CC0 **lotus** and **Om** to bring Kamal and Om back.
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
 
