@@ -39,6 +39,7 @@ export const tiranga: AnimatedFormation<FlagRig> = {
   label: "Tiranga",
   blurb: "The tricolour waves; the Ashoka Chakra's 24 spokes turn at its heart.",
   credit: "Drawn to the Flag Code of India specification",
+  theme: "culture",
   loop: LOOP,
   minDrones: 200,
   build(n) {

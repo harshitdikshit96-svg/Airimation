@@ -24,7 +24,7 @@
 //             dark (LEDs off) and relights on the string. String and
 //             arrow drones are the model's own; nothing is added.
 
-import { AnimatedFormation, MAX_DRONE_SPEED, SHOW_ALT, TAU, clamp, hex, mixRGB, type RGB } from "./kit";
+import { AnimatedFormation, MAX_DRONE_SPEED, SHOW_ALT, TAU, clamp, hex, mixRGB, type RGB, type Theme } from "./kit";
 
 export type ScanFile = {
   id: string;
@@ -62,6 +62,7 @@ export type ScanOptions = {
   sway?: number;
   effect?: Effect;
   minDrones?: number;
+  theme?: Theme;
 };
 
 function decode(b64: string): Uint8Array {
@@ -144,6 +145,7 @@ export function scanFormation(file: ScanFile, opts: ScanOptions): AnimatedFormat
     label: file.label,
     blurb: opts.blurb,
     credit: file.credit,
+    theme: opts.theme ?? "culture",
     loop,
     minDrones: opts.minDrones ?? 500,
     build(n) {

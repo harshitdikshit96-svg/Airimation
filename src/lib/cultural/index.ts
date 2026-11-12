@@ -15,7 +15,7 @@ import { CLASSIC_3D } from "./classic";
 import { SCANS } from "./scans";
 
 export type { AnimatedFormation } from "./kit";
-export { SHOW_ALT } from "./kit";
+export { SHOW_ALT, THEMES, type Theme } from "./kit";
 
 export const CULTURAL: AnimatedFormation<unknown>[] = [
   tiranga,
@@ -23,9 +23,9 @@ export const CULTURAL: AnimatedFormation<unknown>[] = [
   ...CLASSIC_3D,
 ] as AnimatedFormation<unknown>[];
 
-/** Formations that read at a given fleet size. */
-export function formationsFor(drones: number): AnimatedFormation<unknown>[] {
-  return CULTURAL.filter((f) => f.minDrones <= drones);
+/** Formations that read at a given fleet size (optionally one theme). */
+export function formationsFor(drones: number, theme?: string): AnimatedFormation<unknown>[] {
+  return CULTURAL.filter((f) => f.minDrones <= drones && (!theme || theme === "all" || f.theme === theme));
 }
 
 export function culturalById(id: string): AnimatedFormation<unknown> | undefined {

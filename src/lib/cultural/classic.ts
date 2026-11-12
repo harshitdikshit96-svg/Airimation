@@ -56,6 +56,7 @@ function wrap(def: FormationDef): AnimatedFormation<Rig> {
     blurb: BLURBS[def.id] ?? "",
     loop,
     minDrones: Math.max(100, def.minRecommended),
+    theme: "shapes",
     build(n) {
       const pts: Vec3[] = def.build({
         scale: SHOW_SCALE,

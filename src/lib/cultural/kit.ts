@@ -456,13 +456,25 @@ export function onTube(line: TubeLine, s: number, u: number, bend?: (s: number) 
  * every frame and writes positions (metres, show-centred, see SHOW_ALT)
  * and LINEAR colours, where black means "LED off".
  */
+export const THEMES = [
+  { id: "culture", label: "Culture & devotion" },
+  { id: "landmarks", label: "Landmarks" },
+  { id: "animals", label: "Animals" },
+  { id: "travel", label: "Travel" },
+  { id: "objects", label: "Objects" },
+  { id: "shapes", label: "Shapes" },
+] as const;
+export type Theme = (typeof THEMES)[number]["id"];
+
 export type AnimatedFormation<R = unknown> = {
   id: string;
   label: string;
   /** Short line for the UI. */
   blurb: string;
-  /** Source and licence of the 3D model it is made from (shown on the page). */
+  /** Source and licence of the 3D model it is made from (listed on /credits). */
   credit?: string;
+  /** Theme for the Design a Show filter. */
+  theme?: Theme;
   /** Seconds per loop of the animation. */
   loop: number;
   /** Fewest drones at which this figure still reads. */

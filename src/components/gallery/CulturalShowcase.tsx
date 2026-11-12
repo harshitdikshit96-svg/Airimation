@@ -16,7 +16,7 @@ import Skyline from "@/components/swarm/Skyline";
 import { detectTier, type QualityProfile } from "@/components/swarm/quality";
 import { assign } from "@/lib/show/assign";
 import type { Vec3 } from "@/lib/show/types";
-import { SHOW_ALT, culturalById, formationsFor, type AnimatedFormation } from "@/lib/cultural";
+import { SHOW_ALT, THEMES, culturalById, formationsFor, type AnimatedFormation } from "@/lib/cultural";
 import { PALETTES, getPalette } from "@/lib/show/palettes";
 import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphSeconds, MORPH_MAX } from "./showcaseMath";
 
@@ -261,10 +261,16 @@ export default function CulturalShowcase() {
   const [count, setCount] = useState(defaultFleet);
   const [id, setId] = useState("tiranga");
   const [hues, setHues] = useState("auto");
+  const [theme, setTheme] = useState("all");
   const [auto, setAuto] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [failed, setFailed] = useState(false);
-  const list = useMemo(() => formationsFor(count), [count]);
+  const all = useMemo(() => formationsFor(count), [count]);
+  // A theme with nothing at this fleet size falls back to everything.
+  const list = useMemo(() => {
+    const themed = formationsFor(count, theme);
+    return themed.length ? themed : all;
+  }, [count, theme, all]);
   // A formation that doesn't read at this fleet size falls back to the first that does.
   const current = list.find((f) => f.id === id) ?? list[0];
 
@@ -328,7 +334,29 @@ export default function CulturalShowcase() {
           ))}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <label htmlFor="fleet" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+          <label htmlFor="theme" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+            Theme
+          </label>
+          <select
+            id="theme"
+            value={theme}
+            onChange={(e) => {
+              setTheme(e.target.value);
+              setAuto(true);
+            }}
+            className="min-h-11 rounded-full border border-line-2 bg-navy px-4 font-mono text-xs text-ink"
+          >
+            <option value="all">All · {all.length}</option>
+            {THEMES.map((t) => {
+              const k = all.filter((f) => f.theme === t.id).length;
+              return k ? (
+                <option key={t.id} value={t.id}>
+                  {t.label} · {k}
+                </option>
+              ) : null;
+            })}
+          </select>
+          <label htmlFor="fleet" className="ml-2 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Fleet
           </label>
           <select

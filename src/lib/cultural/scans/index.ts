@@ -48,6 +48,7 @@ export const SCANS: AnimatedFormation<unknown>[] = [
   }),
   scanFormation(f(dil), {
     blurb: "A heart, from a scanned heart-shaped box — beating in light.",
+    theme: "objects",
     colors: ["#ff1744", "#ff9db0"],
     motion: "sway",
     sway: 30,
@@ -100,6 +101,7 @@ export const SCANS: AnimatedFormation<unknown>[] = [
   }),
   scanFormation(f(tajMahal), {
     blurb: "The Taj Mahal — dome, four minarets — for a wedding night.",
+    theme: "landmarks",
     colors: ["#f4f1ff", "#ffffff"],
     minDrones: 200,
   }),
