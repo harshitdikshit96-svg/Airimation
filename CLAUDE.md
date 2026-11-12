@@ -17,7 +17,7 @@ node scripts/build-skyline.mjs && node scripts/compress-assets.mjs   # skyline G
 node scripts/render-poster.mjs http://localhost:3000                 # poster frames
 node scripts/scan-colors.mjs <glb> <id>                              # a formation's real colours
 node scripts/scan-manifest.mjs                                       # after adding/re-converting a model
-npx vite-node scripts/preview-formations.ts -- <outDir> 1500 [ids]   # formation contact sheets
+npx vite-node scripts/preview-formations.ts -- 1500 <outDir> [ids]   # formation contact sheets
 ```
 
 Environment variables live in `.env` / `.env.local` (see `.env.example`).

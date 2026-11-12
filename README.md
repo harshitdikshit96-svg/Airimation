@@ -175,7 +175,7 @@ with `scanFormation(file, { blurb, colors, paint, motion, effect, minDrones })`.
 model's own colours one for one, and `regions` — a hex code per box of the
 figure (fractions of its bounds: `x`, `y`, `z`, `r`), the only option for an
 untextured model. Look before you ship:
-`npx vite-node scripts/preview-formations.ts -- /tmp/sheets 1500 my-id`
+`npx vite-node scripts/preview-formations.ts -- 1500 /tmp/sheets my-id`
 writes contact sheets (PNG, via the local Chrome). Then
 and add it to `src/lib/cultural/__tests__/scanFiles.ts`. **Licences:
 CC0 / public domain, or CC BY 4.0 with the credit** (shown on the page).

@@ -1,7 +1,13 @@
 // Contact sheets of every Design a Show formation, to check colours and
 // shading by eye before they go on the site.
 //
-//   npx vite-node scripts/preview-formations.ts -- <outDir> [drones] [ids,comma,separated] [t]
+//   npx vite-node scripts/preview-formations.ts -- <drones> [outDir] [ids,comma,separated] [t]
+//   e.g. npx vite-node scripts/preview-formations.ts -- 100 ../Formations/previews
+//
+// <drones> is the fleet size, one of 100, 200, 500, 800, 1500, 2000 (the
+// site's Fleet menu). It may also come second, after the folder; whichever
+// argument is a number is the fleet. The folder's old sheets are deleted
+// first, so every sheet in it is from this run.
 //
 // Only the formations the site offers at that fleet size, each drawn with
 // exactly that many drones. Draws each (front view at show time t, default 0) as glowing
@@ -10,26 +16,39 @@
 // and sized like the site's drones, so a figure that reads here reads on
 // the page.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chromium } from "playwright-core";
 import { CULTURAL, SHOW_ALT, formationsFor, loadAll } from "../src/lib/cultural";
 
 await loadAll();
 
+const FLEETS = [100, 200, 500, 800, 1500, 2000];
 const args = process.argv.slice(2).filter((a) => a !== "--");
-const OUT = resolve(args[0] ?? "preview");
-const N = Number(args[1] ?? 1500);
+// The fleet is whichever of the first two arguments is a number (people
+// type it first); the other is the output folder.
+const isNum = (a?: string) => a !== undefined && /^\d+$/.test(a);
+const [fleetArg, outArg] = isNum(args[0]) ? [args[0], args[1]] : [args[1], args[0]];
+const N = Number(fleetArg);
+if (!FLEETS.includes(N)) {
+  console.error(`Fleet size missing or not offered: "${fleetArg ?? ""}". Use one of ${FLEETS.join(", ")}.`);
+  console.error("  npx vite-node scripts/preview-formations.ts -- <drones> [outDir] [ids] [t]");
+  process.exit(1);
+}
+const OUT = resolve(outArg ?? "preview");
 const ONLY = args[2] && args[2] !== "all" ? args[2].split(",") : null;
 const T = Number(args[3] ?? 0);
 mkdirSync(OUT, { recursive: true });
+// Old sheets (another fleet size, another run) would sit beside the new ones.
+for (const f of readdirSync(OUT)) if (/^sheet-\d+\.(png|html)$/.test(f)) rmSync(join(OUT, f));
+console.log(`fleet ${N} drones -> ${OUT}`);
 
 const toSrgb = (c: number) => {
   const v = Math.max(0, Math.min(1, c));
   return Math.round(255 * (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055));
 };
 
-type Fig = { id: string; label: string; pts: number[] };
+type Fig = { id: string; label: string; n: number; pts: number[] };
 const figs: Fig[] = [];
 // Exactly what the site offers at this fleet size (Fleet menu): formations
 // that need more drones than N are left out, and every figure is drawn with
@@ -52,7 +71,8 @@ for (const f of CULTURAL) {
   for (const i of order) {
     pts.push(+pos[i * 3].toFixed(2), +(pos[i * 3 + 1] - SHOW_ALT).toFixed(2), toSrgb(col[i * 3]), toSrgb(col[i * 3 + 1]), toSrgb(col[i * 3 + 2]));
   }
-  figs.push({ id: f.id, label: f.label, pts });
+  if (pts.length / 5 !== N) throw new Error(`${f.id}: drew ${pts.length / 5} drones, expected ${N}`);
+  figs.push({ id: f.id, label: f.label, n: pts.length / 5, pts });
 }
 
 const PER = 12;
@@ -62,7 +82,7 @@ const page = await browser.newPage({ viewport: { width: 1600, height: 1230 } });
 for (let s = 0; s < sheets; s++) {
   const batch = figs.slice(s * PER, s * PER + PER);
   const html = `<!doctype html><body style="margin:0;background:#000;display:grid;grid-template-columns:repeat(4,400px);font:12px monospace;color:#999">
-${batch.map((f, k) => `<div><canvas id="c${k}" width="400" height="390"></canvas><div style="position:relative;top:-386px;left:6px">${f.label} (${f.id})</div></div>`).join("")}
+${batch.map((f, k) => `<div><canvas id="c${k}" width="400" height="390"></canvas><div style="position:relative;top:-386px;left:6px">${f.label} (${f.id}) · ${f.n} drones</div></div>`).join("")}
 <script>
 const figs = ${JSON.stringify(batch.map((f) => f.pts))};
 figs.forEach((p, k) => {
@@ -85,6 +105,6 @@ figs.forEach((p, k) => {
   writeFileSync(file, html);
   await page.goto("file://" + file);
   await page.screenshot({ path: join(OUT, `sheet-${s}.png`) });
-  console.log(join(OUT, `sheet-${s}.png`), batch.map((f) => f.id).join(", "));
+  console.log(join(OUT, `sheet-${s}.png`), batch.map((f) => `${f.id} (${f.n})`).join(", "));
 }
 await browser.close();
