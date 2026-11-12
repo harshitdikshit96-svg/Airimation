@@ -103,7 +103,7 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 
 Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`/design-your-show`**. One flat list of buttons — no group headings (removed 12 Nov 2026).
 
-**Rule (12 Nov 2026): only formations made from a real 3D model.** A museum scan or an openly licensed model (`scans/`), an exact geometric shape (`classic.ts`), or the national flag drawn to its official specification (`tiranga.ts`). If no usable 3D model exists, the formation is out. Removed for that reason: **Kamal (lotus), Om, Mahadev** (the Nataraja scans cover Shiva). Licences: CC0 / public domain, or CC BY 4.0 with the credit shown under the preview ("Source: …"). Never NC, ND or SA.
+**Rule (12 Nov 2026): only formations made from a real 3D model.** A museum scan or an openly licensed model (`scans/`), a symbol **we model ourselves in Blender** (`scripts/blender/make-symbols.py`), an exact geometric shape (`classic.ts`), or the national flag drawn to its official specification (`tiranga.ts`). No hand-drawn 2D figures. Mahadev was removed (the Nataraja scans cover Shiva); Kamal and Om came back as our own models. Licences: CC0 / public domain, CC BY 4.0 (credited on `/credits`), or our own. Never NC, ND or SA.
 
 | Formation | Model | Licence | From fleet |
 |---|---|---|---|
@@ -112,9 +112,18 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Dil | Heart-shaped snuffbox, Sosenko Family Foundation / Virtual Małopolska | CC0 | 100 |
 | Damru | "Damru – Small Two Headed Drum" (INDIANMONSTERYT) | CC BY 4.0 | 100 |
 | Dhanush-baan | "Bow & Arrow" (MOJackal); arrow nocked by `scripts/nock-arrow.mjs`. **Fires:** string and arrow draw back 8 m, the arrow is loosed and flies 56 m at 7 m/s, returns dark, relights (24 s loop) | CC BY 4.0 | 100 |
+| Shankh | "Hindu God Conch Shell" (rushat_saiyush) | CC BY 4.0 | 100 |
+| Trishul | modelled by Airimation (with a damru below the head) | own | 100 |
+| Kalash | modelled by Airimation (pot, mango leaves, coconut) | own | 100 |
+| Om | modelled by Airimation from the Noto Sans Devanagari glyph (SIL OFL) | own | 200 |
+| Kamal | modelled by Airimation; petals as outlines, bloom faces the audience | own | 200 |
+| Taj Mahal | "Taj Mahal" (choi464); building + minarets only (`--only`) | CC BY 4.0 | 200 |
+| Nandi | Chola-period Nandi, Dallas Museum of Art scan (pressefr) | CC BY 4.0 | 500 |
+| Hanuman | *Hanuman Conversing*, Scan the World | CC0 | 500 |
 | Ganesha | Ganesha, 10th–11th C, Minneapolis Institute of Art | CC0 | 500 |
 | Dragon | "Dragon statuette" (norgeotloic, from a jschmidtcreaform scan) | CC BY 4.0 | 500 |
 | Nataraja | 1930.331, Cleveland Museum of Art (ring of fire) | CC0 | 800 |
+| Vishnu on Garuda | 12–13th C bronze, Minneapolis Institute of Art | CC0 | 800 |
 | Dancing Shiva | Shiva Nataraja, Minneapolis Institute of Art | CC0 | 800 |
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
 | 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
@@ -129,7 +138,7 @@ All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are o
 
 **LED hues** (restored 12 Nov 2026): Per formation, Diwali gold, Royal, Moonlight, Tiranga, Wedding rose. A palette keeps each drone's brightness and takes the hue from a top-to-bottom gradient (`showcaseMath.ts > applyHues`).
 
-**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] --label … --credit … [--licence "CC BY 4.0"]`, then register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit and bounds.
+**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] [--box …] [--only nodeA,nodeB] --label … --credit … [--licence "CC BY 4.0" | "Airimation"]`, then register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit and bounds.
 
 **Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`): Skybrush zipped CSV + static CSV + points JSON + preview SVG + `REPORT.md` per formation (unchanged).
 
@@ -237,6 +246,11 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 7
+- **Nine new formations** from §4b: Shankh, Nandi, Taj Mahal (CC BY); Hanuman, Vishnu on Garuda (CC0); Trishul, Kalash, Om, Kamal **modelled by Airimation** in Blender (`scripts/blender/make-symbols.py`, GLBs in `Scans/made/`). 27 formations in all.
+- Dropped *Krishna Lifting Govardhan* (CMA): the scan is a broken fragment (legs missing, mountain a slab) and does not read as drones.
+- Converter: `--box` and `--only` (keep named nodes) options.
+
 ### 12 Nov 2026 — round 6
 - **Dhanush-baan fires** (draw, loose, flight, dark return); bow faces the audience instead of swaying.
 - Model credits moved off Design a Show to **`/credits`**, linked from the footer.
@@ -287,7 +301,7 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 | Command | What it covers | Last run |
 |---|---|---|
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
-| `npm test` | 130 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 130/130, 12 Nov 2026 |
+| `npm test` | 184 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 184/184, 12 Nov 2026 |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 |
 | `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link | ✅ 54/54, 12 Nov 2026 |
 
@@ -308,7 +322,7 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
-- [ ] Add the next formations from §4b (Krishna–Govardhan, conch, Nandi, Vishnu–Garuda, Hanuman, Taj Mahal); model trishul / kalash / Om / lotus in Blender.
-- [ ] Better source models when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) and a CC0 **lotus** and **Om** to bring Kamal and Om back.
+- [ ] Next from §4b: Cleveland Ganesha 1970.62 and the Sikhara from Sketchfab (needs your login); a Ram figure and Ram Mandir need a 3D artist.
+- [ ] Better source model when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) — or model one in Blender.
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
 

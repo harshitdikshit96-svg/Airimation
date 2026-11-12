@@ -9,6 +9,15 @@ import dhanushBaan from "../scans/dhanush-baan.json";
 import dragon from "../scans/dragon.json";
 import diya from "../scans/diya.json";
 import dil from "../scans/dil.json";
+import shankh from "../scans/shankh.json";
+import trishul from "../scans/trishul.json";
+import kalash from "../scans/kalash.json";
+import kamal from "../scans/kamal.json";
+import om from "../scans/om.json";
+import nandi from "../scans/nandi.json";
+import tajMahal from "../scans/taj-mahal.json";
+import hanuman from "../scans/hanuman.json";
+import vishnuGaruda from "../scans/vishnu-garuda.json";
 
 const files: Record<string, ScanFile> = {
   cmaNataraja: { ...(cmaNataraja as ScanFile), credit: "Cleveland Museum of Art, CC0" },
@@ -20,5 +29,14 @@ const files: Record<string, ScanFile> = {
   dragon: dragon as ScanFile,
   diya: diya as ScanFile,
   dil: dil as ScanFile,
+  shankh: shankh as ScanFile,
+  trishul: trishul as ScanFile,
+  kalash: kalash as ScanFile,
+  kamal: kamal as ScanFile,
+  om: om as ScanFile,
+  nandi: nandi as ScanFile,
+  tajMahal: tajMahal as ScanFile,
+  hanuman: hanuman as ScanFile,
+  vishnuGaruda: vishnuGaruda as ScanFile,
 };
 export default files;

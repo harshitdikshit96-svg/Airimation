@@ -138,7 +138,7 @@ await check("flat formation list, LED hues, instant fleet change", async () => {
   await page.waitForSelector('[role="tab"]', { timeout: 20000 });
   const body = await page.textContent("body");
   for (const old of ["Story & culture", "Sculptures — real 3D scans", "3D shapes"]) assert(!body.includes(old), `old heading "${old}"`);
-  for (const gone of ["Mahadev", "Kamal"]) assert(!(await page.$(`[role="tab"]:text-is("${gone}")`)), `removed formation "${gone}" listed`);
+  for (const gone of ["Mahadev"]) assert(!(await page.$(`[role="tab"]:text-is("${gone}")`)), `removed formation "${gone}" listed`);
   assert(!/Source: /.test(body), "model credit shown on Design a Show (it lives on /credits)");
   assert(await page.$('[role="radiogroup"][aria-label="LED hues"]'), "LED hues picker missing");
   const hues = await page.$$('[role="radio"]');

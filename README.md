@@ -160,6 +160,10 @@ with `scanFormation(file, { blurb, colors, motion, effect, minDrones })`,
 and add it to `src/lib/cultural/__tests__/scanFiles.ts`. **Licences:
 CC0 / public domain, or CC BY 4.0 with the credit** (shown on the page).
 Never NC, ND or SA. Record the source in `Airimation/Scans/SOURCES.md`.
+Symbols with no open model (trishul, kalash, Om, lotus) are modelled by
+script in Blender — `Blender --background --python
+scripts/blender/make-symbols.py -- ../Scans/made` — then converted the
+same way with `--licence "Airimation"`.
 `npm test` then checks the licence, credit, file and that no drone
 strays outside the model.
 
@@ -176,7 +180,7 @@ speed and minimum separation.
 ### Tests
 
 ```bash
-npm test                                   # 129 unit tests (vitest), seconds
+npm test                                   # 184 unit tests (vitest), seconds
 npm run build && npm run start             # then, in another terminal:
 npm run test:e2e -- http://localhost:3000  # 54 checks in Chrome
 ```

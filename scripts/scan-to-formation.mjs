@@ -3,7 +3,7 @@
 // shading normals, ready for src/lib/cultural/scans.ts.
 //
 //   node scripts/scan-to-formation.mjs <in.glb> <id> [--height 84] [--points 2000]
-//        [--rotate-x -90] [--rotate-y 0] [--tilt-x 40] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."] [--licence "CC BY 4.0"]
+//        [--rotate-x -90] [--rotate-y 0] [--tilt-x 40] [--box x0,x1,y0,y1,z0,z1] [--only nodeA,nodeB] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."] [--licence "CC BY 4.0"]
 //
 // What it does:
 //   1. Reads every mesh in the GLB (Meshopt/Draco-free GLBs, as museums ship).
@@ -42,6 +42,12 @@ const RY = (Number(opt("rotate-y", 0)) * Math.PI) / 180;
 const TX = (Number(opt("tilt-x", 0)) * Math.PI) / 180;
 // Drop the lowest fraction of the figure (a heavy pedestal eats drones).
 const CROP = Number(opt("crop-bottom", 0));
+// Keep only triangles inside a box, as fractions of the bounds after
+// rotation: "x0,x1,y0,y1,z0,z1" (e.g. the Taj Mahal without its garden).
+// Keep only nodes whose name contains one of these (comma-separated), e.g.
+// the Taj Mahal's building and towers without its garden and trees.
+const ONLY = opt("only", "") ? opt("only", "").split(",") : null;
+const BOX = opt("box", "") ? opt("box", "").split(",").map(Number) : null;
 
 await MeshoptDecoder.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ "meshopt.decoder": MeshoptDecoder });
@@ -57,6 +63,7 @@ const mul = (m, p) => [
 for (const node of doc.getRoot().listNodes()) {
   const mesh = node.getMesh();
   if (!mesh) continue;
+  if (ONLY && !ONLY.some((name) => node.getName().includes(name))) continue;
   const m = node.getWorldMatrix();
   for (const prim of mesh.listPrimitives()) {
     const pos = prim.getAttribute("POSITION");
@@ -78,6 +85,18 @@ const rot = (p) => {
   return [x, y, z];
 };
 for (const t of tris) for (let k = 0; k < 3; k++) t[k] = rot(t[k]);
+if (BOX) {
+  const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+  for (const t of tris) for (const p of t) for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], p[k]); hi[k] = Math.max(hi[k], p[k]); }
+  for (let i = tris.length - 1; i >= 0; i--) {
+    const c = [0, 1, 2].map((k) => (tris[i][0][k] + tris[i][1][k] + tris[i][2][k]) / 3);
+    const inside = [0, 1, 2].every((k) => {
+      const f = (c[k] - lo[k]) / (hi[k] - lo[k] || 1);
+      return f >= BOX[k * 2] && f <= BOX[k * 2 + 1];
+    });
+    if (!inside) tris.splice(i, 1);
+  }
+}
 if (CROP > 0) {
   let lo = Infinity, hi = -Infinity;
   for (const t of tris) for (const p of t) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }

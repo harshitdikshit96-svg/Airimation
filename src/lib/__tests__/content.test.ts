@@ -31,7 +31,7 @@ describe("Design a Show copy", () => {
   const copy = JSON.stringify([designYourShow, designTeaser]);
 
   test("never names a formation the library no longer has", () => {
-    for (const gone of ["Mahadev", "Om at", "Kamal", "lotus"]) expect(copy).not.toContain(gone);
+    for (const gone of ["Mahadev", "Om at"]) expect(copy).not.toContain(gone);
   });
 
   test("names only formations that exist", () => {

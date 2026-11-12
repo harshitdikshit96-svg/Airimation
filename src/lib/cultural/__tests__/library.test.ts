@@ -11,7 +11,9 @@ import scanFiles from "./scanFiles";
 //  - every fleet size on offer has formations to show
 
 const FLEETS = [100, 200, 500, 800, 1500, 2000];
-const REMOVED = ["om", "kamal", "lotus", "mahadev", "shiva", "heartbeat"];
+// Hand-drawn figures replaced by model-based ones (Om and Kamal came back
+// as Airimation-modelled symbols, under new code).
+const REMOVED = ["lotus", "mahadev", "shiva", "heartbeat"];
 
 describe("formation library", () => {
   test("ids and labels are unique", () => {
@@ -46,7 +48,8 @@ describe("formation library", () => {
 describe("3D model files", () => {
   for (const [name, file] of Object.entries(scanFiles)) {
     test(`${name}: allowed licence, credited, intact`, () => {
-      expect(["CC0 1.0", "CC BY 4.0"]).toContain(file.licence);
+      expect(["CC0 1.0", "CC BY 4.0", "Airimation"]).toContain(file.licence);
+      if (file.licence === "Airimation") expect(file.credit).toMatch(/Modelled by Airimation/);
       if (file.licence === "CC BY 4.0") expect(file.credit).toMatch(/CC BY 4\.0/);
       expect(file.credit).not.toMatch(/\bNC\b|\bSA\b|\bND\b|non-commercial/i);
       expect(file.height).toBe(84);
