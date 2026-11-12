@@ -50,7 +50,7 @@ export const SCAN_SOURCES: Record<string, ScanSource> = {
     load: () => import("./dhanush-baan.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "dil": {
-    ...{"id":"dil","label":"Dil","credit":"Snuffbox in the shape of a heart — Sosenko Family Foundation, Virtual Małopolska, CC0","licence":"CC0 1.0","height":84.3,"width":80.4,"depth":57.3,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"dil","label":"Dil","credit":"Snuffbox in the shape of a heart — Sosenko Family Foundation, Virtual Małopolska, CC0","licence":"CC0 1.0","height":84.1,"width":80.4,"depth":57.3,"count":5000,"quant":0.003906369212927641},
     load: () => import("./dil.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "diya": {
@@ -84,10 +84,6 @@ export const SCAN_SOURCES: Record<string, ScanSource> = {
   "ganesha": {
     ...{"id":"ganesha","label":"Ganesha","credit":"Ganesha, 10th–11th C CE — Minneapolis Institute of Art, CC0","licence":"CC0 1.0","height":89.8,"width":52.9,"depth":45.8,"count":5000,"quant":0.003906369212927641},
     load: () => import("./ganesha.json").then((m) => (m.default ?? m) as unknown as ScanFile),
-  },
-  "hanuman": {
-    ...{"id":"hanuman","label":"Hanuman","credit":"Hanuman Conversing — Scan the World, CC0","licence":"CC0 1.0","height":86.7,"width":26,"depth":25.5,"count":5000,"quant":0.003906369212927641},
-    load: () => import("./hanuman.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "horse": {
     ...{"id":"horse","label":"Horse","credit":"“Horse running” by verena stabel (Sketchfab), CC BY 4.0","licence":"CC BY 4.0","height":79.9,"width":127,"depth":24.5,"count":5000,"quant":0.003906369212927641},
@@ -138,12 +134,8 @@ export const SCAN_SOURCES: Record<string, ScanSource> = {
     load: () => import("./qutub-minar.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "ram-mandir": {
-    ...{"id":"ram-mandir","label":"Ram Mandir","credit":"Modelled by Airimation (scripts/blender/make-ram.py)","licence":"Airimation","height":68.5,"width":129.7,"depth":83,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"ram-mandir","label":"Ram Mandir","credit":"Modelled by Airimation (scripts/blender/make-ram-mandir.py)","licence":"Airimation","height":68.5,"width":129.7,"depth":83,"count":5000,"quant":0.003906369212927641},
     load: () => import("./ram-mandir.json").then((m) => (m.default ?? m) as unknown as ScanFile),
-  },
-  "ram": {
-    ...{"id":"ram","label":"Ram","credit":"Modelled by Airimation (scripts/blender/make-ram.py)","licence":"Airimation","height":84,"width":45.5,"depth":13.8,"count":5000,"quant":0.003906369212927641},
-    load: () => import("./ram.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "rose": {
     ...{"id":"rose","label":"Rose","credit":"“Red rose” by Lassi Kaukonen (Sketchfab), CC BY 4.0","licence":"CC BY 4.0","height":84,"width":50.9,"depth":51.8,"count":5000,"quant":0.003906369212927641},

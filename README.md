@@ -180,10 +180,10 @@ writes contact sheets (PNG, via the local Chrome). Then
 and add it to `src/lib/cultural/__tests__/scanFiles.ts`. **Licences:
 CC0 / public domain, or CC BY 4.0 with the credit** (shown on the page).
 Never NC, ND or SA. Record the source in `Airimation/Scans/SOURCES.md`.
-Symbols with no open model (trishul, kalash, Om, lotus) and the Ram figure
-and Ram Mandir are modelled by script in Blender —
+Symbols with no open model (trishul, kalash, Om, lotus, the shankh, the 3D
+shapes) and the Ram Mandir are modelled by script in Blender —
 `Blender --background --python scripts/blender/make-symbols.py -- ../Scans/made`
-(and `make-ram.py`) — then converted the same way with `--licence "Airimation"`.
+(and `make-ram-mandir.py`, `make-shankh.py`, `make-shapes.py`) — then converted the same way with `--licence "Airimation"`.
 `npm test` then checks the licence, credit, file and that no drone
 strays outside the model.
 

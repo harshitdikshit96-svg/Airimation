@@ -18,7 +18,7 @@ import { FIT_D, FIT_H, FIT_W, fitScale } from "../scan";
 const FLEETS = [100, 500, 1500, 3000, 5000];
 // Hand-drawn figures replaced by model-based ones (Om and Kamal came back
 // as Airimation-modelled symbols, under new code).
-const REMOVED = ["lotus", "mahadev", "shiva", "heartbeat"];
+const REMOVED = ["lotus", "mahadev", "shiva", "heartbeat", "ram", "hanuman"];
 
 describe("formation library", () => {
   test("ids and labels are unique", () => {
@@ -136,13 +136,16 @@ describe("light effects never add stray drones", () => {
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
     f.pose(f.build(n), 1, pos, col);
-    // The flame is the last 10% of the list, standing on the wick (the
-    // highest lamp drone near the vertical axis) and rising above the lamp.
+    // The flame is the last 10% of the list, standing on the wick in the
+    // lip at the lamp's LEFT edge (not the centre) and rising above it.
     const flame = Array.from({ length: 50 }, (_, k) => n - 50 + k);
     const body = Array.from({ length: n - 50 }, (_, i) => i);
     const maxBody = Math.max(...body.map((i) => pos[i * 3 + 1]));
+    const minX = Math.min(...body.map((i) => pos[i * 3]));
+    const maxX = Math.max(...body.map((i) => pos[i * 3]));
     expect(Math.max(...flame.map((i) => pos[i * 3 + 1]))).toBeGreaterThan(maxBody + 10);
-    for (const i of flame) expect(Math.hypot(pos[i * 3], pos[i * 3 + 2])).toBeLessThan(30);
+    // One flame, at the edge: every flame drone in the lamp's left fifth.
+    for (const i of flame) expect(pos[i * 3]).toBeLessThan(minX + (maxX - minX) * 0.2);
     for (const i of flame) expect(col[i * 3] + col[i * 3 + 1]).toBeGreaterThan(0.3);
   });
 });

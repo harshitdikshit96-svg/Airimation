@@ -11,6 +11,9 @@
 //             formation, with colours; existing palette order is kept so
 //             hand-made palette overrides stay valid. Records the source
 //             GLB and the transform in the JSON (`source`).
+// --drop x0,x1,y0,y1,z0,z1  with --points: leave out surface inside this
+//             box (fractions of the formation's bounds; x left-right, y
+//             base-top, z back-front).
 //
 // Reads src/lib/cultural/scans/<id>.json (made by scan-to-formation.mjs),
 // writes back two fields:
@@ -380,12 +383,20 @@ if (RESCAN) {
   const { R, s: sc, t: tr } = best;
   const tf = (p) => [0, 1, 2].map((r) => sc * (R[r][0] * p[0] + R[r][1] * p[1] + R[r][2] * p[2]) + tr[r]);
   const oldNear = makeGrid(P, NP, CELL);
+  // --drop x0,x1,y0,y1,z0,z1: leave out surface inside this box (fractions
+  // of the formation's bounds), e.g. a box lid's hinge flap.
+  const DROP = opt("drop", "") ? opt("drop", "").split(",").map(Number) : null;
+  const inDrop = (c) => {
+    const f = [c[0] / scan.width + 0.5, c[1] / scan.height, c[2] / scan.depth + 0.5];
+    return [0, 1, 2].every((k) => f[k] >= DROP[k * 2] && f[k] <= DROP[k * 2 + 1]);
+  };
   const keepD2 = (H * 0.045) ** 2;
   const kept = [];
   for (const t of tris) {
     const q = t.p.map(tf);
     const near3 = q.map((v) => oldNear(v[0], v[1], v[2])[0][1]);
     const c = [0, 1, 2].map((k) => (q[0][k] + q[1][k] + q[2][k]) / 3);
+    if (DROP && inDrop(c)) continue;
     if (Math.min(oldNear(c[0], c[1], c[2])[0][1], ...near3) <= keepD2) kept.push({ ...t, p: q });
   }
   const CAND = Math.max(RESCAN * 30, 150000);
@@ -468,7 +479,7 @@ if (RESCAN) {
   }
   // Record how this file was made, so it can be regenerated without
   // re-finding the alignment.
-  scan.source = { glb: input.replace(/^.*?(Scans\/)/, "$1"), xf: { R: best.R.map((r) => r.map((v) => +v.toFixed(6))), s: +best.s.toFixed(6), t: best.t.map((v, k) => +(v - off[k]).toFixed(4)) }, only: ONLY };
+  scan.source = { glb: input.replace(/^.*?(Scans\/)/, "$1"), xf: { R: best.R.map((r) => r.map((v) => +v.toFixed(6))), s: +best.s.toFixed(6), t: best.t.map((v, k) => +(v - off[k]).toFixed(4)) }, only: ONLY, drop: DROP };
   writeFileSync(jsonPath, JSON.stringify(scan));
   console.log(`${id}: fit ${(best.err * 100).toFixed(2)}% · rescanned ${RESCAN} points from ${kept.length}/${tris.length} triangles · ${scan.width}x${scan.height}x${scan.depth} m · palette ${scan.palette ? scan.palette.length : 0}`);
   process.exit(0);

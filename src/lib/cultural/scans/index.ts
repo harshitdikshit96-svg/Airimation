@@ -30,10 +30,8 @@ const kalash = SCAN_SOURCES["kalash"];
 const kamal = SCAN_SOURCES["kamal"];
 const om = SCAN_SOURCES["om"];
 const nandi = SCAN_SOURCES["nandi"];
-const ram = SCAN_SOURCES["ram"];
 const ramMandir = SCAN_SOURCES["ram-mandir"];
 const tajMahal = SCAN_SOURCES["taj-mahal"];
-const hanuman = SCAN_SOURCES["hanuman"];
 const vishnuGaruda = SCAN_SOURCES["vishnu-garuda"];
 
 const f = (src: ScanSource) => src;
@@ -47,7 +45,7 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     blurb: "A clay diya, its flame flickering.",
     colors: ["#ff6a1f", "#ffc890"],
     effect: "flame",
-    flameAt: "top",
+    flameAt: "left-rim",
     minDrones: 100,
   }),
   scanFormation(f(dil), {
@@ -111,21 +109,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     colors: ["#f4f1ff", "#ffffff"],
     minDrones: 200,
   }),
-  scanFormation(f(ram), {
-    paint: {
-      regions: [
-        { hex: "#3d7bff" },
-        { hex: "#ffd400", y: [0.08, 0.5], x: [0.25, 0.7] },
-        { hex: "#ff7a1a", y: [0.5, 0.66], x: [0.3, 0.66], z: [0.55, 1] },
-        { hex: "#ffc246", y: [0.86, 1] },
-        { hex: "#ffc246", x: [0.72, 1] },
-        { hex: "#fff0c0", x: [0, 0.3], y: [0, 0.55] },
-      ],
-    },
-    blurb: "Lord Ram, the Kodanda bow in his left hand and an arrow in his right. Modelled by Airimation.",
-    colors: ["#3d7bff", "#e0ecff"],
-    minDrones: 500,
-  }),
   scanFormation(f(ramMandir), {
     paint: {
       ramp: ["#ff7a6a", "#ffa898", "#ffd8cc"],
@@ -140,12 +123,6 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     paint: { ramp: ["#3a2412", "#a8682a", "#ffc070", "#fff2dc"] },
     blurb: "Nandi, Shiva's bull, from a Chola-period sculpture.",
     colors: ["#ffcf7a", "#fff3d6"],
-    minDrones: 500,
-  }),
-  scanFormation(f(hanuman), {
-    paint: { regions: [{ hex: "#ff6a1a" }, { hex: "#ffc246", y: [0.86, 1] }, { hex: "#ffd27a", y: [0.6, 0.66] }, { hex: "#c03a0a", level: 0.8, y: [0, 0.07] }] },
-    blurb: "Hanuman, hands joined before Ram, from a scanned sculpture.",
-    colors: ["#ff7a2a", "#ffe0b0"],
     minDrones: 500,
   }),
   scanFormation(f(ganesha), {

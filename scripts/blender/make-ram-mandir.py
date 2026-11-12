@@ -1,12 +1,12 @@
-# Airimation's own 3D models of the Ram Mandir, Ayodhya, and of Lord Ram
-# standing with his bow. There is no open-licence model of either, so we
-# model them by script in Blender (free), from general reference only
+# Airimation's own 3D model of the Ram Mandir, Ayodhya. There is no
+# open-licence model of it, so we model it by script in Blender (free),
+# from general reference only
 # (published dimensions and photographs; no model or illustration traced).
 #
 #   /Applications/Blender.app/Contents/MacOS/Blender --background \
-#     --python scripts/blender/make-ram.py -- ../Scans/made
+#     --python scripts/blender/make-ram-mandir.py -- ../Scans/made
 #
-# Writes <out>/ram-mandir.glb and ram.glb. Then convert each with
+# Writes <out>/ram-mandir.glb. Then convert it with
 # scripts/scan-to-formation.mjs (licence: Airimation's own).
 #
 # Units are arbitrary (the converter normalises size). Y is up in the
@@ -282,146 +282,5 @@ def ram_mandir():
     export("ram-mandir")
 
 
-# ---------------------------------------------------------------- Lord Ram
-#
-# Standard iconography: standing upright, a tall crown (kirita mukut), a
-# long bow (Kodanda) held vertically in the LEFT hand with its foot near
-# the ground, an arrow in the RIGHT hand, a quiver of arrows on the back
-# (feathers showing over the right shoulder), dhoti (pitambar) to the
-# ankles, an angavastram (uttariya) round the arms, a halo. A smooth,
-# stylised sculpted figure; the face is left plain.
-#
-# Body by metaballs (one smooth skin, no hidden inner surfaces to waste
-# drones on); props by tubes and lathes. 1 unit ~ 1 head; ~8.6 units tall
-# to the crown tip. Faces -Y; his left hand is at +X (the audience's right).
-
-def meta_body():
-    mb = bpy.data.metaballs.new("body")
-    mb.resolution = 0.07
-    mb.render_resolution = 0.07
-    mb.threshold = 0.6
-    ob = bpy.data.objects.new("body", mb)
-    bpy.context.collection.objects.link(ob)
-
-    def ball(p, r, s=(1, 1, 1)):
-        e = mb.elements.new(type="ELLIPSOID")
-        e.co = p
-        e.radius = r
-        e.size_x, e.size_y, e.size_z = s
-        return e
-
-    def capsule(a, b, r):
-        a, b = Vector(a), Vector(b)
-        d = b - a
-        e = mb.elements.new(type="CAPSULE")
-        e.co = (a + b) / 2
-        e.radius = r
-        e.size_x = d.length / 2
-        e.rotation = Vector((1, 0, 0)).rotation_difference(d.normalized())
-        return e
-
-    # Head and neck.
-    ball((0, 0, 7.35), 1.0, (0.36, 0.38, 0.46))
-    capsule((0, 0.02, 6.7), (0, 0.02, 7.0), 0.24)
-    # Chest, waist, hips (broad shoulders, narrow waist).
-    ball((0, 0.05, 6.05), 1.0, (0.86, 0.42, 0.58))
-    ball((0, 0.05, 5.25), 1.0, (0.55, 0.36, 0.5))
-    ball((0, 0.05, 4.55), 1.0, (0.62, 0.4, 0.4))
-    capsule((-0.85, 0.05, 6.35), (0.85, 0.05, 6.35), 0.32)  # shoulders
-    # Right arm (-X): down, forearm forward, hand holding the arrow.
-    capsule((-0.95, 0.05, 6.3), (-1.18, 0.0, 5.05), 0.22)
-    capsule((-1.18, 0.0, 5.05), (-1.32, -0.35, 4.15), 0.18)
-    ball((-1.34, -0.4, 4.0), 1.0, (0.16, 0.16, 0.2))
-    # Left arm (+X): out to the bow, gripping it at waist height.
-    capsule((0.95, 0.05, 6.3), (1.35, 0.0, 5.2), 0.22)
-    capsule((1.35, 0.0, 5.2), (2.2, -0.2, 4.6), 0.18)
-    ball((2.32, -0.22, 4.55), 1.0, (0.17, 0.17, 0.2))
-    # Feet below the dhoti hem.
-    ball((-0.3, -0.15, 0.12), 1.0, (0.17, 0.32, 0.13))
-    ball((0.3, -0.15, 0.12), 1.0, (0.17, 0.32, 0.13))
-    capsule((-0.28, 0.0, 0.2), (-0.28, 0.0, 0.7), 0.13)
-    capsule((0.28, 0.0, 0.2), (0.28, 0.0, 0.7), 0.13)
-    return to_mesh(ob)
-
-
-def ram():
-    reset()
-    meta_body()
-    # Dhoti (pitambar): from the waist, flaring a little to the ankles, with
-    # a centre pleat falling in front.
-    lathe(
-        [(0.6, 4.75), (0.7, 4.3), (0.72, 3.6), (0.64, 2.6), (0.56, 1.5), (0.6, 0.85), (0.66, 0.65), (0.58, 0.6)],
-        "dhoti", 0, 0.05, segments=36, sx=1.0, sy=0.58,
-    )
-    tube([(0, -0.42, 4.6), (0.03, -0.46, 3.0), (0, -0.5, 1.3), (0.03, -0.5, 0.65)], 0.07, "pleat")
-    # Waist sash with hanging ends.
-    lathe([(0.66, 4.62), (0.68, 4.8), (0.64, 4.92)], "sash", 0, 0.05, segments=36, sy=0.62)
-    # Angavastram: over the shoulders and looping round the forearms, the
-    # ends falling beside the dhoti.
-    tube([(-1.25, -0.1, 4.9), (-1.35, -0.25, 4.0), (-1.3, -0.25, 3.0), (-1.18, -0.2, 2.3)], 0.07, "uttariyaR", radii=[1, 1, 1, 0.7])
-    tube([(1.55, -0.1, 5.0), (1.45, -0.25, 4.0), (1.25, -0.25, 3.0), (1.1, -0.2, 2.3)], 0.07, "uttariyaL", radii=[1, 1, 1, 0.7])
-    tube([(-0.9, -0.15, 6.4), (-0.5, -0.4, 5.6), (0, -0.45, 5.35), (0.5, -0.4, 5.6), (0.9, -0.15, 6.4)], 0.06, "uttariyaChest")
-    # Necklace (vaijayanti mala) and a waist girdle.
-    tube([(-0.55, -0.1, 6.55), (-0.4, -0.38, 5.9), (0, -0.46, 5.6), (0.4, -0.38, 5.9), (0.55, -0.1, 6.55)], 0.05, "mala")
-    # Crown (kirita mukut): a tall tapering crown with a broad band and a
-    # pointed top.
-    lathe(
-        [(0.0, 7.62), (0.38, 7.62), (0.42, 7.78), (0.4, 7.9), (0.34, 8.1), (0.28, 8.35), (0.22, 8.55), (0.25, 8.62), (0.12, 8.75), (0.05, 8.95), (0.0, 9.05)],
-        "mukut", 0, 0, segments=24,
-    )
-    # Halo (prabhamandala) behind the head.
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.85, minor_radius=0.05, major_segments=48, minor_segments=8, location=(0, 0.45, 7.55), rotation=(math.pi / 2, 0, 0))
-
-    # The bow (Kodanda), held vertically in the left hand at (1.95, z 4.5):
-    # a deep curved stave bowing outward, recurved tips, a straight string.
-    gx, gz, half = 2.45, 4.55, 4.15
-    pts = []
-    n = 24
-    for i in range(n + 1):
-        t = -1 + 2 * i / n
-        x = gx + 1.1 * (1 - t * t) - 1.1
-        # Recurve: the tips flick back outward.
-        x += 0.3 * max(0.0, abs(t) - 0.82) / 0.18
-        pts.append((x, -0.22, gz + half * t))
-    radii = [1.0 - 0.45 * abs(-1 + 2 * i / n) for i in range(n + 1)]
-    tube(pts, 0.13, "bow", radii=radii)
-    tip_lo, tip_hi = pts[0], pts[-1]
-    tube([tip_lo, tip_hi], 0.04, "string")
-    # Grip binding.
-    tube([(gx, -0.22, gz - 0.25), (gx, -0.22, gz + 0.25)], 0.15, "grip")
-
-    # The arrow in the right hand, held point-down beside the body.
-    # It slants out and down from the hand so it can't be read as the arm.
-    ay = -0.42
-    top, tip = Vector((-0.95, ay, 6.1)), Vector((-2.05, ay, 1.5))
-    u = (tip - top).normalized()
-    tube([tuple(top), tuple(tip)], 0.05, "arrow")
-    head = lathe([(0.0, 0.0), (0.2, 0.12), (0.0, 0.62)], "arrowhead", segments=12)
-    head.location = tip
-    head.rotation_mode = "QUATERNION"
-    head.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(u)
-    side_ = Vector((u.z, 0, -u.x))  # perpendicular, in the picture plane
-    for sg in (-1, 1):
-        def fl(bm, sg=sg):
-            p = [top, top + side_ * sg * 0.22 - u * 0.12, top + side_ * sg * 0.22 + u * 0.5, top + u * 0.6]
-            bm.faces.new([bm.verts.new(tuple(q)) for q in p])
-        mesh_from("fletch", fl)
-
-    # Quiver on the back, slung from the left hip to over the right
-    # shoulder, its arrows' feathers showing above the shoulder.
-    qa, qb = Vector((0.55, 0.62, 4.3)), Vector((-0.6, 0.62, 6.9))
-    d = qb - qa
-    q = lathe([(0.2, 0), (0.24, 0.15), (0.26, d.length)], "quiver", 0, 0, segments=16)
-    q.location = qa
-    q.rotation_mode = "QUATERNION"
-    q.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(d.normalized())
-    for k, off in enumerate((-0.12, 0.0, 0.12)):
-        base = qb + Vector((off, 0, 0))
-        top = qb + d.normalized() * 0.55 + Vector((off, 0, 0))
-        tube([tuple(base), tuple(top)], 0.035, f"quiverArrow{k}")
-        tube([tuple(top - d.normalized() * 0.25), tuple(top)], 0.09, f"quiverFeather{k}")
-    export("ram")
-
-
-for make in (ram_mandir, ram):
+for make in (ram_mandir,):
     make()

@@ -16,9 +16,7 @@ import kamal from "../scans/kamal.json";
 import om from "../scans/om.json";
 import nandi from "../scans/nandi.json";
 import tajMahal from "../scans/taj-mahal.json";
-import hanuman from "../scans/hanuman.json";
 import vishnuGaruda from "../scans/vishnu-garuda.json";
-import ram from "../scans/ram.json";
 import ramMandir from "../scans/ram-mandir.json";
 import shape_globe from "../scans/shape-globe.json";
 import shape_helix from "../scans/shape-helix.json";
@@ -104,9 +102,7 @@ const files: Record<string, ScanFile> = {
   om: om as ScanFile,
   nandi: nandi as ScanFile,
   tajMahal: tajMahal as ScanFile,
-  hanuman: hanuman as ScanFile,
   vishnuGaruda: vishnuGaruda as ScanFile,
-  ram: ram as ScanFile,
   ramMandir: ramMandir as ScanFile,
   shape_globe: shape_globe as ScanFile,
   shape_helix: shape_helix as ScanFile,

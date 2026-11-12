@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 12 November 2026 (round 11).*
+the change log. Last updated: 12 November 2026 (round 12).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -129,14 +129,12 @@ Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`
 | Kamal | modelled by Airimation; petals as outlines, bloom faces the audience | own | 200 |
 | Taj Mahal | "Taj Mahal" (choi464); building + minarets only (`--only`) | CC BY 4.0 | 200 |
 | Nandi | Chola-period Nandi, Dallas Museum of Art scan (pressefr) | CC BY 4.0 | 500 |
-| Hanuman | *Hanuman Conversing*, Scan the World | CC0 | 500 |
 | Ganesha | Ganesha, 10th–11th C, Minneapolis Institute of Art | CC0 | 500 |
 | Dragon | "Dragon statuette" (norgeotloic, from a jschmidtcreaform scan) | CC BY 4.0 | 500 |
 | Nataraja | 1930.331, Cleveland Museum of Art (ring of fire) | CC0 | 800 |
 | Vishnu on Garuda | 12–13th C bronze, Minneapolis Institute of Art | CC0 | 800 |
 | Dancing Shiva | Shiva Nataraja, Minneapolis Institute of Art | CC0 | 800 |
 | Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
-| **Ram** | modelled by Airimation (`scripts/blender/make-ram.py`): standing, Kodanda bow in the left hand, arrow in the right, crown and halo | own | 500 |
 | **Ram Mandir** | modelled by Airimation from published dimensions (380 × 250 ft, 161 ft shikhara, five mandapas, Nagara style) | own | 800 |
 | 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst — **modelled by Airimation in Blender** (`scripts/blender/make-shapes.py`; lines are thin tubes) since round 11, replacing the code-generated `classic.ts` | own | 100 (globe, atom, spiral 500) |
 
@@ -277,6 +275,12 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 12
+- **Removed:** the **Ram** figure (formation, model file, and its part of the Blender script — now `make-ram-mandir.py`) and **Hanuman**. A test keeps them out. 55 formations.
+- **Diya:** the flame sits on the lamp's rim at its left edge, where the source model's wick is (`flameAt: "left-rim"`), its base down in the lip.
+- **Dil:** the snuffbox lid's hinge flap that stuck out below the heart is cut away (`scan-colors.mjs --drop`, a box of surface left out).
+- **Somaskanda:** the gap between Shiva and Uma is real — the Minneapolis bronze has lost its Skanda figure (museum record). Decision pending (see §7).
+
 ### 12 Nov 2026 — round 11
 - **Shankh** remodelled by Airimation in Blender (`scripts/blender/make-shankh.py`): the CC BY conch was a featureless teardrop. Now a real conch — spire of whorls up, body whorl, siphonal canal down, lip toward the audience.
 - **Kamal** upright: a lotus seen from the side, petals opening upward (it had been tipped 90° to face the audience).
@@ -298,7 +302,7 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 - **Design a Show:** the 3D sky is now the full-width hero straight under the header; Theme / Fleet / Play, the formation list and LED hues sit below it; the heading, intro and quote CTA after.
 - **Camera moves only when the visitor moves it:** idle auto-rotate removed; tilt range widened (12°–104°), orbit 360° round.
 - **Per-drone colour** for every scanned formation (§3): real texture colours (`scripts/scan-colors.mjs`, 38 models) and hand-designed ramps / palettes / regions; shading contrast raised. Preview tool `scripts/preview-formations.ts`.
-- **Ram** and **Ram Mandir** added, modelled by Airimation in Blender (`scripts/blender/make-ram.py`; GLBs in workspace `Scans/made/`). 57 formations at 2,000 drones.
+- **Ram** and **Ram Mandir** added, modelled by Airimation in Blender (`scripts/blender/make-ram-mandir.py`; GLBs in workspace `Scans/made/`). 57 formations at 2,000 drones.
 - **Lighter backdrop overlay** on inner pages (80% → 55%).
 - **Phones:** the live drone animation and a "best seen on a bigger screen" note with the email button, on every route (§2).
 - **One company email, hello@airimation.in**: JSON-LD's Gmail address removed; JSON-LD moved to `src/lib/jsonld.ts` and tested. The team's own addresses stay on /team (briefly removed, restored the same day at Harshit's request).
@@ -364,15 +368,16 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 | Command | What it covers | Last run |
 |---|---|---|
 | `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 (round 11) |
-| `npm test` | 485 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story; manifest in sync with the model files | ✅ 485/485, 12 Nov 2026 (round 11) |
+| `npm test` | 471 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story; manifest in sync with the model files | ✅ 471/471, 12 Nov 2026 (round 12) |
 | `npm run build` | type check + production build | ✅ 12 Nov 2026 (round 11) |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls, then heading; wheel over the sky scrolls the page, Ctrl+wheel zooms | ✅ 69/69, 12 Nov 2026 (round 11) |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls, then heading; wheel over the sky scrolls the page, Ctrl+wheel zooms | ✅ 69/69, 12 Nov 2026 (round 12) |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
 ---
 
 ## 7. Open items
+- [ ] Somaskanda: the scanned bronze has lost its child Skanda, leaving a gap between Shiva and Uma. Keep (renamed), or remove? Founder's call.
 - [ ] Push `feat/showcase-models`, check the Vercel preview on a real phone (the gate) and a MacBook, then merge to `main`.
 - [ ] Verify the CIN state code ("UW" vs "UP").
 - [ ] Iconography review of Ganesha, Om, and the new **Ram** figure and **Ram Mandir** model before promoting them (Mahadev was removed).
@@ -386,7 +391,7 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] **Make sure hello@airimation.in actually receives mail before launch** — on phones it is now the only way to reach us.
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
-- [x] Ram figure and Ram Mandir: modelled by Airimation in Blender (12 Nov, round 9). A professional 3D artist could still improve the face, dhoti folds and the Mandir's carving; the Mandir reads from 800 drones.
+- [x] Ram Mandir: modelled by Airimation in Blender (12 Nov, round 9); reads from 1,500 drones. (The Ram figure was made too, then removed in round 12.)
 - [ ] With 57 formations, consider a search box (phones now see the gate, so it's a desktop-only question).
 - [x] Clay diya: Sketchfab "Diya in Blender" (CC BY) replaced the Roman lamp (12 Nov).
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).

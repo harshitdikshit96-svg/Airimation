@@ -118,7 +118,8 @@ export type ScanOptions = {
   sway?: number;
   effect?: Effect;
   /** Flame: at the spout (a lamp with a nozzle) or on the wick at the top centre (a round diya). */
-  flameAt?: "spout" | "top";
+  /** Where the wick is: a spout (furthest +x), the top centre, or on the rim at the left edge (a clay diya's pinched lip). */
+  flameAt?: "spout" | "top" | "left-rim";
   minDrones?: number;
   theme?: Theme;
 };
@@ -373,19 +374,32 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
               tip = i;
             }
           }
+        } else if (opts.flameAt === "left-rim") {
+          // The wick lies in the lip at the lamp's left edge: the highest
+          // drone among those nearest the left end.
+          let minX = Infinity;
+          for (let i = 0; i < m; i++) minX = Math.min(minX, p[i * 3]);
+          let best = -Infinity;
+          for (let i = 0; i < m; i++) {
+            if (p[i * 3] < minX + W * 0.08 && p[i * 3 + 1] > best) {
+              best = p[i * 3 + 1];
+              tip = i;
+            }
+          }
         } else {
           for (let i = 0; i < m; i++) if (p[i * 3] > p[tip * 3]) tip = i;
         }
-        const tx = p[tip * 3] - (opts.flameAt === "top" ? 0 : W * 0.04);
-        const ty = p[tip * 3 + 1] + 1.5;
+        const tx = p[tip * 3] + (opts.flameAt === "top" ? 0 : opts.flameAt === "left-rim" ? W * 0.03 : -W * 0.04);
         const tz = p[tip * 3 + 2];
         const F = Math.max(6, Math.round(n * 0.1));
         // A wide, shallow diya sizes its flame by its width, a tall lamp by its height.
-        const ref = opts.flameAt === "top" ? Math.max(H, W * 0.9) : H;
+        const ref = opts.flameAt === "top" || opts.flameAt === "left-rim" ? Math.max(H, W * 0.9) : H;
         // The wick sits low in a bowl, so its flame must rise well clear of the rim.
         // A teardrop, not a spike: about a third of the lamp's size tall.
-        const FH = ref * (opts.flameAt === "top" ? 0.3 : 0.42);
-        const FR = ref * (opts.flameAt === "top" ? 0.085 : 0.09);
+        const FH = ref * (opts.flameAt === "spout" || !opts.flameAt ? 0.42 : 0.28);
+        const FR = ref * (opts.flameAt === "spout" || !opts.flameAt ? 0.09 : 0.075);
+        // The flame's narrow base sits down in the lip, not floating above it.
+        const ty = p[tip * 3 + 1] + (opts.flameAt === "left-rim" ? -FH * 0.3 : 1.5);
         const golden = Math.PI * (3 - Math.sqrt(5));
         for (let k = 0; k < F; k++) {
           const i = n - F + k;
