@@ -2,7 +2,7 @@
 
 *Living record of every decision taken so far about the company and this
 website, and every change made to the site. Newest changes at the top of
-the change log. Last updated: 10 November 2026 (round 4).*
+the change log. Last updated: 12 November 2026 (round 5).*
 
 Read this before changing copy, team, branding or the 3D swarm.
 
@@ -99,38 +99,39 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 
 ---
 
-## 3. Animated formations — on Design a Show
+## 3. Formations — on Design a Show
 
-Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`/design-your-show`** (the gallery page now redirects there). Each formation declares the smallest fleet at which it still reads; the fleet dropdown (100 / 200 / 500 / 800 / 1,500 / 2,000) shows only those, grouped as *Story & culture*, *Sculptures — real 3D scans*, *3D shapes*.
+Library: `src/lib/cultural/` (pure TypeScript, deterministic). Live in 3D on **`/design-your-show`**. One flat list of buttons — no group headings (removed 12 Nov 2026).
 
-| Fleet | Formations offered |
-|---|---|
-| 100 | Tiranga, Diya, Kamal, Dil + 9 3D shapes (globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst) |
-| 200 | + Om, Damru, Dhanush-baan |
-| 500 | + Ganesha, Mahadev, Dragon |
-| 800 | + **Nataraja** (Cleveland 1930.331 scan, ring of fire), **Dancing Shiva** (Minneapolis scan) |
-| 1,500, 2,000 | + **Somaskanda** (Minneapolis scan) — all 22 |
+**Rule (12 Nov 2026): only formations made from a real 3D model.** A museum scan or an openly licensed model (`scans/`), an exact geometric shape (`classic.ts`), or the national flag drawn to its official specification (`tiranga.ts`). If no usable 3D model exists, the formation is out. Removed for that reason: **Kamal (lotus), Om, Mahadev** (the Nataraja scans cover Shiva). Licences: CC0 / public domain, or CC BY 4.0 with the credit shown under the preview ("Source: …"). Never NC, ND or SA.
 
-**Real drone speeds (decided 10 Nov 2026).** Every drone in every formation stays **under 8 m/s**, enforced by `src/lib/cultural/__tests__/speed.test.ts` (every drone, every frame, including the loop wrap). Anything faster is done with **light** on drones that hold still, as real shows do:
-- Dhanush-baan: the draw takes 6 s; at release the arrow's flight is a light-chase along drones parked on the flight path; string and arrow reset in the dark.
-- Damru: one slow turn per 40 s; the beat is a white flash on the drumhead each time a bead's swing peaks.
-- Mahadev: the Ganga holds its shape; ripples of light run down it.
-- Diya: the flame's shape moves slowly; the flicker is brightness and colour.
-- Dragon: one lap per 80 s; fire breath is light on parked drones.
-- Dil: the beat is a light pulse with a 2% swell.
-- Transitions between formations last as long as the distance needs (6–24 s).
+| Formation | Model | Licence | From fleet |
+|---|---|---|---|
+| Tiranga | Flag Code of India spec; chakra with 24 spokes | — | 200 |
+| Diya | "Terracotta lamp", Institute of Classical Studies, London (harlehrenberg) + a light-only flame | CC BY 4.0 | 100 |
+| Dil | Heart-shaped snuffbox, Sosenko Family Foundation / Virtual Małopolska | CC0 | 100 |
+| Damru | "Damru – Small Two Headed Drum" (INDIANMONSTERYT) | CC BY 4.0 | 100 |
+| Dhanush-baan | "Bow & Arrow" (MOJackal); arrow nocked by `scripts/nock-arrow.mjs` | CC BY 4.0 | 100 |
+| Ganesha | Ganesha, 10th–11th C, Minneapolis Institute of Art | CC0 | 500 |
+| Dragon | "Dragon statuette" (norgeotloic, from a jschmidtcreaform scan) | CC BY 4.0 | 500 |
+| Nataraja | 1930.331, Cleveland Museum of Art (ring of fire) | CC0 | 800 |
+| Dancing Shiva | Shiva Nataraja, Minneapolis Institute of Art | CC0 | 800 |
+| Somaskanda | Minneapolis Institute of Art | CC0 | 1,500 |
+| 9 3D shapes | globe, double helix, atom, torus knot, cube, rising spiral, diamond, pyramid, starburst | — | 100 |
 
-Export at 500 drones (`Formations/REPORT.md`): max speed 2.2–7.5 m/s for all. Remaining gap to flight-ready is **separation**: only the scan sculptures (2.8–4.6 m) and Mahadev (2.1 m) already meet ~2–3 m; the rest need spacing widened in Skybrush.
+All GLBs and their record numbers: workspace `Scans/SOURCES.md`.
 
-**Depth.** Flat drawings are "inflated" into rounded reliefs (each part bulges from its own edge, `kit.ts > inflate`), so Ganesha, Mahadev, Om, Diya and Dil have volume when orbited. The scans and 3D shapes are true 3D.
+**Motion and light.** Models turn on a turntable; flat ones (lamp, heart, bow) sway ±24–30° so they never go edge-on. Effects are light only and add no drones outside the model: diya flame (10% of the fleet, at the spout), heartbeat pulse, drum heads flashing, a pulse running along the arrow, Nataraja's ring of fire. A test checks every drone stays within the model's bounds (the old Dhanush-baan's streak of extra lights is gone).
 
-**Scans** (`scripts/scan-to-formation.mjs`): GLB → surface samples → farthest-point ordering (any prefix is evenly spread, so one file serves every fleet size) → `src/lib/cultural/scans/<id>.json` (~24 KB). Shading is light: brightness follows each surface normal against a fixed light while the figure turns. Source files and licences: `Airimation/Scans/SOURCES.md`.
+**Speeds.** Choreography stays under **8 m/s** (speed test). The **preview plays 1.8× faster** (12 Nov 2026: "mid-way between the old fast version and real speed"); the page copy says it is sped up. Transitions 4.5–14 s.
 
-**Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`) writes per formation:
-- `<id>.skybrush.zip` — Skybrush Studio for Blender "zipped CSV" import: one CSV per drone, `Time_msec,x_m,y_m,z_m,Red,Green,Blue`, metres, Z up, linear colour. Works on the free community server.
-- `<id>.formation.csv` — static formation, Skybrush "static CSV": `Name,x_m,y_m,z_m,Red,Green,Blue`.
-- `<id>.points.json` — 600 points, our Formation Asset Spec format.
-- `<id>.preview.svg` and `REPORT.md` (speed and separation).
+**Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×2 at 2,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
+
+**LED hues** (restored 12 Nov 2026): Per formation, Diwali gold, Royal, Moonlight, Tiranga, Wedding rose. A palette keeps each drone's brightness and takes the hue from a top-to-bottom gradient (`showcaseMath.ts > applyHues`).
+
+**Adding a model:** `node scripts/scan-to-formation.mjs <glb> <id> [--rotate-x] [--rotate-y] [--tilt-x] [--crop-bottom] --label … --credit … [--licence "CC BY 4.0"]`, then register it in `scans/index.ts` and `__tests__/scanFiles.ts`. The tests check licence, credit and bounds.
+
+**Export** (`npx vite-node scripts/export-formations.ts -- ../Formations 500 24`): Skybrush zipped CSV + static CSV + points JSON + preview SVG + `REPORT.md` per formation (unchanged).
 
 Before any depiction of a deity is used publicly, have someone who knows the iconography review it.
 
@@ -173,6 +174,13 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 
 ## 5. Change log
 
+### 12 Nov 2026 — round 5 (branch `feat/showcase-models`)
+- **Home:** the live 3D scene starts right after load, not on the first scroll (the still poster used to "come alive" with a shimmer). Scroll only drives the drones.
+- **Steady backdrop on every page:** the dusk sky, river and skyline the home page settles on (under the team section), darkened the same way. A still image (`public/posters/backdrop*.jpg`, rendered from the live scene), not WebGL. Not on `/internal`.
+- **Design a Show:** only formations from real 3D models (§3); Kamal, Om and Mahadev removed; Ganesha, Diya, Dil, Damru, Dhanush-baan and Dragon rebuilt from models; group headings removed; model credit under the preview; **LED hues** picker back; fleet change redraws in place; bigger fleet = bigger picture; preview 1.8× faster; Tiranga chakra now shows 24 spokes (it read as rings) and needs 200 drones.
+- **UI pass:** every inner page and the footer now share the header's 1100 px column (left edges used to jump between 4xl/5xl/6xl sections); over-long paragraphs capped; `/shows` hero aligned; logo tap target 44 px.
+- **Tests:** unit suite grown to 129 tests (library rules, licences, 24 spokes, no stray drones, LED hues, fleet scaling, content); new `npm run test:e2e` (47 checks in Chrome against a running site). See §6.
+
 ### 10 Nov 2026 — round 4
 - **Design a Show = the 3D showcase.** `/design-your-show` now shows the fleet-size showcase (100–2,000 drones) with a Request-a-quote CTA. The old formation-picker configurator is **archived** at `/design-your-show/classic` (noindex, not linked) with a note pointing to the new page; old share links `/design-your-show/s/…` still open it. `/gallery` → 308 to `/design-your-show`; Gallery removed from the nav.
 - **Real drone speeds:** every formation re-choreographed under 8 m/s (see §3); speed test added; all motion now loops seamlessly.
@@ -206,38 +214,16 @@ Sources: [Republic World — Ayodhya Deepotsav 2026](https://www.republicworld.c
 - Jul 2026: Next.js site built; Neon contact form; IBM Plex self-hosted; homepage v2 scroll story; monochrome/borderless rules; white swarm; `/investors` removed; `/team`; `/internal` Academy + quiz with its own pink/yellow theme; brand spelling fixed to Airimation sitewide; sandeep.jpg casing fix.
 - Sep–Oct 2026: 3D R3F swarm with GPU morphing, home scroll story, `/design-your-show` configurator with share links and OG images, poster frames, synthesised show sound, statutory details in footer, advisors kept in config but hidden.
 
-## 6. Verification — 9 Nov 2026 (round 3)
+## 6. Tests — run before every push
 
-Every claim in §1–§5 that the site can show was checked against the code
-and a production build (`npm run build && npm run start`), in Chrome.
-Re-run this list after any change to copy, team, branding or the swarm.
-
-| Check | How | Result |
+| Command | What it covers | Last run |
 |---|---|---|
-| Lint + retired words | `npm run lint` | ✅ pass |
-| Tests | `npm test` | ✅ 29/29 |
-| Production build | `npm run build` | ✅ pass |
-| `/biscope` → `/shows` | `curl -I` | ✅ 308 to `/shows` |
-| Retired words, removed members, hidden advisors in served HTML (/, /shows, /about, /vision, /gallery, /team, /contact, /design-your-show) | grep | ✅ none |
-| Full CIN/GSTIN/street address in HTML or `.next/static` bundle | grep | ✅ none; footer shows `U823xxx…`, `09xxx…`, `UDYAM-UP-xxx…`, `DIPPxxx…`, "Greater Noida, Uttar Pradesh" |
-| JSON-LD | read `/` | ✅ logo URL, locality only, no numbers |
-| HQ wording | read pages | ✅ "Noida, Uttar Pradesh (Delhi NCR)" |
-| Concept-render / simulation labels | read pages | ✅ on /, /shows, /gallery, /design-your-show, footer |
-| Team order and roles | read /, /about, /team | ✅ Directors Harshit, Madhuri; Advisors Gaurav, Neeraj; other three hidden |
-| Home team photos | Chrome | ✅ 144 px (desktop) |
-| /about thumbnails | Chrome | ✅ round, 64 px |
-| Logo | Chrome | ✅ white mark in header + footer, black on `/internal`, `icon.png` + `apple-icon.png` served |
-| Footer | Chrome | ✅ two link columns, masked numbers, harshitcreates.in credit |
-| "Where we are" | read / and /vision | ✅ prototype, Nano, ArduPilot, Skybrush, Indian parts; pledge and F1 goal on /vision |
-| Gallery fleets + formations | Chrome, every option | ✅ exactly as the §3 table |
-| 2D formation cards removed | code + Chrome | ✅ |
-| 360° orbit | Chrome, dragged ~270° | ✅ goes behind the figure, no pull-back |
-| 60 fps cap, DPR caps, no MSAA, half-res bloom, monitor never rebuilds | code (`quality.ts`, `SwarmCanvas.tsx`, `Effects.tsx`) + Chrome (canvas at 1.5× on a 1.8× screen) | ✅ |
-| No `backdrop-filter` over a live canvas | code + Chrome | ❌ → fixed: sound toggle and configurator hint still blurred; blur removed (round 3) |
-| Exporter column format | code | ✅ matches §3 |
+| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 12 Nov 2026 |
+| `npm test` | 129 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") | ✅ 129/129, 12 Nov 2026 |
+| `npm run build` | type check + production build | ✅ 12 Nov 2026 |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, LED hues, fleet change | ✅ 47/47, 12 Nov 2026 |
 
-Not checkable from the site: company facts in §1 (registrations, fleet
-plan, money, internal roles) and the research in §4 — recorded as given.
+When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
 ---
 
@@ -253,3 +239,7 @@ plan, money, internal roles) and the research in §4 — recorded as given.
 - [ ] Choose a new flagship show name (or decide not to have one).
 - [ ] Two public emails disagree: the footer/contact show `hello@airimation.in` (marked TODO in `content.ts` until Google Workspace is set up) while JSON-LD uses `teamairimation@gmail.com`. Pick one; make sure hello@ actually receives mail before launch.
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
+- [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
+- [ ] Better source models when found: an actual clay **diya** (the current lamp is Hellenistic/Roman) and a CC0 **lotus** and **Om** to bring Kamal and Om back.
+- [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
+

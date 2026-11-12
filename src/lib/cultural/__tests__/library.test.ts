@@ -1,0 +1,143 @@
+import { describe, expect, test } from "vitest";
+import { CULTURAL, formationsFor } from "../index";
+import { tiranga } from "../tiranga";
+import { SHOW_ALT, TAU } from "../kit";
+import scanFiles from "./scanFiles";
+
+// The Design a Show library rules (DECISIONS.md §3):
+//  - every formation comes from a real 3D model, an exact geometric shape,
+//    or the flag's official specification — no hand-drawn figures
+//  - only CC0 / public-domain or CC BY 4.0 models, and CC BY ones are credited
+//  - every fleet size on offer has formations to show
+
+const FLEETS = [100, 200, 500, 800, 1500, 2000];
+const REMOVED = ["om", "kamal", "lotus", "mahadev", "shiva", "heartbeat"];
+
+describe("formation library", () => {
+  test("ids and labels are unique", () => {
+    const ids = CULTURAL.map((f) => f.id);
+    const labels = CULTURAL.map((f) => f.label);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(new Set(labels).size).toBe(labels.length);
+  });
+
+  test("formations without a 3D model are gone", () => {
+    for (const id of REMOVED) expect(CULTURAL.find((f) => f.id === id), id).toBeUndefined();
+  });
+
+  test("every non-geometric formation names its source", () => {
+    for (const f of CULTURAL) {
+      if (f.id.startsWith("classic-")) continue;
+      expect(f.credit, f.id).toBeTruthy();
+    }
+  });
+
+  test("every fleet size offers at least four formations, and more drones never offer fewer", () => {
+    let prev = 0;
+    for (const n of FLEETS) {
+      const k = formationsFor(n).length;
+      expect(k, `${n} drones`).toBeGreaterThanOrEqual(4);
+      expect(k).toBeGreaterThanOrEqual(prev);
+      prev = k;
+    }
+  });
+});
+
+describe("3D model files", () => {
+  for (const [name, file] of Object.entries(scanFiles)) {
+    test(`${name}: allowed licence, credited, intact`, () => {
+      expect(["CC0 1.0", "CC BY 4.0"]).toContain(file.licence);
+      if (file.licence === "CC BY 4.0") expect(file.credit).toMatch(/CC BY 4\.0/);
+      expect(file.credit).not.toMatch(/\bNC\b|\bSA\b|\bND\b|non-commercial/i);
+      expect(file.height).toBe(84);
+      const pos = Buffer.from(file.pos, "base64");
+      const nrm = Buffer.from(file.nrm, "base64");
+      expect(pos.byteLength).toBe(file.count * 3 * 2);
+      expect(nrm.byteLength).toBe(file.count * 3);
+      expect(file.count).toBeGreaterThanOrEqual(2000);
+    });
+  }
+});
+
+describe("light effects never add stray drones", () => {
+  // The old bow drew a streak of extra lights behind the arrow. Every drone
+  // must now sit on the model (or the diya's flame, just above it).
+  for (const f of CULTURAL.filter((x) => !x.id.startsWith("classic-") && x.id !== "tiranga")) {
+    test(`${f.id}: every drone inside the model's bounds`, () => {
+      const n = Math.max(f.minDrones, 800);
+      const rig = f.build(n);
+      const pos = new Float32Array(n * 3);
+      const col = new Float32Array(n * 3);
+      f.pose(rig, 0, pos, col);
+      const file = Object.values(scanFiles).find((s) => s.id === f.id)!;
+      const reach = Math.hypot(file.width, file.depth) / 2 + 2;
+      const top = SHOW_ALT + file.height / 2 + (f.id === "diya" ? file.height * 0.45 : 1);
+      for (let i = 0; i < n; i++) {
+        const [x, y, z] = [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]];
+        expect(Math.hypot(x, z), `${f.id} drone ${i}`).toBeLessThanOrEqual(reach);
+        expect(y).toBeGreaterThanOrEqual(SHOW_ALT - file.height / 2 - 1);
+        expect(y).toBeLessThanOrEqual(top);
+      }
+    });
+  }
+
+  test("the diya has a lit flame above its spout", () => {
+    const f = CULTURAL.find((x) => x.id === "diya")!;
+    const n = 500;
+    const pos = new Float32Array(n * 3);
+    const col = new Float32Array(n * 3);
+    f.pose(f.build(n), 1, pos, col);
+    // The flame is the last 10% of the list, standing on the spout tip (the
+    // lamp drone furthest along +x) and rising above it.
+    const flame = Array.from({ length: 50 }, (_, k) => n - 50 + k);
+    let tip = 0;
+    for (let i = 0; i < n - 50; i++) if (pos[i * 3] > pos[tip * 3]) tip = i;
+    for (const i of flame) {
+      expect(pos[i * 3 + 1]).toBeGreaterThanOrEqual(pos[tip * 3 + 1]);
+      expect(Math.hypot(pos[i * 3] - pos[tip * 3], pos[i * 3 + 2] - pos[tip * 3 + 2])).toBeLessThan(15);
+    }
+    expect(Math.max(...flame.map((i) => pos[i * 3 + 1])) - pos[tip * 3 + 1]).toBeGreaterThan(20);
+    for (const i of flame) expect(col[i * 3] + col[i * 3 + 1]).toBeGreaterThan(0.3);
+  });
+});
+
+describe("Tiranga", () => {
+  test("needs 200 drones", () => {
+    expect(tiranga.minDrones).toBe(200);
+    expect(formationsFor(100).some((f) => f.id === "tiranga")).toBe(false);
+  });
+
+  for (const n of [200, 500, 800, 2000]) {
+    test(`${n} drones: the chakra has 24 spokes, each a straight line of 2+ drones`, () => {
+      const rig = tiranga.build(n);
+      expect(rig.u.length).toBe(n);
+      // Spoke drones: chakra drones strictly inside the rim, away from the hub.
+      const R = 52 / 6;
+      const byAngle = new Map<number, number>();
+      for (let i = 0; i < n; i++) {
+        if (rig.kind[i] !== 1) continue;
+        const r = rig.v[i];
+        if (r <= R * 0.2 || r >= R * 0.99) continue;
+        const a = Math.round((rig.u[i] / TAU) * 24) % 24;
+        expect(Math.abs((rig.u[i] / TAU) * 24 - Math.round((rig.u[i] / TAU) * 24))).toBeLessThan(1e-6);
+        byAngle.set(a, (byAngle.get(a) ?? 0) + 1);
+      }
+      expect(byAngle.size).toBe(24);
+      for (const c of byAngle.values()) expect(c).toBeGreaterThanOrEqual(2);
+    });
+  }
+
+  test("bands are saffron over white over green, chakra navy", () => {
+    const n = 800;
+    const pos = new Float32Array(n * 3);
+    const col = new Float32Array(n * 3);
+    const rig = tiranga.build(n);
+    tiranga.pose(rig, 0, pos, col);
+    for (let i = 0; i < n; i++) {
+      const [r, g, b] = [col[i * 3], col[i * 3 + 1], col[i * 3 + 2]];
+      if (rig.kind[i] === 1) expect(b).toBeGreaterThan(r);
+      else if (rig.v[i] > 52 / 6) expect(r).toBeGreaterThan(b * 2); // saffron
+      else if (rig.v[i] < -52 / 6) expect(g).toBeGreaterThan(r); // green
+    }
+  });
+});

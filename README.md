@@ -103,8 +103,8 @@ serverless/edge deployments (e.g. Vercel) without connection-pooling issues.
 ## Replacing the visuals
 
 The home page story and `/design-your-show` render the drone swarm in
-real time with React Three Fiber (`src/components/swarm/`); the gallery
-and /shows pages use the older 2D canvas (`src/lib/swarmShapes.ts`). See
+real time with React Three Fiber (`src/components/swarm/`); /shows uses
+the older 2D canvas (`src/lib/swarmShapes.ts`). See
 CLAUDE.md for the map. When real show footage exists, it replaces the
 posters and the hero, and the "concept render" labels can go.
 
@@ -136,26 +136,32 @@ To offer it in the configurator, register it in
 share links: adding is free, changing an existing one needs a
 `LIBRARY_VERSION` bump — see SHOW_CONFIGURATOR.md).
 
-### Animated cultural formations
+### Design a Show formations (3D models only)
 
-`src/lib/cultural/` holds figures that MOVE: Ganesha, Mahadev (Shiva),
-damru, dhanush-baan (bow and fire-arrow) and a dragon. They play live in
-3D on `/design-your-show` (`src/components/gallery/CulturalShowcase.tsx`).
+`src/lib/cultural/` holds the formations on `/design-your-show`
+(`src/components/gallery/CulturalShowcase.tsx`). **Every one is made from
+a real 3D model** — a museum scan or an openly licensed model, an exact
+geometric shape, or the flag to its official spec. No hand-drawn figures.
 
 Each is an `AnimatedFormation` (see `kit.ts`): `build(n)` once per drone
-count, `pose(rig, t, pos, col)` every frame. Two ways to author one:
+count, `pose(rig, t, pos, col)` every frame. Colours are LINEAR rgb
+(`hex()` converts); black = LED off. Keep `pose` allocation-free.
 
-- **2D figure from parts** (Ganesha, Shiva): describe the drawing as named
-  parts — ellipses, polygons and tapered `tube`s along a curve — and call
-  `sampleParts(parts, n)`. Edges are drawn with drones first, fill second.
-  Every drone remembers its part, and tube drones their position along the
-  tube, so `pose` can bend a trunk or run water down a stream.
-- **Procedural 3D** (damru, bow, dragon): assign each drone a place on the
-  object (along / around) in `build`, rebuild the object each frame in
-  `pose`.
+To add one from a model (GLB):
 
-Colours are LINEAR rgb (`hex()` converts); black = LED off. Keep `pose`
-allocation-free: it runs every frame for up to 1,600 drones.
+```bash
+node scripts/scan-to-formation.mjs path/to/model.glb my-id \
+  --label "My figure" --credit "Title by Creator (Sketchfab), CC BY 4.0" \
+  [--licence "CC BY 4.0"] [--rotate-x 90] [--rotate-y 90] [--tilt-x 40] [--crop-bottom 0.12]
+```
+
+then register `scans/my-id.json` in `src/lib/cultural/scans/index.ts`
+with `scanFormation(file, { blurb, colors, motion, effect, minDrones })`,
+and add it to `src/lib/cultural/__tests__/scanFiles.ts`. **Licences:
+CC0 / public domain, or CC BY 4.0 with the credit** (shown on the page).
+Never NC, ND or SA. Record the source in `Airimation/Scans/SOURCES.md`.
+`npm test` then checks the licence, credit, file and that no drone
+strays outside the model.
 
 Export for Blender / Skybrush and the asset spec:
 
@@ -165,21 +171,18 @@ npx vite-node scripts/export-formations.ts -- ../Formations 500 24
 
 writes, per formation, a 600-point cloud (`.points.json`, spec format), a
 preview SVG, one CSV per drone for one loop, and `REPORT.md` with max
-speed and minimum separation — the gap between a concept render and a
-flyable show.
+speed and minimum separation.
 
-### Scans → formations
-
-Real 3D sculptures become formations with:
+### Tests
 
 ```bash
-node scripts/scan-to-formation.mjs path/to/scan.glb my-id --points 2000 [--crop-bottom 0.2] [--rotate-x -90]
+npm test                                   # 129 unit tests (vitest), seconds
+npm run build && npm run start             # then, in another terminal:
+npm run test:e2e -- http://localhost:3000  # 47 checks in Chrome
 ```
 
-then register `src/lib/cultural/scans/my-id.json` in `scans/index.ts` with
-`scanFormation(...)`. **Only CC0 / public-domain scans.** The current ones
-came from Zenodo's CC0 mirrors of the Cleveland Museum of Art and
-Minneapolis Institute of Art releases (see `Airimation/Scans/SOURCES.md`).
+Run both before pushing. What each covers, and the rule behind it, is in
+DECISIONS.md §6 — when a rule changes, change its test in the same commit.
 
 ### 3D assets
 

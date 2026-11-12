@@ -10,7 +10,8 @@ npm run dev      # start dev server (Turbopack) at http://localhost:3000
 npm run build    # production build (also runs the TypeScript check)
 npm run start    # serve the production build locally
 npm run lint      # eslint (flat config, eslint.config.mjs)
-npm test          # vitest: share-link encoding + show determinism
+npm test          # vitest unit suite (formations, library rules, content)
+npm run test:e2e -- http://localhost:3000   # Chrome checks against a running site
 
 node scripts/build-skyline.mjs && node scripts/compress-assets.mjs   # skyline GLB
 node scripts/render-poster.mjs http://localhost:3000                 # poster frames
@@ -27,8 +28,9 @@ stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 (team presentation, retired words, masked registration numbers, 3D
 performance rules) and the change log.
 **Keep it current:** after any change, add a dated entry to its change
-log, update §1–§3 if a decision changed, and re-run the §6 verification
-checklist (mark ✅/❌ and the date).
+log, update §1–§3 if a decision changed, and run the §6 test suites
+(`npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`) and
+update their "last run". When a rule changes, change its test too.
 
 This is the marketing website for **Airimation**, a Noida (Delhi NCR)
 drone-swarm light-show company. Next.js App Router, TypeScript, Tailwind
@@ -93,16 +95,23 @@ module `src/components/swarm/`:
 - Posters (`public/posters/`) are rendered from the live scene by
   `scripts/render-poster.mjs`; re-run it when the look changes.
 
-*Animated formations* (`src/lib/cultural/`, live on `/design-your-show`
-via `src/components/gallery/CulturalShowcase.tsx`) — drawn figures
-(Ganesha, Shiva, damru, bow, dragon, tiranga, diya, lotus, heart, om), CC0
-scan sculptures (`scan.ts`, `scans/`, made by `scripts/scan-to-formation.mjs`)
-and 3D shapes wrapped from the archived designer (`classic.ts`). Each
-declares `minDrones`; the fleet dropdown (100–2,000) offers only what
-reads at that size. **Every drone stays under 8 m/s** (`MAX_DRONE_SPEED`,
-enforced by `__tests__/speed.test.ts`) — do fast effects with light. Pure TS (no DOM), posed every frame on the CPU and
-written to the swarm with `SwarmHandle.setPose`. See README > Animated
-cultural formations; `scripts/export-formations.ts` exports them.
+*Design a Show formations* (`src/lib/cultural/`, live on `/design-your-show`
+via `src/components/gallery/CulturalShowcase.tsx`, maths in
+`showcaseMath.ts`) — **only formations made from a real 3D model**: museum
+scans and CC0 / CC BY 4.0 models (`scan.ts`, `scans/`, made by
+`scripts/scan-to-formation.mjs`, credited on the page), the 3D shapes from
+the archived designer (`classic.ts`), and the Tiranga to its official spec
+(`tiranga.ts`). No hand-drawn figures — no model, no formation. Each
+declares `minDrones`; a bigger fleet flies a bigger figure; a fleet change
+redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
+`__tests__/speed.test.ts`); the preview plays 1.8× (`PREVIEW_RATE`). Effects
+are light only and never add drones outside the model (tested). LED hues
+recolour by palette. See README > Design a Show formations;
+`scripts/export-formations.ts` exports them.
+
+*Site backdrop* — every page except home and `/internal` sits on a still of
+the home scene's dusk sky (`SiteBackdrop.tsx`, `public/posters/backdrop*.jpg`).
+Home starts its live scene right after load (not on scroll).
 
 *Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
 1.5, no MSAA. The runtime monitor may lower DPR/bloom but never drone
