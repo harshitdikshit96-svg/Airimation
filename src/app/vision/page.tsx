@@ -18,7 +18,7 @@ export default function VisionPage() {
   return (
     <>
       <section className="border-b border-line-2 px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>Vision</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
@@ -36,7 +36,7 @@ export default function VisionPage() {
 
       {/* WHERE WE ARE */}
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>Where we are</SectionLabel>
             <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -61,7 +61,7 @@ export default function VisionPage() {
 
       {/* TRACK 1 */}
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no={shows.no}>{shows.label}</SectionLabel>
             <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -94,7 +94,7 @@ export default function VisionPage() {
 
       {/* TRACK 2 */}
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no={research.no}>{research.label}</SectionLabel>
             <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -125,7 +125,7 @@ export default function VisionPage() {
 
       {/* HOW WE BUILD */}
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="03">How we build</SectionLabel>
           </Reveal>

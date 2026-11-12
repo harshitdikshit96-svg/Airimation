@@ -32,7 +32,7 @@ export default function ShowsPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/60 to-navy/20" />
         </div>
 
-        <div className="relative mx-auto max-w-4xl py-24">
+        <div className="relative mx-auto w-full max-w-[1052px] py-24">
           <Reveal>
             <SectionLabel>The Show</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-6xl">
@@ -51,7 +51,7 @@ export default function ShowsPage() {
                 See the Formations
               </Button>
             </div>
-            <p className="mt-6 text-xs text-dim">
+            <p className="mt-6 max-w-2xl text-xs text-dim">
               Formations shown are concept renders, not show footage — our
               first prototype is built and our first shows are in preparation.
             </p>
@@ -61,7 +61,7 @@ export default function ShowsPage() {
 
       {/* BRAND PILLARS */}
       <section className="px-6 py-16">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1052px]">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {showPillars.map((pillar, i) => (
               <Reveal key={pillar.title} delay={i * 0.07}>
@@ -79,7 +79,7 @@ export default function ShowsPage() {
 
       {/* SPECS / BENEFITS */}
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="01">On every drone</SectionLabel>
             <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -108,7 +108,7 @@ export default function ShowsPage() {
 
       {/* PROCESS */}
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="02">The process</SectionLabel>
             <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -141,7 +141,7 @@ export default function ShowsPage() {
 
       {/* COVERAGE / SHOW TYPES */}
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="03">Where we perform</SectionLabel>
             <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
@@ -165,7 +165,7 @@ export default function ShowsPage() {
 
       {/* BEYOND THE SHOWS */}
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <div className="panel-border rounded-3xl bg-panel/30 p-8 sm:p-12">
               <SectionLabel>{beyondShows.eyebrow}</SectionLabel>
@@ -185,7 +185,7 @@ export default function ShowsPage() {
 
       {/* SAFETY */}
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="04">Safety, named plainly</SectionLabel>
             <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">

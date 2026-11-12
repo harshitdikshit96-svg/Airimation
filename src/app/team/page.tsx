@@ -87,7 +87,7 @@ export default function TeamPage() {
   return (
     <>
       <section className="border-b border-line-2 px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>The Team</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
@@ -105,7 +105,7 @@ export default function TeamPage() {
       </section>
 
       <section className="px-6 pt-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>Directors</SectionLabel>
           </Reveal>
@@ -120,7 +120,7 @@ export default function TeamPage() {
       {/* Advisors: those not marked `hidden` in content.ts. */}
       {visibleAdvisors.length > 0 && (
       <section className="px-6 pb-20 pt-16">
-        <div className="mx-auto max-w-5xl border-t border-line-2 pt-16">
+        <div className="mx-auto max-w-[1052px] border-t border-line-2 pt-16">
           <Reveal>
             <SectionLabel>Advisors</SectionLabel>
           </Reveal>

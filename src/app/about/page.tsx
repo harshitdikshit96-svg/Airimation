@@ -36,7 +36,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="border-b border-line-2 px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>About Airimation</SectionLabel>
             <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
@@ -57,13 +57,13 @@ export default function AboutPage() {
       </section>
 
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <div className="panel-border rounded-2xl bg-panel/40 p-8 sm:p-10">
               <h2 className="font-serif text-2xl font-semibold text-amber-soft">
                 What we are — and what we are not
               </h2>
-              <p className="mt-4 leading-relaxed text-muted">
+              <p className="mt-4 max-w-[68ch] leading-relaxed text-muted">
                 Today Airimation is an early-stage company with its{" "}
                 <strong className="text-ink">first in-house prototype drone built</strong>,
                 now being taken below 250 grams into the DGCA Nano category. It
@@ -72,7 +72,7 @@ export default function AboutPage() {
                 Indian vendors. We have not flown a commercial show yet, and
                 nothing on this site pretends otherwise.
               </p>
-              <p className="mt-4 leading-relaxed text-muted">
+              <p className="mt-4 max-w-[68ch] leading-relaxed text-muted">
                 The plan is two tracks, in order. First, light shows: a
                 100-drone fleet, test shows in Uttar Pradesh, then NCR,
                 pan-India and international clients. Second, once operations
@@ -86,7 +86,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-line-2 bg-panel-2/40 px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="01">Why Uttar Pradesh</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
@@ -106,7 +106,7 @@ export default function AboutPage() {
       </section>
 
       <section className="px-6 py-14 sm:py-20">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="02">The founding team</SectionLabel>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">

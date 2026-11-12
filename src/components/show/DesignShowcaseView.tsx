@@ -12,7 +12,7 @@ import { ArrowRight } from "lucide-react";
  */
 export default function DesignShowcaseView() {
   return (
-    <main className="mx-auto max-w-6xl px-6 pb-24 pt-28">
+    <main className="mx-auto max-w-[1100px] px-6 pb-24 pt-28">
       {/* Not <Reveal>: its opacity fade delays LCP until JS runs. */}
       <div className="hero-enter">
         <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">{designYourShow.eyebrow}</p>

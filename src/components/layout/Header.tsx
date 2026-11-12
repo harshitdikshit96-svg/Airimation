@@ -82,7 +82,7 @@ export default function Header() {
         <Link
           href={isInternal ? "/internal" : "/"}
           onClick={() => setOpen(false)}
-          className="flex items-center gap-2.5"
+          className="flex min-h-11 items-center gap-2.5"
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, cached; next/image adds nothing for vectors */}
           <img

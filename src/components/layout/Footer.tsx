@@ -16,7 +16,7 @@ export default function Footer() {
         isInternal ? "border-int-line bg-int-bg-2" : "border-line-2 bg-navy-2"
       )}
     >
-      <div className="mx-auto max-w-6xl px-6 py-14">
+      <div className="mx-auto max-w-[1100px] px-6 py-14">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element -- static SVG, cached */}
