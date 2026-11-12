@@ -14,6 +14,7 @@ import "@fontsource/ibm-plex-mono/600.css";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SiteBackdrop from "@/components/layout/SiteBackdrop";
 import { company, site } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -76,6 +77,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        <SiteBackdrop />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

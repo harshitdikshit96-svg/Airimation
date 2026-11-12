@@ -8,8 +8,9 @@ import { onEngageOrIdle } from "@/components/swarm/defer";
 import SoundToggle from "@/components/swarm/SoundToggle";
 
 // three, R3F, postprocessing and GSAP all live behind this import. It is
-// requested only after the page has loaded, on the visitor's first scroll
-// or tap (or a few idle seconds), so none of it competes with the hero.
+// requested as soon as the page has loaded and the main thread is idle —
+// never during load, so it doesn't compete with the hero — and the live
+// scene runs from then on. Scrolling only drives the drones' story.
 const HomeSwarm = dynamic(() => import("./HomeSwarm"), { ssr: false });
 
 export const HOME_POSTER = "/posters/home.jpg";
@@ -37,6 +38,16 @@ function pinnedBeat(): number | null {
 }
 
 /**
+ * `?swarmDissolve=1` (with a pinned beat) renders the sky with the fleet
+ * gone — the backdrop the rest of the site uses (scripts/render-poster.mjs).
+ */
+function pinnedDissolve(): number {
+  const raw = new URLSearchParams(window.location.search).get("swarmDissolve");
+  const value = raw === null ? 0 : Number(raw);
+  return Number.isFinite(value) ? Math.min(Math.max(value, 0), 1) : 0;
+}
+
+/**
  * Fixed full-viewport backdrop for the home page's scroll story.
  *
  * Paints a pre-rendered poster frame immediately (server HTML), then swaps
@@ -49,7 +60,7 @@ export default function HomeSwarmLoader() {
   // during render); GSAP writes it, the render loop reads it.
   const [story] = useState<StoryState>(() => {
     const pinned = pinnedBeat();
-    return pinned === null ? { beat: 0, lit: 0, dissolve: 0 } : { beat: pinned, lit: 1, dissolve: 0 };
+    return pinned === null ? { beat: 0, lit: 0, dissolve: 0 } : { beat: pinned, lit: 1, dissolve: pinnedDissolve() };
   });
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
@@ -63,8 +74,10 @@ export default function HomeSwarmLoader() {
 
   useEffect(() => {
     if (!webgl) return;
-    // A pinned beat (poster renders, tuning) has no visitor to wait for.
-    return onEngageOrIdle(() => setMounted(true), pinnedBeat() !== null ? 0 : 3500);
+    // Start right after load (at the first idle moment), not on the first
+    // scroll: waiting left a still poster on screen that "came alive" with a
+    // shimmer when the visitor scrolled.
+    return onEngageOrIdle(() => setMounted(true), 0);
   }, [webgl]);
 
   // Scroll wiring loads with the scene, never on reduced motion.
