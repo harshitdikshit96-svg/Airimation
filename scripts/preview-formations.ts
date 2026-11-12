@@ -3,7 +3,8 @@
 //
 //   npx vite-node scripts/preview-formations.ts -- <outDir> [drones] [ids,comma,separated] [t]
 //
-// Draws each formation (front view at show time t, default 0) as glowing
+// Only the formations the site offers at that fleet size, each drawn with
+// exactly that many drones. Draws each (front view at show time t, default 0) as glowing
 // dots on black, 12 per sheet, and screenshots the sheets with the local
 // Chrome (playwright-core) into <outDir>/sheet-<k>.png. Dots are additive
 // and sized like the site's drones, so a figure that reads here reads on
@@ -12,7 +13,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chromium } from "playwright-core";
-import { CULTURAL, SHOW_ALT, loadAll } from "../src/lib/cultural";
+import { CULTURAL, SHOW_ALT, formationsFor, loadAll } from "../src/lib/cultural";
 
 await loadAll();
 
@@ -30,9 +31,17 @@ const toSrgb = (c: number) => {
 
 type Fig = { id: string; label: string; pts: number[] };
 const figs: Fig[] = [];
+// Exactly what the site offers at this fleet size (Fleet menu): formations
+// that need more drones than N are left out, and every figure is drawn with
+// exactly N drones.
+const offered = new Set(formationsFor(N).map((f) => f.id));
 for (const f of CULTURAL) {
   if (ONLY && !ONLY.includes(f.id)) continue;
-  const n = Math.max(N, f.minDrones);
+  if (!offered.has(f.id)) {
+    console.log(`skip ${f.id}: needs ${f.minDrones} drones, fleet is ${N}`);
+    continue;
+  }
+  const n = N;
   const rig = f.build(n);
   const pos = new Float32Array(n * 3);
   const col = new Float32Array(n * 3);
