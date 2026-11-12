@@ -3,7 +3,7 @@
 // shading normals, ready for src/lib/cultural/scans.ts.
 //
 //   node scripts/scan-to-formation.mjs <in.glb> <id> [--height 84] [--points 2000]
-//        [--rotate-x -90] [--rotate-y 0] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."]
+//        [--rotate-x -90] [--rotate-y 0] [--tilt-x 40] [--crop-bottom 0.2] [--label "Nataraja"] [--credit "..."] [--licence "CC BY 4.0"]
 //
 // What it does:
 //   1. Reads every mesh in the GLB (Meshopt/Draco-free GLBs, as museums ship).
@@ -16,8 +16,8 @@
 //      --height metres, centred on x/z.
 //   5. Writes src/lib/cultural/scans/<id>.json — int16-quantised, base64.
 //
-// Licence: only CC0 / public-domain scans go in the repo. Record the
-// source in --credit.
+// Licence: CC0 / public domain, or CC BY 4.0 with the credit shown on the
+// site (--licence "CC BY 4.0"). Never NC/ND/SA. Record the source in --credit.
 
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
@@ -38,6 +38,8 @@ const HEIGHT = Number(opt("height", 84));
 const POINTS = Number(opt("points", 2000));
 const RX = (Number(opt("rotate-x", 0)) * Math.PI) / 180;
 const RY = (Number(opt("rotate-y", 0)) * Math.PI) / 180;
+// Applied last: tips the top of an object toward the audience (+z).
+const TX = (Number(opt("tilt-x", 0)) * Math.PI) / 180;
 // Drop the lowest fraction of the figure (a heavy pedestal eats drones).
 const CROP = Number(opt("crop-bottom", 0));
 
@@ -72,6 +74,7 @@ const rot = (p) => {
   let [x, y, z] = p;
   [y, z] = [y * Math.cos(RX) - z * Math.sin(RX), y * Math.sin(RX) + z * Math.cos(RX)];
   [x, z] = [x * Math.cos(RY) + z * Math.sin(RY), -x * Math.sin(RY) + z * Math.cos(RY)];
+  [y, z] = [y * Math.cos(TX) - z * Math.sin(TX), y * Math.sin(TX) + z * Math.cos(TX)];
   return [x, y, z];
 };
 for (const t of tris) for (let k = 0; k < 3; k++) t[k] = rot(t[k]);
@@ -156,7 +159,7 @@ const out = {
   id,
   label: opt("label", id),
   credit: opt("credit", ""),
-  licence: "CC0 1.0",
+  licence: opt("licence", "CC0 1.0"),
   height: HEIGHT,
   width: +((maxX - minX) * scale).toFixed(1),
   depth: +((maxZ - minZ) * scale).toFixed(1),

@@ -1,28 +1,25 @@
-// The animated cultural formations, in showcase order.
+// The formations in Design a Show, in showcase order.
+//
+// Rule: every formation is made from a real 3D model — a museum scan or an
+// openly licensed model (scans/), an exact geometric shape (classic.ts), or
+// the national flag drawn to its official specification (tiranga.ts). No
+// hand-drawn figures: if no usable 3D model exists, the formation is out.
 //
 // Each is an AnimatedFormation (see kit.ts): `build(n)` once per drone
-// count, `pose(rig, t, pos, col)` every frame. Used by the gallery's live
-// showcase and by scripts/export-formations.ts.
+// count, `pose(rig, t, pos, col)` every frame. Used by the showcase and by
+// scripts/export-formations.ts.
 
 import type { AnimatedFormation } from "./kit";
-import { ganesha } from "./ganesha";
-import { shiva } from "./shiva";
-import { damru } from "./damru";
-import { bowArrow } from "./bow";
-import { dragon } from "./dragon";
-import { diya, heartbeat, lotusBloom, om, tiranga } from "./small";
+import { tiranga } from "./tiranga";
 import { CLASSIC_3D } from "./classic";
 import { SCANS } from "./scans";
 
 export type { AnimatedFormation } from "./kit";
 export { SHOW_ALT } from "./kit";
 
-/** Showcase order: small-fleet formations first, the detailed ones after. */
 export const CULTURAL: AnimatedFormation<unknown>[] = [
-  tiranga, diya, lotusBloom, heartbeat, om, damru, bowArrow, ganesha, shiva, dragon,
-  // True 3D sculptures from CC0 museum scans (empty until scans are added).
+  tiranga,
   ...SCANS,
-  // 3D shapes carried over from the archived show designer.
   ...CLASSIC_3D,
 ] as AnimatedFormation<unknown>[];
 

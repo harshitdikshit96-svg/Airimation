@@ -461,6 +461,8 @@ export type AnimatedFormation<R = unknown> = {
   label: string;
   /** Short line for the UI. */
   blurb: string;
+  /** Source and licence of the 3D model it is made from (shown on the page). */
+  credit?: string;
   /** Seconds per loop of the animation. */
   loop: number;
   /** Fewest drones at which this figure still reads. */

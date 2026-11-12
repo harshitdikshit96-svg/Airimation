@@ -165,17 +165,17 @@ export const designYourShow = {
   eyebrow: "DESIGN A SHOW",
   title: "See it in the sky before you book it.",
   intro:
-    "Most people have never stood under a drone show, so the hardest question is the simplest one: how many drones do you actually need? Pick a fleet size and watch the formations it can genuinely fly — a waving Tiranga at 100 drones, Om at 200, Ganesha, Mahadev and a dragon from 500 — simulated live in 3D, at the speed real drones move. Drag to walk all the way round.",
+    "Most people have never stood under a drone show, so the hardest question is the simplest one: how many drones do you actually need? Pick a fleet size and watch what it can fly — every figure here is made from a real 3D model: museum scans of Ganesha and Nataraja, a scanned oil lamp, a damru, a bow and arrow, the Tiranga to its official specification. A bigger fleet flies a bigger, finer picture. Drag to walk all the way round.",
   quoteNote:
     "Tell us the date, the venue and the story — every real show is designed around your occasion, then safety-validated, before a single drone flies.",
   notes: [
     {
-      title: "It is a simulation — at real speeds",
-      body: "Simulated formations, not footage and not a flight plan. Motion is kept to real drone speeds (under 8 m/s); the fastest effects — a loosed arrow, a drum beat, flowing water — are done with light, the way a real show does them.",
+      title: "It is a simulation, sped up",
+      body: "Simulated formations, not footage and not a flight plan. Every figure is choreographed to real drone speeds (under 8 m/s) and the preview plays it 1.8× faster. Effects — a flame, a drum beat, an arrow of light — are done with LEDs, the way a real show does them.",
     },
     {
       title: "Fleet size changes everything",
-      body: "A hundred drones draws bold, clean shapes; detailed figures need five hundred or more. Our standard fleet is a hundred, flown in two packs of fifty; larger shows are arranged in advance.",
+      body: "Drones keep a safe distance apart, so more drones means a bigger picture, not just a denser one — and room for detail. A hundred draws bold, simple objects; sculptures like Ganesha need five hundred or more. Our standard fleet is a hundred, flown in two packs of fifty; larger shows are arranged in advance.",
     },
     {
       title: "Your show is yours",
@@ -188,7 +188,7 @@ export const designYourShow = {
 export const designTeaser = {
   eyebrow: "04 · DESIGN A SHOW",
   title: "How many drones does your sky need?",
-  body: "Pick a fleet size — 100 to 2,000 drones — and watch the formations it can fly, from the Tiranga to Ganesha, live in 3D.",
+  body: "Pick a fleet size — 100 to 2,000 drones — and watch what it can fly, from the Tiranga to a scanned Ganesha, live in 3D.",
   cta: "Design your show",
 };
 
