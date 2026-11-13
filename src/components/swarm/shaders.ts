@@ -117,6 +117,7 @@ export const droneFragmentShader = /* glsl */ `
   uniform float uWhiten;
   uniform float uCoreGain;
   uniform float uHaloGain;
+  uniform float uPeak;
 
   varying vec3 vColor;
   varying float vIntensity;
@@ -132,6 +133,9 @@ export const droneFragmentShader = /* glsl */ `
     float halo = exp(-r2 * uHaloWidth);
     vec3 hot = mix(vColor, vec3(1.0), core * uWhiten);
     vec3 col = hot * core * uCore * uCoreGain + vColor * halo * uHalo * uHaloGain;
+    // Cap the brightest channel, keeping the hue: above ~0.8 the tone
+    // mapper bleaches a colour toward white.
+    col *= min(1.0, uPeak / max(max(col.r, col.g), max(col.b, 1e-4)));
 
     gl_FragColor = vec4(col * vIntensity * uOpacity, 1.0);
     // Tone mapping only runs when drawing straight to the screen (low tier,

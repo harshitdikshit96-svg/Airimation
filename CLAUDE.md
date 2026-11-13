@@ -105,13 +105,14 @@ via `src/components/gallery/CulturalShowcase.tsx`, maths in
 `showcaseMath.ts`) — **only formations made from a real 3D model**: museum
 scans and CC0 / CC BY 4.0 models (`scan.ts`, `scans/`, made by
 `scripts/scan-to-formation.mjs`, credited on the page), the 3D shapes from
-the archived designer (now Blender models, `scans/shapes.ts`), and the Tiranga to its official spec
+the archived designer (now solid Blender models, `scans/shapes.ts`), and the Tiranga to its official spec
 (`tiranga.ts`), plus symbols and figures modelled by us in Blender
-(`scripts/blender/`, incl. Ram and the Ram Mandir). No hand-drawn
+(`scripts/blender/`, incl. the Ram Mandir). No hand-drawn
 figures — no model, no formation. **Per-drone colour** (`paint` in
 `scan.ts`): the model's real texture colours (`scripts/scan-colors.mjs`
 writes `palette` + `ci` into the JSON) or hand-designed `ramp` / `palette`
-/ `regions` hex codes — never one flat colour (`paint.test.ts`). Each
+/ `regions` hex codes — never one flat colour, and **never white**: every
+drone keeps a minimum saturation (`vivid`/`MIN_SAT`; `paint.test.ts`). Each
 declares `minDrones`; a bigger fleet flies a bigger figure; a fleet change
 redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
 `__tests__/speed.test.ts`); the preview plays 1.8× (`PREVIEW_RATE`). Effects
@@ -180,5 +181,5 @@ than writing bespoke markup per section — follow that pattern for new pages.
 | `/team` | Directors and advisors |
 | `/contact` | Contact form (posts to `/api/contact`) |
 | `/credits` | Credits for the CC BY 3D models (noindex, footer link) |
-| `/design-your-show` | Full-width 3D sky hero (100 / 500 / 1,500 / 3,000 / 5,000 drones, 57 formations), controls below, then copy + quote CTA |
+| `/design-your-show` | Full-width 3D sky hero (100 / 500 / 1,500 / 3,000 / 5,000 drones, 55 formations), controls below, then copy + quote CTA |
 | `/design-your-show/classic` | ARCHIVED formation-picker configurator (noindex); old share links `/design-your-show/s/[code]` still open it |

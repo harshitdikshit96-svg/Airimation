@@ -48,7 +48,7 @@ npm run lint    # eslint
 | `/about` | Company mission, honest positioning, founding team |
 | `/team` | Directors and advisors, bios and photos |
 | `/vision` | Build status, the two tracks (shows, then R&D), dated roadmap |
-| `/design-your-show` | 3D simulator: full-width sky hero, fleet 100–5,000 (100 / 500 / 1,500 / 3,000 / 5,000), 57 formations (`/gallery` redirects here) |
+| `/design-your-show` | 3D simulator: full-width sky hero, fleet 100–5,000 (100 / 500 / 1,500 / 3,000 / 5,000), 55 formations (`/gallery` redirects here) |
 | `/design-your-show/classic` | Archived formation-picker configurator (noindex; old share links) |
 | `/credits` | Credits for the CC BY 3D models |
 | `/contact` | Contact form (posts to `/api/contact`) |

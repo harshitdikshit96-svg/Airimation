@@ -64,24 +64,27 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     minDrones: 100,
   }),
   scanFormation(f(dhanushBaan), {
-    paint: { ramp: ["#ff9a1f", "#ffc246", "#ffe9b0", "#ffffff"], floor: 0.6 },
+    paint: { ramp: ["#ff8a12", "#ffb02e", "#ffd36a"], floor: 0.6 },
     blurb: "The bow is drawn and the arrow loosed — it flies off and returns, dark, to the string.",
-    colors: ["#ffc246", "#fff3d6"],
+    colors: ["#ffb02e", "#ffd36a"],
     motion: "still",
     effect: "arrow",
     minDrones: 100,
   }),
   scanFormation(f(shankh), {
-    // Ivory body, peach-pink opening, an amber line along the spire's spiral.
-    paint: { palette: ["#fff4e0", "#ff9a8a", "#e8a33a"] },
+    // Warm ivory (peach, not white) body, coral-pink opening, an amber line
+    // along the spire's spiral.
+    paint: { palette: ["#ffcf94", "#ff7a6a", "#e8901a"] },
     blurb: "The shankh, spire up — the conch sounded at the start of every puja. Modelled by Airimation.",
-    colors: ["#fff4e0", "#fff4e0"],
+    colors: ["#ffcf94", "#ffb070"],
     minDrones: 500,
   }),
   scanFormation(f(trishul), {
-    paint: { regions: [{ hex: "#9fb6d0", level: 0.85 }, { hex: "#e8f4ff", y: [0.7, 1] }, { hex: "#ffb02e", y: [0.56, 0.7], r: [0, 0.5] }, { hex: "#ff3a2a", y: [0.5, 0.56], r: [0, 0.4] }] },
+    // Steel as blue light (not white): a deep-blue shaft, a bright sky-blue
+    // head, the damru gold and its red cord.
+    paint: { regions: [{ hex: "#3f74ff", level: 0.85 }, { hex: "#6fb4ff", y: [0.7, 1] }, { hex: "#ffb02e", y: [0.56, 0.7], r: [0, 0.5] }, { hex: "#ff3a2a", y: [0.5, 0.56], r: [0, 0.4] }] },
     blurb: "Shiva's trident, a damru tied below its head.",
-    colors: ["#9fd8ff", "#ffffff"],
+    colors: ["#3f74ff", "#8fc8ff"],
     minDrones: 100,
   }),
   scanFormation(f(kalash), {
@@ -103,10 +106,12 @@ export const SCANS: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(tajMahal), {
-    paint: { regions: [{ hex: "#f2f0ff" }, { hex: "#fff3e4", y: [0, 0.42], r: [0, 0.8] }, { hex: "#dfe8ff", r: [0.82, 1] }, { hex: "#ffd27a", y: [0.93, 1] }] },
+    // Marble at dusk as rose-gold light, not white: rose body, warmer
+    // plinth, gold minarets and finial.
+    paint: { regions: [{ hex: "#ffa98a" }, { hex: "#ff8f6a", y: [0, 0.42], r: [0, 0.8] }, { hex: "#ffc46a", r: [0.82, 1] }, { hex: "#ffd24a", y: [0.93, 1] }] },
     blurb: "The Taj Mahal — dome, four minarets — for a wedding night.",
     theme: "landmarks",
-    colors: ["#f4f1ff", "#ffffff"],
+    colors: ["#ffa98a", "#ffd27a"],
     minDrones: 200,
   }),
   scanFormation(f(ramMandir), {

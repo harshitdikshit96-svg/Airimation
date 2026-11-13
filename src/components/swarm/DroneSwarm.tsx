@@ -27,11 +27,14 @@ export type SwarmUniforms = {
   /**
    * Colour fidelity, for a driver that needs each drone's own colour to
    * read (Design a Show). Defaults keep the original white-hot LED look:
-   * uWhiten 0.55 (how far the core blends to white), uCoreGain 1, uHaloGain 1.
+   * uWhiten 0.55 (how far the core blends to white), uCoreGain 1, uHaloGain 1,
+   * uPeak 100 (no cap). uPeak caps each pixel's brightest channel, hue kept,
+   * so a drone's centre never tone-maps to white.
    */
   uWhiten: { value: number };
   uCoreGain: { value: number };
   uHaloGain: { value: number };
+  uPeak: { value: number };
 };
 
 export type Transition = {
@@ -64,6 +67,12 @@ type Props = {
   reflection?: boolean;
   /** World size of a drone sprite, in metres at 300m. */
   size?: number;
+  /**
+   * How overlapping drones combine. "add" (default): light sums, so a dense
+   * crowd flares white — the home page's look. "max": the brightest drone
+   * wins, so a dense figure keeps its colour (Design a Show).
+   */
+  blend?: "add" | "max";
   ref?: Ref<SwarmHandle>;
 };
 
@@ -84,9 +93,9 @@ function applyLook(material: THREE.ShaderMaterial, bloom: boolean, size: number,
   u.uHaloWidth.value = bloom ? 5.5 : 3.0;
 }
 
-function makeMaterial(shared: SwarmUniforms, opts: { lag: number; mirror: boolean; opacity: number }) {
-  const { lag, mirror, opacity } = opts;
-  return new THREE.ShaderMaterial({
+function makeMaterial(shared: SwarmUniforms, opts: { lag: number; mirror: boolean; opacity: number; blend: "add" | "max" }) {
+  const { lag, mirror, opacity, blend } = opts;
+  const m = new THREE.ShaderMaterial({
     uniforms: {
       ...shared,
       uLag: { value: lag },
@@ -106,9 +115,16 @@ function makeMaterial(shared: SwarmUniforms, opts: { lag: number; mirror: boolea
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   });
+  if (blend === "max") {
+    m.blending = THREE.CustomBlending;
+    m.blendEquation = THREE.MaxEquation;
+    m.blendSrc = THREE.OneFactor;
+    m.blendDst = THREE.OneFactor;
+  }
+  return m;
 }
 
-export default function DroneSwarm({ capacity, quality, reflection = false, size = 1.7, ref }: Props) {
+export default function DroneSwarm({ capacity, quality, reflection = false, size = 1.7, blend = "add", ref }: Props) {
   const { trailSteps, bloom } = quality;
   const mirrored = reflection && quality.reflection;
   const { geometry, uniforms, passes } = useMemo(() => {
@@ -146,6 +162,7 @@ export default function DroneSwarm({ capacity, quality, reflection = false, size
       uWhiten: { value: 0.55 },
       uCoreGain: { value: 1 },
       uHaloGain: { value: 1 },
+      uPeak: { value: 100 },
     };
 
     const passes: { material: THREE.ShaderMaterial; order: number; size: number }[] = [];
@@ -157,19 +174,20 @@ export default function DroneSwarm({ capacity, quality, reflection = false, size
           lag: 0.018 * k,
           mirror: false,
           opacity: 0.38 * (1 - k / (trailSteps + 1)),
+          blend,
         }),
         order: 1,
         size: size * 0.85,
       });
     }
-    passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: false, opacity: 1 }), order: 2, size });
+    passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: false, opacity: 1, blend }), order: 2, size });
     if (mirrored) {
-      passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: true, opacity: 1 }), order: 0, size: size * 1.2 });
+      passes.push({ material: makeMaterial(uniforms, { lag: 0, mirror: true, opacity: 1, blend }), order: 0, size: size * 1.2 });
     }
     return { geometry, uniforms, passes };
     // Deliberately NOT keyed on the whole `quality` object: DPR and bloom
     // change at runtime and are applied as uniforms below.
-  }, [capacity, trailSteps, mirrored, size]);
+  }, [capacity, trailSteps, mirrored, size, blend]);
 
   const dpr = useThree((s) => s.viewport.dpr);
   useEffect(() => {

@@ -88,8 +88,17 @@ export type Paint = {
   ramp?: string[];
   palette?: string[];
   regions?: Region[];
-  /** Brightness of the darkest drones, 0..1 (default 0.3). Never 0: a dark drone still draws the shape. */
+  /** Brightness of the darkest drones, 0..1 (default 0.55). Never 0: a dark drone still draws the shape. */
   floor?: number;
+  /**
+   * Untextured models: place each drone on the ramp mostly by which way its
+   * surface FACES (toward the light = the ramp's light end), a little by
+   * height — so a cube's faces, a pyramid's sides, a diamond's facets each
+   * show their own colour and the solid reads in 3D.
+   */
+  byFace?: boolean;
+  /** Hue given to near-white or grey surfaces (default: the base colour, else warm gold). No drone is white. */
+  tint?: string;
 };
 
 type Effect = "fireRing" | "flame" | "beat" | "strike" | "arrow";
@@ -122,6 +131,8 @@ export type ScanOptions = {
   flameAt?: "spout" | "top" | "left-rim";
   minDrones?: number;
   theme?: Theme;
+  /** How strongly surface shading varies brightness, 0..1 (default 0.6). Flat-faced solids use more, so each face reads. */
+  shading?: number;
 };
 
 function decode(b64: string): Uint8Array {
@@ -134,13 +145,15 @@ function decode(b64: string): Uint8Array {
   return Uint8Array.from(Buffer.from(b64, "base64"));
 }
 
+// Effect colours are coloured light, never white (Nov 2026: white LEDs
+// read as glare and wash the figure out).
 const FIRE_A = hex("#ff3a12");
-const FIRE_B = hex("#ffd36a");
-const FLAME_CORE = hex("#fff4c8");
-const FLAME_EDGE = hex("#ff6a1a");
+const FIRE_B = hex("#ffc23a");
+const FLAME_CORE = hex("#ffd24a");
+const FLAME_EDGE = hex("#ff5a12");
 const HIGHLIGHT_LIGHT = [-0.45, 0.55, 0.7];
-const STRIKE = hex("#fff6e0");
-const ARROW_HOT = hex("#fff2c0");
+const STRIKE = hex("#ffc04a");
+const ARROW_HOT = hex("#ffc85a");
 
 /**
  * The bow's shot, in seconds of one loop. Every drone stays under the
@@ -193,6 +206,51 @@ function ledHue(c: RGB): RGB {
   return [clamp(m + (n[0] - m) * sat, 0, 1), clamp(m + (n[1] - m) * sat, 0, 1), clamp(m + (n[2] - m) * sat, 0, 1)];
 }
 
+/**
+ * Least saturation a drone may show, in linear light: its weakest channel
+ * at most 30% of its strongest (about 60% in sRGB). Near-white LEDs flare
+ * to white under bloom and wash a figure out, so every drone stays a
+ * COLOUR (Nov 2026). Tested in paint.test.ts.
+ */
+export const MIN_SAT = 0.7;
+const WARM = hex("#ffb347");
+
+/** Saturation of a linear colour: 1 - weakest / strongest channel. */
+export function saturation(c: RGB): number {
+  const peak = Math.max(c[0], c[1], c[2]);
+  return peak > 0 ? 1 - Math.min(c[0], c[1], c[2]) / peak : 0;
+}
+
+/**
+ * The colour, kept to at least MIN_SAT: same hue and peak, the weaker
+ * channels pulled down. A colour with almost no hue of its own (white
+ * marble, steel, ivory) takes the hue of `tint` instead, so a whole
+ * surface turns one even colour rather than speckling noisy hues.
+ */
+export function vivid(c: RGB, tint: RGB = WARM): RGB {
+  const peak = Math.max(c[0], c[1], c[2]);
+  if (peak <= 0) return c;
+  const sat = saturation(c);
+  if (sat >= MIN_SAT) return c;
+  const t = saturation(tint) >= 0.3 ? tint : WARM;
+  const tp = Math.max(t[0], t[1], t[2]);
+  // Little hue of its own: lean on the tint's hue.
+  const w = clamp(sat / 0.35, 0, 1);
+  const n: RGB = [0, 0, 0];
+  for (let k = 0; k < 3; k++) n[k] = (t[k] / tp) * (1 - w) + (c[k] / peak) * w;
+  const np = Math.max(n[0], n[1], n[2]);
+  const nmin = Math.min(n[0], n[1], n[2]);
+  const ns = 1 - nmin / np;
+  // Stretch each channel's distance below the peak so the weakest sits at 1 - MIN_SAT.
+  const k = ns > 1e-6 ? MIN_SAT / ns : 0;
+  const out: RGB = [0, 0, 0];
+  for (let j = 0; j < 3; j++) {
+    const v = n[j] / np;
+    out[j] = ns > 1e-6 ? (1 - (1 - v) * k) * peak : (t[j] / tp) * peak;
+  }
+  return ns > 1e-6 ? out : vivid(out, t);
+}
+
 function rampAt(ramp: RGB[], t: number): RGB {
   if (ramp.length === 1) return ramp[0];
   const s = clamp(t, 0, 1) * (ramp.length - 1);
@@ -204,13 +262,15 @@ function rampAt(ramp: RGB[], t: number): RGB {
  * Base colour per model point (linear rgb, brightness included), from the
  * texture palette and the paint config. Pure and deterministic.
  */
-export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallback: string, paint: Paint = {}): Float32Array {
+export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallback: string, paint: Paint = {}, nrm?: Float32Array): Float32Array {
   const out = new Float32Array(m * 3);
   const floor = paint.floor ?? 0.55;
   const real = file.palette && file.ci && file.palette.length > 1 ? file.palette.map(hex) : null;
   const idx = real ? decode(file.ci!) : null;
   const mode = paint.mode ?? (paint.ramp ? "ramp" : real ? "texture" : "flat");
   const base = hex(fallback);
+  // Hue for surfaces with none of their own: the paint's tint, else the base.
+  const tint = hex(paint.tint ?? fallback);
 
   // Brightness rank of each palette entry: its position in the cumulative
   // share of drones, darkest first, so contrast is spread evenly.
@@ -247,8 +307,13 @@ export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallba
         level = floor + (1 - floor) * Math.pow(luma(real[k]) / maxL, 0.6);
       }
     } else if (mode === "ramp" && ramp) {
-      // No texture: ramp up the figure, base to top.
-      c = rampAt(ramp, pts[i * 3 + 1] / Math.max(1, file.height));
+      // No texture: ramp up the figure, base to top (or by facing).
+      const up = pts[i * 3 + 1] / Math.max(1, file.height);
+      if (paint.byFace && nrm) {
+        const L = HIGHLIGHT_LIGHT;
+        const face = (nrm[i * 3] * L[0] + nrm[i * 3 + 1] * L[1] + nrm[i * 3 + 2] * L[2]) * 0.5 + 0.5;
+        c = rampAt(ramp, 0.75 * face + 0.25 * up);
+      } else c = rampAt(ramp, up);
     }
     if (paint.regions?.length) {
       const fx = pts[i * 3] / Math.max(1e-6, file.width) + 0.5;
@@ -263,6 +328,7 @@ export function paintPoints(file: ScanFile, pts: Float32Array, m: number, fallba
         }
       }
     }
+    c = vivid(c, tint);
     out[i * 3] = c[0] * level;
     out[i * 3 + 1] = c[1] * level;
     out[i * 3 + 2] = c[2] * level;
@@ -306,7 +372,8 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
           ? 16
           : // Sway: peak angular speed is amp * 2π / loop.
             Math.max(16, Math.ceil((reach * swayAmp * TAU) / budget));
-  const highlight = hex(opts.colors[1]);
+  const highlight = vivid(hex(opts.colors[1]), hex(opts.colors[0]));
+  const shade = opts.shading ?? 0.6;
   let cache: { pos: Int16Array; nrm: Int8Array } | null = null;
 
   return {
@@ -469,7 +536,7 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
         }
       }
       // Per-drone colour (extras that double up take their twin's colour).
-      const painted = paintPoints({ ...file, width: W, height: H, depth: D }, p, m, opts.colors[0], opts.paint);
+      const painted = paintPoints({ ...file, width: W, height: H, depth: D }, p, m, opts.colors[0], opts.paint, nrm);
       const c = new Float32Array(n * 3);
       for (let i = 0; i < n; i++) {
         const j = i < m ? i : i % m;
@@ -512,7 +579,18 @@ export function scanFormation(source: ScanSource, opts: ScanOptions): AnimatedFo
         let r = rig.c[i3] + (h0 - rig.c[i3]) * lean;
         let g = rig.c[i3 + 1] + (h1 - rig.c[i3 + 1]) * lean;
         let b = rig.c[i3 + 2] + (h2 - rig.c[i3 + 2]) * lean;
-        let k = 0.4 + 0.6 * diffuse;
+        if (lean > 0) {
+          // Mixing two hues greys a colour a little: keep it saturated.
+          const hi = Math.max(r, g, b);
+          const lo = Math.min(r, g, b);
+          if (hi > 0 && 1 - lo / hi < MIN_SAT) {
+            const k = MIN_SAT / Math.max(1e-6, 1 - lo / hi);
+            r = hi - (hi - r) * k;
+            g = hi - (hi - g) * k;
+            b = hi - (hi - b) * k;
+          }
+        }
+        let k = 1 - shade + shade * diffuse;
 
         if (rig.tag[i]) {
           if (opts.effect === "fireRing") {

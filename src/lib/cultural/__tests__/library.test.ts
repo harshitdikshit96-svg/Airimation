@@ -190,3 +190,50 @@ describe("Tiranga", () => {
     }
   });
 });
+
+describe("the 3D shapes are solids, not wireframes", () => {
+  // Nov 2026: a cube must show its six faces, a pyramid its sides and base,
+  // the globe a whole sphere — drones on the surfaces, not only the edges.
+  const pts = (id: string, n: number) => {
+    const file = Object.values(scanFiles).find((s) => s.id === id)!;
+    const b = Buffer.from(file.pos, "base64");
+    const q = new Int16Array(b.buffer, b.byteOffset, b.byteLength / 2);
+    return { file, at: (i: number) => [q[i * 3] * file.quant, q[i * 3 + 1] * file.quant - file.height / 2, q[i * 3 + 2] * file.quant] };
+  };
+
+  test("cube: most drones sit inside a face, not on an edge", () => {
+    const n = 500;
+    const { file, at } = pts("shape-cube", n);
+    const h = file.height / 2;
+    let face = 0;
+    for (let i = 0; i < n; i++) {
+      const near = at(i).filter((v) => Math.abs(v) > h * 0.9).length;
+      if (near === 1) face++;
+    }
+    expect(face / n).toBeGreaterThan(0.7);
+  });
+
+  test("pyramid: its square base is filled", () => {
+    const n = 500;
+    const { file, at } = pts("shape-pyramid", n);
+    let base = 0;
+    for (let i = 0; i < n; i++) {
+      const [x, y, z] = at(i);
+      if (y < -file.height / 2 + 1 && Math.abs(x) < file.width / 4 && Math.abs(z) < file.depth / 4) base++;
+    }
+    expect(base).toBeGreaterThan(10);
+  });
+
+  test("globe: drones cover the whole sphere", () => {
+    const n = 1500;
+    const { at } = pts("shape-globe", n);
+    const cells = new Set<string>();
+    for (let i = 0; i < n; i++) {
+      const [x, y, z] = at(i);
+      const lat = Math.floor(((Math.atan2(y, Math.hypot(x, z)) / Math.PI) * 2 + 1) * 4); // 8 bands
+      const lon = Math.floor(((Math.atan2(z, x) / Math.PI + 1) / 2) * 12); // 12 sectors
+      cells.add(`${lat}:${lon % 12}`);
+    }
+    expect(cells.size).toBeGreaterThanOrEqual(8 * 12);
+  });
+});

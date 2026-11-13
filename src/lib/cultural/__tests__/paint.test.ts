@@ -6,7 +6,8 @@ import { loadAll } from "..";
 beforeAll(() => loadAll());
 import files from "./scanFiles";
 import { CULTURAL } from "..";
-import { paintPoints } from "../scan";
+import { MIN_SAT, paintPoints, saturation, vivid } from "../scan";
+import { hex } from "../kit";
 
 const decode = (b64: string) => Uint8Array.from(Buffer.from(b64, "base64"));
 
@@ -61,4 +62,38 @@ describe("scans/manifest.ts (scripts/scan-manifest.mjs)", () => {
       expect(loaded.pos).toBe(file.pos);
     }
   });
+});
+
+describe("no white LEDs (Nov 2026)", () => {
+  // White drones flare under bloom and wash a figure out: every drone of
+  // every model-based figure is a colour. (The Tiranga's white band is the
+  // flag's own colour, by its specification, and is exempt.)
+  test("vivid keeps hue and peak, lifts saturation, tints grey", () => {
+    const gold = hex("#ffb347");
+    expect(vivid(gold)).toEqual(gold);
+    const ivory = vivid(hex("#fff4e0"));
+    expect(saturation(ivory)).toBeGreaterThanOrEqual(MIN_SAT - 1e-6);
+    expect(Math.max(...ivory)).toBeCloseTo(1, 5);
+    expect(ivory[0]).toBeGreaterThan(ivory[2]); // still warm
+    const steel = vivid(hex("#d0d0d0"), hex("#3f74ff"));
+    expect(steel[2]).toBeGreaterThan(steel[0]); // grey takes the blue tint
+    expect(saturation(steel)).toBeGreaterThanOrEqual(MIN_SAT - 1e-6);
+  });
+
+  for (const f of CULTURAL.filter((x) => x.id !== "tiranga")) {
+    test(`${f.id}: no drone near white`, () => {
+      const n = Math.max(500, f.minDrones);
+      const pos = new Float32Array(n * 3);
+      const col = new Float32Array(n * 3);
+      const rig = f.build(n);
+      for (const t of [0, 2.3, 6.1, 9]) {
+        f.pose(rig, t, pos, col);
+        for (let i = 0; i < n; i++) {
+          const c: [number, number, number] = [col[i * 3], col[i * 3 + 1], col[i * 3 + 2]];
+          if (Math.max(...c) < 0.02) continue; // dark (the arrow on its way back)
+          expect(saturation(c), `${f.id} drone ${i} t=${t}`).toBeGreaterThanOrEqual(0.5);
+        }
+      }
+    });
+  }
 });

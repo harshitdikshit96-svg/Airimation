@@ -272,7 +272,11 @@ function Scene({
     // under AgX tone mapping turns every colour to white).
     u.uWhiten.value = 0;
     u.uCoreGain.value = 0.42;
-    u.uHaloGain.value = 2.6;
+    // Brighter glow than additive blending could take: with "max" blending
+    // overlapping halos no longer stack into white.
+    u.uHaloGain.value = 3.4;
+    // No pixel brighter than the tone mapper's white knee: drones stay coloured.
+    u.uPeak.value = 0.78;
     u.uDissolve.value = 0;
     u.uMotion.value = 0;
     u.uCentre.value.set(0, showAltitude(count), 0);
@@ -307,7 +311,8 @@ function Scene({
       <Suspense fallback={null}>
         <Skyline part="ring" lightGain={1.4} />
       </Suspense>
-      <DroneSwarm ref={swarm} capacity={CAPACITY} quality={quality} size={1.9} />
+      {/* "max": overlapping drones don't sum to white; each keeps its colour. */}
+      <DroneSwarm ref={swarm} capacity={CAPACITY} quality={quality} size={1.9} blend="max" />
       <OrbitControls
         ref={controls}
         target={[0, showAltitude(count) + 4, 0]}

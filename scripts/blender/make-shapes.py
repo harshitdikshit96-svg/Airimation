@@ -10,11 +10,11 @@
 # spiral.glb, diamond.glb, pyramid.glb, starburst.glb. Then convert each
 # with scripts/scan-to-formation.mjs (licence: Airimation's own).
 #
-# Why tubes: the converter samples points uniformly by SURFACE AREA, then
-# farthest-point samples them. A drone shape like these reads as LINES of
-# light (a wireframe globe, orbit rings, facet edges), so every line is a
-# thin tube: the samples land on the lines, never spread over faces. Solid
-# parts (a nucleus, a burst's core) are small spheres.
+# Solid, not wireframe (Nov 2026): every shape is a CLOSED SOLID — a cube
+# has six faces, a pyramid four sides and a base, a globe is a whole sphere,
+# lines are thick round tubes. The converter samples points by SURFACE AREA,
+# so drones cover the faces evenly and the site's shading (by each point's
+# normal) makes the faces read as a 3D object, not an outline.
 #
 # Each shape follows the archived designer's generator of the same name
 # (src/lib/show/formations/playful.ts, geometric.ts) — same lines, same
@@ -32,9 +32,9 @@ argv = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
 OUT = os.path.abspath(argv[0] if argv else "made/shapes")
 os.makedirs(OUT, exist_ok=True)
 
-# Tube radius, in generator units (shapes are ~1.5-1.7 units tall): thin
-# enough that samples sit on the line's centre at 100-2,000 points.
-R = 0.012
+# Default tube radius, in generator units (shapes are ~1.5-1.7 units tall):
+# thick enough to read as a solid rod, not a line.
+R = 0.07
 TAU = 2 * math.pi
 
 
@@ -60,17 +60,20 @@ def to_mesh(obj):
     return obj
 
 
-def tube(points, name, radius=R, closed=False):
-    """A round tube along a 3D polyline of Y-up points."""
+def tube(points, name, radius=R, closed=False, taper=None):
+    """A solid round tube along a 3D polyline of Y-up points. `taper` is a
+    list of radius multipliers, one per point (a ray narrowing to a tip)."""
     cu = bpy.data.curves.new(name, "CURVE")
     cu.dimensions = "3D"
     cu.bevel_depth = radius
-    cu.bevel_resolution = 2
+    cu.bevel_resolution = 4
     cu.use_fill_caps = not closed
     sp = cu.splines.new("POLY")
     sp.points.add(len(points) - 1)
     for i, p in enumerate(points):
         sp.points[i].co = (*P(*p), 1)
+        if taper:
+            sp.points[i].radius = taper[i]
     sp.use_cyclic_u = closed
     ob = bpy.data.objects.new(name, cu)
     bpy.context.collection.objects.link(ob)
@@ -88,8 +91,19 @@ def segment(a, b, name, radius=R):
 
 
 def ball(centre, radius, name):
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=radius, location=P(*centre))
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=radius, location=P(*centre))
     bpy.context.object.name = name
+
+
+def solid(verts, faces, name):
+    """A closed polyhedron from Y-up vertices and faces (each listed
+    counter-clockwise seen from outside)."""
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([P(*v) for v in verts], [], faces)
+    me.update()
+    ob = bpy.data.objects.new(name, me)
+    bpy.context.collection.objects.link(ob)
+    return ob
 
 
 def rot_y(p, a):
@@ -113,53 +127,52 @@ def fibonacci(count):
 
 
 def globe():
-    """A wireframe globe: meridians and parallels."""
+    """A whole sphere — the globe as a solid ball of light."""
     reset()
-    r = 0.8
-    # Few lines on purpose: at 100 drones a dense graticule dissolves into a
-    # dotted ball; three great circles and three parallels still read as
-    # lines, and they stay crisp at 2,000.
-    meridians = 3  # great circles -> 6 meridian lines, 60 degrees apart
-    for m in range(meridians):
-        lon = m / meridians * math.pi
-        curve(lambda t, lon=lon: rot_y((math.cos(t * TAU) * r, math.sin(t * TAU) * r, 0), lon), 96, f"meridian{m}", closed=True)
-    for k, lat in enumerate((-45, 0, 45)):
-        a = math.radians(lat)
-        rr = math.cos(a) * r
-        curve(lambda t, rr=rr, a=a: (math.cos(t * TAU) * rr, math.sin(a) * r, math.sin(t * TAU) * rr), 96, f"parallel{k}", closed=True)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=96, ring_count=48, radius=0.8, location=(0, 0, 0))
+    bpy.context.object.name = "globe"
     export("globe")
 
 
 def helix():
-    """A DNA double helix: two strands and the rungs between them."""
+    """A DNA double helix: two thick strands, solid rungs, a bead where each
+    rung meets a strand."""
     reset()
-    # Fewer, taller turns than the archived generator (2.4 turns, 1.5 high),
-    # which at 100 drones read as a coiled spring: the strands need room
-    # between them for the rungs to show.
     turns, r, height = 1.6, 0.5, 1.8
     for s, off in enumerate((0, math.pi)):
-        curve(lambda t, off=off: (math.cos(t * TAU * turns + off) * r, -height / 2 + t * height, math.sin(t * TAU * turns + off) * r), 240, f"strand{s}")
+        curve(lambda t, off=off: (math.cos(t * TAU * turns + off) * r, -height / 2 + t * height, math.sin(t * TAU * turns + off) * r), 240, f"strand{s}", radius=0.075)
     rungs = 8
     for i in range(rungs):
         t = (i + 0.5) / rungs
         a = t * TAU * turns
         y = -height / 2 + t * height
-        segment((math.cos(a) * r, y, math.sin(a) * r), (-math.cos(a) * r, y, -math.sin(a) * r), f"rung{i}", radius=R * 0.8)
+        p = (math.cos(a) * r, y, math.sin(a) * r)
+        q = (-math.cos(a) * r, y, -math.sin(a) * r)
+        segment(p, q, f"rung{i}", radius=0.045)
+        ball(p, 0.1, f"bead{i}a")
+        ball(q, 0.1, f"bead{i}b")
     export("helix")
 
 
 def atom():
-    """An atom: three tilted orbits round a nucleus."""
+    """An atom: a nucleus of packed protons and neutrons, three solid orbit
+    rings, and an electron on each."""
     reset()
     r = 0.78
-    for k, (tilt_x, spin_y) in enumerate(((0, 0), (math.pi / 3, math.pi / 3), (-math.pi / 3, 2 * math.pi / 3))):
-        curve(lambda t, tx=tilt_x, sy=spin_y: rot_y(rot_x((math.cos(t * TAU) * r, math.sin(t * TAU) * r * 0.42, math.sin(t * TAU) * r), tx), sy), 120, f"orbit{k}", closed=True)
-    ball((0, 0, 0), 0.14, "nucleus")
+    tilts = ((0, 0), (math.pi / 3, math.pi / 3), (-math.pi / 3, 2 * math.pi / 3))
+    for k, (tx, sy) in enumerate(tilts):
+        f = lambda t, tx=tx, sy=sy: rot_y(rot_x((math.cos(t * TAU) * r, math.sin(t * TAU) * r * 0.42, math.sin(t * TAU) * r), tx), sy)
+        curve(f, 160, f"orbit{k}", radius=0.035, closed=True)
+        ball(f(0.15 + k * 0.3), 0.075, f"electron{k}")
+    # Nucleus: a tight cluster of 13 balls (one centre, twelve round it).
+    ball((0, 0, 0), 0.1, "n0")
+    for i, (x, y, z) in enumerate(fibonacci(12)):
+        ball((x * 0.13, y * 0.13, z * 0.13), 0.09, f"n{i + 1}")
     export("atom")
 
 
 def knot():
-    """A (2, 3) torus knot: one line, endlessly looping."""
+    """A (2, 3) torus knot: one thick solid rope, endlessly looping."""
     reset()
     p, q, r = 2, 3, 0.52
 
@@ -168,82 +181,89 @@ def knot():
         rad = r * (2 + math.cos(q * a))
         return (rad * math.cos(p * a) / 2, r * math.sin(q * a) * 1.25, rad * math.sin(p * a) / 2)
 
-    curve(f, 420, "knot", closed=True)
+    curve(f, 600, "knot", radius=0.085, closed=True)
     export("knot")
 
 
 def cube():
-    """A cube as its twelve edges."""
+    """A solid cube: six faces."""
     reset()
-    h = 0.7
-    corners = [(sx * h, sy * h, sz * h) for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)]
-    k = 0
-    for i, a in enumerate(corners):
-        for b in corners[i + 1 :]:
-            if sum(1 for u, v in zip(a, b) if u != v) == 1:
-                segment(a, b, f"edge{k}")
-                k += 1
-    # Round joints at the corners, so the edges meet cleanly.
-    for i, c in enumerate(corners):
-        ball(c, R * 1.4, f"corner{i}")
+    bpy.ops.mesh.primitive_cube_add(size=1.4, location=(0, 0, 0))
+    bpy.context.object.name = "cube"
     export("cube")
 
 
 def spiral():
-    """A rising spiral: two arms opening upward."""
+    """A rising spiral: two solid arms, thickening as they open upward."""
     reset()
-    turns = 2.0  # the generator's 2.75 packs the coils too close at 100 drones
+    turns, n = 2.0, 260
     for s, off in enumerate((0, math.pi)):
         def f(t, off=off):
             a = t * TAU * turns + off
             rr = 0.2 + 0.72 * t
             return (math.cos(a) * rr, -0.6 + t * 1.2, math.sin(a) * rr)
 
-        curve(f, 260, f"arm{s}")
+        pts = [f(k / n) for k in range(n + 1)]
+        tube(pts, f"arm{s}", radius=0.08, taper=[0.45 + 0.55 * k / n for k in range(n + 1)])
     export("spiral")
 
 
 def diamond():
-    """A brilliant-cut diamond as its facet edges: table, crown, girdle and
-    pavilion meeting at the culet."""
+    """A solid brilliant-cut diamond: flat table, faceted crown, girdle, and
+    a pavilion of facets meeting at the culet."""
     reset()
     facets = 8
     girdle_r, girdle_y = 0.7, 0.18
     table_r, table_y = 0.34, 0.55
     tip = (0, -0.85, 0)
 
-    def at(radius, y, i):
-        a = i / facets * TAU
+    def at(radius, y, i, half=0.0):
+        a = (i + half) / facets * TAU
         return (math.cos(a) * radius, y, math.sin(a) * radius)
 
-    tube([at(girdle_r, girdle_y, i) for i in range(facets)], "girdle", closed=True)
-    tube([at(table_r, table_y, i) for i in range(facets)], "table", closed=True)
+    verts = [at(table_r, table_y, i) for i in range(facets)]  # 0..7 table
+    verts += [at(girdle_r, girdle_y, i) for i in range(facets)]  # 8..15 girdle
+    verts += [tip]  # 16 culet
+    T, G, C = 0, facets, 2 * facets
+    faces = [list(range(facets))[::-1]]  # the table, facing up
     for i in range(facets):
-        segment(at(girdle_r, girdle_y, i), at(table_r, table_y, i), f"crown{i}")
-        segment(at(girdle_r, girdle_y, i), tip, f"pavilion{i}")
+        j = (i + 1) % facets
+        faces.append([T + i, T + j, G + j, G + i])  # crown facet
+        faces.append([G + i, G + j, C])  # pavilion facet
+    solid(verts, faces, "diamond")
+    bpy.ops.object.select_all(action="SELECT")
+    bpy.context.view_layer.objects.active = bpy.data.objects["diamond"]
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.normals_make_consistent(inside=False)
+    bpy.ops.object.mode_set(mode="OBJECT")
     export("diamond")
 
 
 def pyramid():
-    """A square pyramid as its eight edges."""
+    """A solid square pyramid: four triangular sides on a square base."""
     reset()
     half, base_y = 0.8, -0.6
     apex = (0, 0.85, 0)
     corners = [(-half, base_y, -half), (half, base_y, -half), (half, base_y, half), (-half, base_y, half)]
-    for i in range(4):
-        segment(corners[i], corners[(i + 1) % 4], f"base{i}")
-        segment(corners[i], apex, f"ridge{i}")
-    for i, c in enumerate(corners + [apex]):
-        ball(c, R * 1.4, f"corner{i}")
+    faces = [[0, 1, 2, 3]] + [[i, (i + 1) % 4, 4] for i in range(4)]
+    solid(corners + [apex], faces, "pyramid")
+    bpy.context.view_layer.objects.active = bpy.data.objects["pyramid"]
+    bpy.data.objects["pyramid"].select_set(True)
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.normals_make_consistent(inside=False)
+    bpy.ops.object.mode_set(mode="OBJECT")
     export("pyramid")
 
 
 def starburst():
-    """Rays of light in every direction from a small bright core."""
+    """Solid rays of light bursting from a round core. Rays are even-width
+    rods with rounded tips (a cone would put most of its surface, and so
+    most drones, in a clump at the centre)."""
     reset()
-    for i, (x, y, z) in enumerate(fibonacci(20)):
-        segment((x * 0.22, y * 0.22, z * 0.22), (x, y, z), f"ray{i}")
-    ball((0, 0, 0), 0.12, "core")
+    for i, (x, y, z) in enumerate(fibonacci(16)):
+        pts = [(x * (0.2 + 0.8 * u), y * (0.2 + 0.8 * u), z * (0.2 + 0.8 * u)) for u in (k / 12 for k in range(13))]
+        tube(pts, f"ray{i}", radius=0.05, taper=[1 - 0.35 * k / 12 for k in range(13)])
+    ball((0, 0, 0), 0.17, "core")
     export("starburst")
 
 

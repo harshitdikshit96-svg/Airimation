@@ -42,7 +42,7 @@ const f = (src: ScanSource) => src;
 
 export const SKETCHFAB: AnimatedFormation<unknown>[] = [
   scanFormation(f(charminar), {
-    paint: { ramp: ["#ff9a40", "#ffc070", "#ffe2b8"], regions: [{ hex: "#ffb04a", y: [0.86, 1] }, { hex: "#fff0d0", y: [0.56, 0.6] }] },
+    paint: { ramp: ["#ff9a40", "#ffc070", "#ffd690"], regions: [{ hex: "#ffb04a", y: [0.86, 1] }, { hex: "#ffd27a", y: [0.56, 0.6] }] },
     blurb: "Hyderabad's Charminar — four minarets around the arch.",
     colors: ["#fff1dc", "#ffffff"],
     theme: "landmarks",
@@ -133,7 +133,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(elephant), {
-    paint: { ramp: ["#202538", "#6a7498", "#c0c8ec", "#ffffff"] },
+    paint: { ramp: ["#202538", "#5a68b0", "#8f9cff"], tint: "#7f8fff" },
     blurb: "An elephant, trunk raised.",
     colors: ["#c9d6ff", "#ffffff"],
     theme: "animals",
@@ -161,7 +161,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 500,
   }),
   scanFormation(f(owl), {
-    paint: { ramp: ["#5a3a1a", "#c88a40", "#f0d0a0", "#ffffff"] },
+    paint: { ramp: ["#5a3a1a", "#c88a40", "#ffc070"], tint: "#ffb35a" },
     blurb: "A barn owl on its branch.",
     colors: ["#e8d9c0", "#ffffff"],
     theme: "animals",
@@ -196,7 +196,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(classicCar), {
-    paint: { palette: ["#fff4e0", "#3a4258", "#9aa0b0", "#ffffff", "#ff2010"] },
+    paint: { palette: ["#ffcf7a", "#3a4258", "#6f86c8", "#ffd27a", "#ff2010"], tint: "#ffcf7a" },
     blurb: "A classic car — for the wedding drive-away.",
     colors: ["#ffd27a", "#ffffff"],
     theme: "travel",
@@ -210,7 +210,7 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(bicycle), {
-    paint: { mode: "texture" },
+    paint: { mode: "texture", tint: "#6fb8ff" },
     blurb: "A bicycle with a basket.",
     colors: ["#9fd8ff", "#ffffff"],
     theme: "travel",
@@ -224,7 +224,8 @@ export const SKETCHFAB: AnimatedFormation<unknown>[] = [
     minDrones: 200,
   }),
   scanFormation(f(spaceShuttle), {
-    paint: { mode: "texture" },
+    // White tiles and black heat shield: shown as ice blue, not white.
+    paint: { mode: "texture", tint: "#6fa8ff" },
     blurb: "The Space Shuttle Discovery, from the Smithsonian scan.",
     colors: ["#e8f0ff", "#ffffff"],
     theme: "travel",

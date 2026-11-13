@@ -146,15 +146,15 @@ export const SCAN_SOURCES: Record<string, ScanSource> = {
     load: () => import("./shankh.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-atom": {
-    ...{"id":"shape-atom","label":"Atom","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":78.2,"depth":78.2,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-atom","label":"Atom","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":76.5,"depth":76.8,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-atom.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-cube": {
-    ...{"id":"shape-cube","label":"Cube","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":111.4,"depth":111.5,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-cube","label":"Cube","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":112.1,"depth":112.1,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-cube.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-diamond": {
-    ...{"id":"shape-diamond","label":"Diamond","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":83.9,"depth":84,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-diamond","label":"Diamond","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":83.4,"depth":83.5,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-diamond.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-globe": {
@@ -162,23 +162,23 @@ export const SCAN_SOURCES: Record<string, ScanSource> = {
     load: () => import("./shape-globe.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-helix": {
-    ...{"id":"shape-helix","label":"Double Helix","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":47.3,"depth":47.3,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-helix","label":"Double Helix","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":52,"depth":49.8,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-helix.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-knot": {
-    ...{"id":"shape-knot","label":"Torus Knot","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":90,"depth":94.9,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-knot","label":"Torus Knot","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":89.4,"depth":93.8,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-knot.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-pyramid": {
-    ...{"id":"shape-pyramid","label":"Pyramid","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":92.5,"depth":92.5,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-pyramid","label":"Pyramid","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":125.5,"depth":125.9,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-pyramid.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-spiral": {
-    ...{"id":"shape-spiral","label":"Rising Spiral","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":128,"depth":115.8,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-spiral","label":"Rising Spiral","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":128.1,"depth":116.4,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-spiral.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "shape-starburst": {
-    ...{"id":"shape-starburst","label":"Starburst","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":78,"depth":77.8,"count":5000,"quant":0.003906369212927641},
+    ...{"id":"shape-starburst","label":"Starburst","credit":"Modelled by Airimation (scripts/blender/make-shapes.py)","licence":"Airimation","height":84,"width":78.2,"depth":77.8,"count":5000,"quant":0.003906369212927641},
     load: () => import("./shape-starburst.json").then((m) => (m.default ?? m) as unknown as ScanFile),
   },
   "sikhara": {
