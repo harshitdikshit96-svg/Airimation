@@ -25,10 +25,10 @@ import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphS
  * actually read at that size (`minDrones`), at least four even at 100.
  */
 const FLEETS = [100, 500, 1500, 3000, 5000];
-/** Starting fleet: a showy one where the device can afford it. */
+/** Starting fleet: 3,000 where the device can afford it (13 Nov 2026), else 500. */
 function defaultFleet(): number {
   const tier = detectTier();
-  return tier === "high" ? 1500 : 500;
+  return tier === "high" ? 3000 : 500;
 }
 const CAPACITY = 5000;
 const MIN_DIST = 70;

@@ -158,7 +158,7 @@ All GLBs and their record numbers: workspace `Scans/SOURCES.md`. **Credits are o
 
 **Speeds.** Choreography stays under **8 m/s** (speed test). The **preview plays 1.8× faster** (12 Nov 2026: "mid-way between the old fast version and real speed"); the page copy says it is sped up. Transitions 4.5–14 s.
 
-**Fleets: 100 / 500 / 1,500 / 3,000 / 5,000** (round 11, was 100–2,000 in six steps), so each step is a clear visual difference. Every model holds 5,000 points. **Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×3.2 at 5,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
+**Fleets: 100 / 500 / 1,500 / 3,000 / 5,000** (round 11, was 100–2,000 in six steps), so each step is a clear visual difference. **Opens at 3,000 drones** on capable devices (round 13; was 1,500), 500 on low-tier ones. Every model holds 5,000 points. **Fleet size = picture size.** Drones keep their spacing, so a bigger fleet flies a **bigger** figure (size ∝ √fleet, ×0.5 at 100 to ×3.2 at 5,000), higher up, and the camera eases back once to frame it — more detail, not just more density. Changing the fleet redraws the current figure **in place** — no drones flying up from the ground (only the first load lifts off).
 
 **Per-drone colour** (12 Nov 2026) — so a figure's features read instead of one flat colour. Two sources, set per formation in `paint` (`scan.ts > Paint`):
 - **The model's real colours.** `scripts/scan-colors.mjs` samples each source GLB's texture (the museum's photograph, or the artist's paint) at every drone, and stores a short hex palette plus a per-drone index in the formation JSON. The formation points were made with unrecorded orientation options, so the script finds the alignment itself (24 right-angle starts + ICP); fit error is printed (most < 1% of height; butterfly 2.4%, Somaskanda 3.8%). Done for 38 models.
@@ -277,6 +277,7 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 ## 5. Change log
 
 ### 13 Nov 2026 — round 13
+- **Default fleet 3,000** (was 1,500) on capable devices; low-tier devices still open at 500.
 - **No white LEDs.** Three causes, three fixes:
   1. *Colour data:* white marble, steel and ivory textures and ramps ending in white. A minimum-saturation rule now runs on every scanned formation's colours (`vivid`, `MIN_SAT` in `scan.ts`); grey surfaces take a tint. Recoloured by hand: Taj Mahal (rose-gold, gold minarets), Trishul (blue steel), Shankh (peach ivory), Dhanush-baan, Charminar, elephant, owl, classic car, bicycle, Space Shuttle. Flame core, drum strike and arrow are gold, not white-hot.
   2. *Overlap:* additive blending summed dense drones (the Burj's base, the Taj's plinth) past the tone mapper's white point. Design a Show now draws drones with **max blending** (`DroneSwarm blend="max"`: the brightest drone wins); the home page keeps additive. Halo gain raised to 3.4 to keep the glow.
