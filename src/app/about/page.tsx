@@ -6,12 +6,14 @@ import FounderAvatar from "@/components/team/FounderAvatar";
 import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About | Airimation",
+export const metadata: Metadata = pageMeta({
+  title: "About",
   description:
     "Airimation's mission, founding team and honest read on what the company is today versus where it is building toward.",
-};
+  path: "/about",
+});
 
 function MemberCard({ member, delay }: { member: TeamMember; delay: number }) {
   return (

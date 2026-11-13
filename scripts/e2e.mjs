@@ -211,10 +211,10 @@ console.log("design a show");
 await check("flat formation list, LED hues, instant fleet change", async () => {
   const { page, errors } = await open("/design-your-show");
   await page.evaluate(() => window.scrollTo(0, 500));
-  await page.waitForSelector('[role="tab"]', { timeout: 20000 });
+  await page.waitForSelector('[data-formations] button', { timeout: 20000 });
   const body = await page.textContent("body");
   for (const old of ["Story & culture", "Sculptures — real 3D scans", "3D shapes"]) assert(!body.includes(old), `old heading "${old}"`);
-  for (const gone of ["Mahadev"]) assert(!(await page.$(`[role="tab"]:text-is("${gone}")`)), `removed formation "${gone}" listed`);
+  for (const gone of ["Mahadev"]) assert(!(await page.$(`[data-formations] button:text-is("${gone}")`)), `removed formation "${gone}" listed`);
   assert(!/Source: /.test(body), "model credit shown on Design a Show (it lives on /credits)");
   assert(await page.$('[role="radiogroup"][aria-label="LED hues"]'), "LED hues picker missing");
   const hues = await page.$$('[role="radio"]');
@@ -222,9 +222,9 @@ await check("flat formation list, LED hues, instant fleet change", async () => {
   await hues[1].click();
   assert((await hues[1].getAttribute("aria-checked")) === "true", "hue not selected");
   await page.selectOption("#fleet", "100");
-  const before = await page.$$eval('[role="tab"]', (t) => t.length);
+  const before = await page.$$eval('[data-formations] button', (t) => t.length);
   await page.selectOption("#fleet", "5000");
-  const after = await page.$$eval('[role="tab"]', (t) => t.length);
+  const after = await page.$$eval('[data-formations] button', (t) => t.length);
   assert(after > before, `fleet 5000 lists ${after} formations, was ${before}`);
   assert(/5,000 drones/.test(await page.textContent("body")), "caption did not update");
   assert(errors.length === 0, errors.join("; "));
@@ -236,7 +236,7 @@ await check("hero: full-width sky first, controls below, then the heading", asyn
   await page.waitForSelector("canvas", { timeout: 30000 });
   const r = await page.evaluate(() => {
     const c = document.querySelector("main canvas").getBoundingClientRect();
-    const tabs = document.querySelector('[role="tablist"]')?.getBoundingClientRect().top ?? -1;
+    const tabs = document.querySelector('[data-formations]')?.getBoundingClientRect().top ?? -1;
     const h1 = document.querySelector("main h1").getBoundingClientRect().top;
     return { w: c.width, vw: document.documentElement.clientWidth, top: c.top, h: c.height, vh: innerHeight, tabs, h1 };
   });

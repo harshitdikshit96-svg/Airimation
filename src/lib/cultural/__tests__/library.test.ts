@@ -194,7 +194,7 @@ describe("Tiranga", () => {
 describe("the 3D shapes are solids, not wireframes", () => {
   // Nov 2026: a cube must show its six faces, a pyramid its sides and base,
   // the globe a whole sphere — drones on the surfaces, not only the edges.
-  const pts = (id: string, n: number) => {
+  const pts = (id: string) => {
     const file = Object.values(scanFiles).find((s) => s.id === id)!;
     const b = Buffer.from(file.pos, "base64");
     const q = new Int16Array(b.buffer, b.byteOffset, b.byteLength / 2);
@@ -203,7 +203,7 @@ describe("the 3D shapes are solids, not wireframes", () => {
 
   test("cube: most drones sit inside a face, not on an edge", () => {
     const n = 500;
-    const { file, at } = pts("shape-cube", n);
+    const { file, at } = pts("shape-cube");
     const h = file.height / 2;
     let face = 0;
     for (let i = 0; i < n; i++) {
@@ -215,7 +215,7 @@ describe("the 3D shapes are solids, not wireframes", () => {
 
   test("pyramid: its square base is filled", () => {
     const n = 500;
-    const { file, at } = pts("shape-pyramid", n);
+    const { file, at } = pts("shape-pyramid");
     let base = 0;
     for (let i = 0; i < n; i++) {
       const [x, y, z] = at(i);
@@ -226,7 +226,7 @@ describe("the 3D shapes are solids, not wireframes", () => {
 
   test("globe: drones cover the whole sphere", () => {
     const n = 1500;
-    const { at } = pts("shape-globe", n);
+    const { at } = pts("shape-globe");
     const cells = new Set<string>();
     for (let i = 0; i < n; i++) {
       const [x, y, z] = at(i);

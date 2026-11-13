@@ -6,8 +6,11 @@ import { onLoadedAndNear } from "@/components/swarm/defer";
 
 function Placeholder() {
   return (
-    <div className="flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center bg-black">
-      <p className="rounded bg-black/50 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-dim">
+    <div className="relative flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center overflow-hidden bg-black">
+      {/* The same dusk sky as a still, so the first screen isn't a black box. */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- decorative still, sized by CSS */}
+      <img src="/posters/backdrop.jpg" alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+      <p className="relative rounded bg-black/50 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-dim">
         Preparing the sky…
       </p>
     </div>

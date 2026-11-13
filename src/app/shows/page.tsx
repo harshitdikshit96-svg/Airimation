@@ -12,12 +12,14 @@ import {
 } from "@/lib/content";
 import { ArrowRight, Feather, Radio, Satellite, Lightbulb } from "lucide-react";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Drone Light Shows | Airimation",
+export const metadata: Metadata = pageMeta({
+  title: "Drone Light Shows",
   description:
     "Airimation's drone-swarm light shows — synchronised LED drones choreographed for civic, festival, wedding and corporate events.",
-};
+  path: "/shows",
+});
 
 const specIcons = [Feather, Satellite, Radio, Lightbulb];
 

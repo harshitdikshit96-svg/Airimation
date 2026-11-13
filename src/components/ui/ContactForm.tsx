@@ -52,6 +52,7 @@ export default function ContactForm() {
       organization_type: data.get("organization_type"),
       event_date: data.get("event_date") || undefined,
       message: data.get("message"),
+      website: data.get("website") || undefined,
     };
 
     try {
@@ -76,7 +77,7 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="panel-border rounded-2xl bg-panel/50 p-8 text-center">
+      <div role="status" className="panel-border rounded-2xl bg-panel/50 p-8 text-center">
         <h3 className="font-serif text-xl font-semibold text-green-soft">
           Message received
         </h3>
@@ -88,27 +89,33 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="relative space-y-5">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+          <label htmlFor="cf-name" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
             Name
           </label>
           <input
+            id="cf-name"
             name="name"
             required
+            maxLength={120}
+            autoComplete="name"
             className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
             placeholder="Your full name"
           />
         </div>
         <div>
-          <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+          <label htmlFor="cf-email" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
             Email
           </label>
           <input
             type="email"
+            id="cf-email"
             name="email"
             required
+            maxLength={200}
+            autoComplete="email"
             className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
             placeholder="you@example.com"
           />
@@ -117,21 +124,25 @@ export default function ContactForm() {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+          <label htmlFor="cf-phone" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
             Phone (optional)
           </label>
           <input
+            id="cf-phone"
             name="phone"
+            type="tel"
+            autoComplete="tel"
             className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
             placeholder="+91"
           />
         </div>
         <div>
-          <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+          <label htmlFor="cf-event_date" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
             Event date (optional)
           </label>
           <input
             type="date"
+            id="cf-event_date"
             name="event_date"
             className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
           />
@@ -139,11 +150,12 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+        <label htmlFor="cf-organization_type" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
           You are reaching out as
         </label>
         <select
-          name="organization_type"
+          id="cf-organization_type"
+            name="organization_type"
           required
           defaultValue=""
           className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
@@ -160,24 +172,32 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
+        <label htmlFor="cf-message" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">
           Message
         </label>
         <textarea
           // Remount when the show summary arrives, so it lands as the default.
           key={showMessage ? "show" : "blank"}
           defaultValue={showMessage}
-          name="message"
+          id="cf-message"
+            name="message"
           required
+          maxLength={5000}
           rows={showMessage ? 7 : 5}
           className="w-full rounded-lg border border-line bg-panel-2/70 px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-cyan-soft"
           placeholder="Tell us about the event, venue, or what you'd like to discuss"
         />
       </div>
 
-      {status === "error" && (
-        <p className="text-sm text-brick-soft">{errorMsg}</p>
-      )}
+      {/* Spam trap: hidden from people, filled in by bots; the API drops those. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label htmlFor="cf-website">Website</label>
+        <input id="cf-website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <p role="alert" className="text-sm text-brick-soft empty:hidden">
+        {status === "error" ? errorMsg : ""}
+      </p>
 
       <button
         type="submit"

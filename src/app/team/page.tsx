@@ -5,14 +5,16 @@ import FounderAvatar from "@/components/team/FounderAvatar";
 import { directors, site, visibleAdvisors, type TeamMember } from "@/lib/content";
 import { ArrowRight, ExternalLink, Mail } from "lucide-react";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Team | Airimation",
+export const metadata: Metadata = pageMeta({
+  title: "Team",
   description:
     visibleAdvisors.length > 0
       ? "The directors and advisors behind Airimation's drone-swarm light shows."
       : "The directors behind Airimation's drone-swarm light shows.",
-};
+  path: "/team",
+});
 
 /**
  * One person, one row — the SAME shape for everybody.

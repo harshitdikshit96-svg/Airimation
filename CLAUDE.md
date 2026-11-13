@@ -150,7 +150,9 @@ footer note, the tag beside the home phase indicator, the configurator's
 Simulation badge) — don't remove that framing without real show footage.
 
 **Data flow for the contact form:** `ContactForm.tsx` (client component) →
-`POST /api/contact` (`src/app/api/contact/route.ts`) → `src/lib/db.ts`'s
+`POST /api/contact` (`src/app/api/contact/route.ts`; input checked by
+`src/lib/leadValidation.ts` — strings only, length caps, known org type,
+real date, a honeypot field and a per-IP limit) → `src/lib/db.ts`'s
 `getSql()`, which returns a Neon `@neondatabase/serverless` tagged-template
 SQL client, or `null` if `DATABASE_URL` isn't set. The route is written to
 degrade gracefully when there's no database configured (logs to console,
@@ -162,12 +164,16 @@ connection-pooling concerns. The `leads` table schema is defined in
 README.md, not in a migrations folder — there's no ORM or migration tooling
 in this project.
 
-**Shared UI primitives** live in `src/components/ui/`: `Reveal` (Framer
-Motion scroll-in-view wrapper, used to animate nearly every section),
+**Shared UI primitives** live in `src/components/ui/`: `Reveal` (CSS
+scroll-driven fade-in, a server component with no JS — never hide content
+until hydration; used on nearly every section),
 `GlowCard` (colored hover-glow card, takes a `color` prop matching the theme
 tokens), `Button`, `StatGrid`, `Timeline` (renders the Year 1–5 roadmap from
 `content.ts`), `SectionLabel`, `ContactForm`. Page files compose these rather
 than writing bespoke markup per section — follow that pattern for new pages.
+New pages export `metadata = pageMeta({ title, description, path })`
+(`src/lib/seo.ts`: short title, canonical, Open Graph + share image) and,
+if public, go in `PUBLIC_ROUTES` (sitemap).
 
 ## Pages
 

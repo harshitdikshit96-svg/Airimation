@@ -5,7 +5,7 @@ import DesignYourShowView from "@/components/show/DesignYourShowView";
 // linked from the site; kept so its share links (/design-your-show/s/…)
 // keep working. The live page is /design-your-show.
 export const metadata: Metadata = {
-  title: "Show Designer (archived) | Airimation",
+  title: "Show Designer (archived)",
   robots: { index: false, follow: true },
   alternates: { canonical: "/design-your-show" },
 };

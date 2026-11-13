@@ -162,6 +162,26 @@ body {
   animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+ * Scroll-in reveal (Reveal.tsx): a scroll-driven animation, no JS. Content
+ * is visible in the server HTML; a block already on screen at load sits at
+ * the animation's end state, so it never delays the first paint. Without
+ * support, or with reduced motion, there is no animation at all.
+ */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry var(--reveal-delay, 0%) entry calc(var(--reveal-delay, 0%) + 40%);
+    }
+  }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }

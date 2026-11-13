@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+// Weights the CSS uses (font-light 300 for the serif headlines, 400-600).
+// The browser downloads only the weights a page actually renders.
 import "@fontsource/ibm-plex-sans/300.css";
 import "@fontsource/ibm-plex-sans/400.css";
 import "@fontsource/ibm-plex-sans/500.css";
 import "@fontsource/ibm-plex-sans/600.css";
-import "@fontsource/ibm-plex-sans/700.css";
+import "@fontsource/ibm-plex-serif/300.css";
 import "@fontsource/ibm-plex-serif/400.css";
 import "@fontsource/ibm-plex-serif/500.css";
 import "@fontsource/ibm-plex-serif/600.css";
-import "@fontsource/ibm-plex-serif/700.css";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "@fontsource/ibm-plex-mono/600.css";
@@ -19,7 +20,11 @@ import { organizationJsonLd } from "@/lib/jsonld";
 import PhoneGate from "@/components/layout/PhoneGate";
 
 export const metadata: Metadata = {
-  title: "Airimation | Drone-Swarm Light Shows — Noida, Delhi NCR",
+  title: {
+    default: "Airimation | Drone-Swarm Light Shows — Noida, Delhi NCR",
+    // Pages give their own short title; this adds the brand.
+    template: "%s | Airimation",
+  },
   description:
     "Airimation designs, builds and flies synchronised LED drone-swarm light shows for civic celebrations, festivals, weddings and corporate events across North India.",
   keywords: [
@@ -40,6 +45,12 @@ export const metadata: Metadata = {
     locale: "en_IN",
     type: "website",
   },
+  twitter: { card: "summary_large_image" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#060607",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

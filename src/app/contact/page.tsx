@@ -4,12 +4,14 @@ import ContactForm from "@/components/ui/ContactForm";
 import { company, contactInfo, credentials } from "@/lib/content";
 import { Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact | Airimation",
+export const metadata: Metadata = pageMeta({
+  title: "Contact",
   description:
     "Get in touch with Airimation to book a drone-swarm light show, or to discuss a partnership.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

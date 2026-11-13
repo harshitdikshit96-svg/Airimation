@@ -4,13 +4,15 @@ import Timeline from "@/components/ui/Timeline";
 import Button from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { buildStatus, pledge, principles, rdDirections, visionTracks } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Vision | Airimation",
+export const metadata: Metadata = pageMeta({
+  title: "Vision",
   description:
     "Airimation's two-track vision: a drone light-show fleet that grows from Uttar Pradesh to the world, then grant-funded swarm R&D for environmental and civic problems.",
-};
+  path: "/vision",
+});
 
 export default function VisionPage() {
   const [shows, research] = visionTracks;

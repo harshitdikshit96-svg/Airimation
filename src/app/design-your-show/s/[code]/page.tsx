@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     ? `${describeRecipe(recipe).line}. Open the link to watch it play over a night sky — a concept preview from Airimation.`
     : "Choose a fleet size and formations, and watch a drone light show play out over a night sky.";
   return {
-    title,
+    // Already carries the brand; skip the layout's " | Airimation".
+    title: { absolute: title },
     description,
     // One canonical page for search; every shared variant points to it.
     alternates: { canonical: "/design-your-show" },

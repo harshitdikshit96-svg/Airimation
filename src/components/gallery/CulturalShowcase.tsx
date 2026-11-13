@@ -341,8 +341,12 @@ export default function CulturalShowcase() {
   const [id, setId] = useState("tiranga");
   const [hues, setHues] = useState("auto");
   const [theme, setTheme] = useState("all");
-  const [auto, setAuto] = useState(true);
-  const [playing, setPlaying] = useState(true);
+  // Reduced motion: no auto-advance and the light effects start paused
+  // (the visitor can still pick formations and press Play). Client-only
+  // component (ssr: false), so reading the media query here is safe.
+  const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [auto, setAuto] = useState(!reduceMotion);
+  const [playing, setPlaying] = useState(!reduceMotion);
   const [failed, setFailed] = useState(false);
   const zoomRef = useRef<((factor: number) => void) | null>(null);
   const all = useMemo(() => formationsFor(count), [count]);
@@ -444,12 +448,12 @@ export default function CulturalShowcase() {
 
       <div className="mx-auto max-w-[1100px] px-6">
       <div className="mt-6 flex flex-col gap-5">
-        <div className="order-2 flex flex-wrap gap-2" role="tablist" aria-label="Formation">
+        <div className="order-2 flex flex-wrap gap-2" role="group" aria-label="Formation" data-formations>
           {list.map((item) => (
             <button
               key={item.id}
-              role="tab"
-              aria-selected={item.id === current.id}
+              type="button"
+              aria-pressed={item.id === current.id}
               onClick={() => {
                 setId(item.id);
                 setAuto(false);
@@ -501,6 +505,7 @@ export default function CulturalShowcase() {
             ))}
           </select>
           <button
+            type="button"
             onClick={() => setPlaying((p) => !p)}
             className="min-h-11 rounded-full border border-line-2 px-4 font-mono text-xs text-dim transition-colors hover:text-ink"
           >

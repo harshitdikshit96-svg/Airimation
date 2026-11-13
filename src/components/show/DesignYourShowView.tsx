@@ -11,7 +11,7 @@ import { designYourShow } from "@/lib/content";
  */
 export default function DesignYourShowView({ code, archived = true }: { code?: string; archived?: boolean }) {
   return (
-    <main className="mx-auto max-w-[1100px] px-6 pb-24 pt-28">
+    <div className="mx-auto max-w-[1100px] px-6 pb-24 pt-28">
       {archived && (
         <p className="mb-8 rounded-lg border border-line-2 px-4 py-3 text-sm text-muted">
           This is our earlier show designer, kept so shared links still work.{" "}
@@ -45,6 +45,6 @@ export default function DesignYourShowView({ code, archived = true }: { code?: s
           ))}
         </section>
       </Reveal>
-    </main>
+    </div>
   );
 }

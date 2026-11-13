@@ -3,7 +3,7 @@
 Real headshots only: no generated or stock photos of real people (see
 DECISIONS.md §2).
 
-Drop the file here, then set the matching `photo` path on that person in
+Drop the photo in `public/team/`, then set the matching `photo` path on that person in
 `src/lib/content.ts` (`directors` or `advisors`). Nothing else changes;
 `FounderAvatar` shows initials until a photo is set.
 

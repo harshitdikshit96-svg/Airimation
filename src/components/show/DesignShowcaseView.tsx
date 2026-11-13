@@ -12,7 +12,7 @@ import { ArrowRight } from "lucide-react";
  */
 export default function DesignShowcaseView() {
   return (
-    <main className="pb-24">
+    <div className="pb-24">
       {/* The hero is the sky itself, full width; its controls sit just below. */}
       <CulturalShowcaseLoader />
 
@@ -46,6 +46,6 @@ export default function DesignShowcaseView() {
         </section>
       </Reveal>
       </div>
-    </main>
+    </div>
   );
 }

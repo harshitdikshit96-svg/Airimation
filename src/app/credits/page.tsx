@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CULTURAL } from "@/lib/cultural";
 
 export const metadata: Metadata = {
-  title: "3D Model Credits | Airimation",
+  title: "3D Model Credits",
   description: "Sources and licences of the 3D models behind the formations on Design a Show.",
   robots: { index: false },
 };
