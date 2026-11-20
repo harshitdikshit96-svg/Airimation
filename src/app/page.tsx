@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import ContactForm from "@/components/ui/ContactForm";
@@ -114,21 +115,49 @@ export default function Home() {
           </div>
         </section>
 
-        {/* DESIGN A SHOW — the configurator CTA */}
-        <section
-          id="design"
-          className="mx-auto max-w-[1100px] px-6 py-16 sm:py-24"
-        >
-          <Reveal>
+        {/* DESIGN A SHOW — five stills from the formation library, then
+            the way in. One camera, one crop: the horizon runs on unbroken
+            across the strip and each figure keeps its true size. */}
+        <section id="design" className="py-16 sm:py-24">
+          <Reveal className="mx-auto max-w-[1100px] px-6">
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
               {designTeaser.eyebrow}
             </p>
             <h2 className="mb-5 max-w-[20ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
               {designTeaser.title}
             </h2>
-            <p className="mb-8 max-w-[52ch] text-base font-light leading-relaxed text-muted">
+            <p className="mb-12 max-w-[52ch] text-base font-light leading-relaxed text-muted">
               {designTeaser.body}
             </p>
+          </Reveal>
+
+          <div className="mx-auto max-w-[1440px] px-6">
+            <ul className="grid grid-cols-5">
+              {designTeaser.gallery.items.map((item, i) => (
+                <li key={item.id}>
+                  <Link
+                    href={`/design-your-show?formation=${item.id}&fleet=${designTeaser.gallery.fleet}`}
+                    className="group block focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber"
+                  >
+                    <Image
+                      src={`/renders/${item.id}.webp`}
+                      alt={item.alt}
+                      width={1280}
+                      height={987}
+                      sizes="(min-width: 1440px) 280px, 20vw"
+                      className={`block h-auto w-full transition-[filter] duration-300 group-hover:brightness-125 ${i ? "border-l border-black" : ""}`}
+                    />
+                    <span className="block pt-3 font-serif text-[15px] font-light text-muted transition-colors group-hover:text-ink lg:text-[17px]">
+                      {item.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mx-auto mt-10 flex max-w-[1100px] flex-wrap items-baseline justify-between gap-x-10 gap-y-6 px-6">
+            <p className="max-w-[60ch] text-[13px] font-light text-dim">{designTeaser.gallery.note}</p>
             <Link
               href="/design-your-show"
               className="group inline-flex items-center gap-2 border-b border-amber pb-1 font-mono text-sm text-amber transition hover:gap-3"
@@ -136,7 +165,7 @@ export default function Home() {
               {designTeaser.cta}
               <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
-          </Reveal>
+          </div>
         </section>
 
         {/* WHERE WE ARE — honest build status */}

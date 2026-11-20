@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import { advisors, designTeaser, designYourShow, directors, team, teamConfig, visibleAdvisors } from "../content";
 import { CULTURAL } from "../cultural";
@@ -35,6 +37,18 @@ describe("Design a Show copy", () => {
 
   test("never names a formation the library no longer has", () => {
     for (const gone of ["Mahadev", "Om at"]) expect(copy).not.toContain(gone);
+  });
+
+  test("the home page's stills are real formations, flyable at their fleet, with a render on disk", () => {
+    const { fleet, items } = designTeaser.gallery;
+    for (const item of items) {
+      const f = CULTURAL.find((x) => x.id === item.id);
+      expect(f, item.id).toBeTruthy();
+      expect(f!.label).toBe(item.label);
+      expect(f!.minDrones).toBeLessThanOrEqual(fleet);
+      expect(existsSync(join(process.cwd(), "public/renders", `${item.id}.webp`)), item.id).toBe(true);
+      expect(item.alt.length).toBeGreaterThan(20);
+    }
   });
 
   test("names only formations that exist", () => {

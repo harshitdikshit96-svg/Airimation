@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
       { source: "/models/:path*", headers: cache },
       { source: "/brand/:path*", headers: cache },
       { source: "/team/:path*", headers: cache },
+      { source: "/renders/:path*", headers: cache },
     ];
   },
   // The shared-show OG image reads its fonts from disk at request time;

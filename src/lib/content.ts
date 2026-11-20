@@ -189,7 +189,19 @@ export const designTeaser = {
   eyebrow: "04 · DESIGN A SHOW",
   title: "How many drones does your sky need?",
   body: "Pick a fleet size — 100 to 5,000 drones — and watch what it can fly, from the Tiranga to a scanned Ganesha, live in 3D.",
-  cta: "Design your show",
+  cta: "Open Design a Show",
+  /** The home page's stills (public/renders/, scripts/compress-renders.mjs). */
+  gallery: {
+    fleet: 5000,
+    note: "Concept renders from Design a Show. Each figure is flown by 5,000 drones, shown at true scale over the same skyline.",
+    items: [
+      { id: "nandi", label: "Nandi", alt: "Nandi the bull, seated, drawn in gold drones over a dusk skyline" },
+      { id: "damru", label: "Damru", alt: "Shiva's damru drawn in gold, red and blue drones, its cord curling round it" },
+      { id: "auto-rickshaw", label: "Auto-rickshaw", alt: "An auto-rickshaw seen from the side, drawn in amber and green drones" },
+      { id: "sitar", label: "Sitar", alt: "A sitar drawn diagonally across the sky in orange drones" },
+      { id: "rose", label: "Rose", alt: "A single red rose on a green stem with leaves, drawn in drones" },
+    ],
+  },
 };
 
 export const clientSegments = [

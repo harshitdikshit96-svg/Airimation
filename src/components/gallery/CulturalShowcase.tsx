@@ -65,7 +65,15 @@ function Scene({
   playing,
   hues,
   zoomRef,
+  capture,
 }: {
+  /**
+   * Capture mode (?capture=1, scripts/render-formations.ts): no fly-in, the
+   * camera framed at once (turned `az` degrees round the figure), the show
+   * clock held at `t`, and a signal on <html data-showcase-frame="id:count">
+   * once the figure is on screen.
+   */
+  capture: { t: number; az: number } | null;
   /** Set by the scene: zoom the camera in (< 1) or out (> 1). */
   zoomRef: { current: ((factor: number) => void) | null };
   quality: QualityProfile;
@@ -99,6 +107,8 @@ function Scene({
     dolly: true,
     /** For a static figure: the (figure, fleet, hues) already on screen, so nothing is re-posed or re-uploaded. */
     posed: "",
+    /** Capture mode: seconds the current figure has been fully on screen. */
+    settle: 0,
   });
   const gl = useThree((s) => s.gl);
   const camera = useThree((s) => s.camera);
@@ -227,7 +237,18 @@ function Scene({
         c.order = order;
         c.morph = 0;
         c.t = 0;
+        if (capture) {
+          c.morph = c.morphTotal; // straight to the figure
+          c.t = capture.t;
+          c.dolly = true;
+          if (ctl && capture.az) {
+            const off = state.camera.position.clone().sub(ctl.target);
+            off.applyAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(capture.az));
+            state.camera.position.copy(ctl.target).add(off);
+          }
+        }
       }
+      c.settle = 0;
       c.key = key;
       c.id = f.id;
       c.posed = "";
@@ -287,10 +308,11 @@ function Scene({
     if (ctl && c.dolly) {
       const goalY = showAltitude(count) + 4;
       const goalD = viewDistance(count);
-      ctl.target.y += (goalY - ctl.target.y) * 0.06;
+      const ease = capture ? 1 : 0.06; // capture: framed at once
+      ctl.target.y += (goalY - ctl.target.y) * ease;
       const off = state.camera.position.clone().sub(ctl.target);
       const d = off.length();
-      off.setLength(d + (goalD - d) * 0.06);
+      off.setLength(d + (goalD - d) * ease);
       state.camera.position.copy(ctl.target).add(off);
       ctl.update();
       if (Math.abs(goalD - d) < 0.5 && Math.abs(goalY - ctl.target.y) < 0.2) c.dolly = false;
@@ -299,6 +321,13 @@ function Scene({
     // The camera moves only when the visitor moves it (no idle drift, no
     // auto-rotate). The one exception is the reframe above, right after the
     // visitor changes the fleet size themselves.
+
+    // Capture: say when this figure, at this fleet, is fully drawn — after
+    // 1.5 s of frames, so bloom and tone mapping have settled.
+    if (capture && c.morph >= c.morphTotal && !c.dolly) {
+      c.settle += dt;
+      if (c.settle > 1.5) document.documentElement.dataset.showcaseFrame = key;
+    }
   });
 
   return (
@@ -336,17 +365,36 @@ function Scene({
   );
 }
 
+/**
+ * URL options, read once (client-only component):
+ *   ?formation=<id>[&fleet=<n>]  open on that figure (the home gallery's links)
+ *   &capture=1[&t=<s>][&az=<deg>] a clean still for scripts/render-formations.ts
+ */
+function urlOptions() {
+  const q = new URLSearchParams(window.location.search);
+  const fleet = Number(q.get("fleet"));
+  const formation = q.get("formation");
+  return {
+    fleet: FLEETS.includes(fleet) ? fleet : null,
+    formation: formation && culturalById(formation) ? formation : null,
+    capture: q.get("capture") === "1" ? { t: Number(q.get("t")) || 0, az: Number(q.get("az")) || 0 } : null,
+  };
+}
+
 export default function CulturalShowcase() {
-  const [count, setCount] = useState(defaultFleet);
-  const [id, setId] = useState("tiranga");
+  const [opts] = useState(urlOptions);
+  const capture = opts.capture;
+  const [count, setCount] = useState(() => opts.fleet ?? defaultFleet());
+  const [id, setId] = useState(() => opts.formation ?? "tiranga");
   const [hues, setHues] = useState("auto");
   const [theme, setTheme] = useState("all");
   // Reduced motion: no auto-advance and the light effects start paused
   // (the visitor can still pick formations and press Play). Client-only
   // component (ssr: false), so reading the media query here is safe.
   const [reduceMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  const [auto, setAuto] = useState(!reduceMotion);
-  const [playing, setPlaying] = useState(!reduceMotion);
+  // A linked formation stays put (no auto-advance).
+  const [auto, setAuto] = useState(!reduceMotion && !opts.formation);
+  const [playing, setPlaying] = useState(!reduceMotion && !capture);
   const [failed, setFailed] = useState(false);
   const zoomRef = useRef<((factor: number) => void) | null>(null);
   const all = useMemo(() => formationsFor(count), [count]);
@@ -413,9 +461,11 @@ export default function CulturalShowcase() {
           bloom={0.5}
           onFail={() => setFailed(true)}
         >
-          {(quality) => <Scene quality={quality} id={readyId} count={count} playing={playing} hues={hues} zoomRef={zoomRef} />}
+          {(quality) => <Scene quality={quality} id={readyId} count={count} playing={playing} hues={hues} zoomRef={zoomRef} capture={capture} />}
         </SwarmCanvas>
 
+        {!capture && (
+        <>
         <div className="pointer-events-none absolute inset-x-0 top-0">
           <div className="mx-auto max-w-[1100px] px-6 pt-6">
             <p className="font-serif text-3xl text-ink drop-shadow sm:text-4xl">{current.label}</p>
@@ -444,6 +494,8 @@ export default function CulturalShowcase() {
             </button>
           ))}
         </div>
+        </>
+        )}
       </div>
 
       <div className="mx-auto max-w-[1100px] px-6">

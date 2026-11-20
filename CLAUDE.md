@@ -18,6 +18,8 @@ node scripts/render-poster.mjs http://localhost:3000                 # poster fr
 node scripts/scan-colors.mjs <glb> <id>                              # a formation's real colours
 node scripts/scan-manifest.mjs                                       # after adding/re-converting a model
 npx vite-node scripts/preview-formations.ts -- 1500 <outDir> [ids]   # formation contact sheets
+SCALE=2 npx vite-node scripts/render-formations.ts -- <site> <dir> 5000 <ids> [t] [az]  # stills of the live page
+node scripts/compress-renders.mjs <dir>/5000                         # → public/renders/ (home gallery)
 ```
 
 Environment variables live in `.env` / `.env.local` (see `.env.example`).
@@ -134,7 +136,11 @@ under a 55% overlay (white copy still reads).
 screen" note with a hello@airimation.in button. The site is hidden by CSS
 (`.site-shell`), not removed, so the HTML still carries every page.
 
-Home starts its live scene right after load (not on scroll).
+Home starts its live scene right after load (not on scroll). Its "Design a
+Show" section shows five stills of formations at 5,000 drones
+(`designTeaser.gallery` in `content.ts`, images in `public/renders/`), each
+linking to `/design-your-show?formation=<id>&fleet=5000`; re-render them
+when the formations' look changes.
 
 *Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
 1.5, no MSAA. The runtime monitor may lower DPR/bloom but never drone
