@@ -9,6 +9,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
+import { ChevronDown } from "lucide-react";
 import SwarmCanvas from "@/components/swarm/SwarmCanvas";
 import DroneSwarm, { type SwarmHandle } from "@/components/swarm/DroneSwarm";
 import { Crowd, DuskFog, Ground, SkyDome, Stars } from "@/components/swarm/Environment";
@@ -37,6 +38,11 @@ const MAX_DIST = 900;
 const LED_MAX = 0.85;
 /** Formations per fleet size, for the Fleet menu (computed once). */
 const FLEET_COUNTS = new Map(FLEETS.map((n) => [n, formationsFor(n).length]));
+
+/** Pill selects: our own chevron, inset from the rounded edge (the native one sits on it). */
+const SELECT =
+  "min-h-11 cursor-pointer appearance-none rounded-full border border-line-2 bg-navy py-0 pl-4 pr-10 font-mono text-xs text-ink transition-colors hover:border-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber";
+const CHEVRON = "pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-dim";
 
 const STAGGER = 0.1;
 const LOOPS_PER_FIGURE = 2;
@@ -163,7 +169,8 @@ function Scene({
       buffers.pos[i * 3 + 1] = alt + (buffers.pos[i * 3 + 1] - SHOW_ALT) * scale;
       buffers.pos[i * 3 + 2] *= scale;
     }
-    applyHues(buffers.pos, buffers.col, count, getPalette(hues).colors);
+    const theme = getPalette(hues);
+    applyHues(buffers.pos, buffers.col, count, theme.colors, theme.mode);
     // No drone brighter than an LED at ~85%: brighter values only bloom and
     // turn white, and the drone's own colour is lost.
     for (let i = 0; i < count; i++) {
@@ -367,7 +374,7 @@ function Scene({
 
 /**
  * URL options, read once (client-only component):
- *   ?formation=<id>[&fleet=<n>]  open on that figure (the home gallery's links)
+ *   ?formation=<id>[&fleet=<n>][&hues=<theme>]  open on that figure (the home gallery's links)
  *   &capture=1[&t=<s>][&az=<deg>] a clean still for scripts/render-formations.ts
  */
 function urlOptions() {
@@ -377,6 +384,7 @@ function urlOptions() {
   return {
     fleet: FLEETS.includes(fleet) ? fleet : null,
     formation: formation && culturalById(formation) ? formation : null,
+    hues: PALETTES.some((p) => p.id === q.get("hues")) ? q.get("hues")! : null,
     capture: q.get("capture") === "1" ? { t: Number(q.get("t")) || 0, az: Number(q.get("az")) || 0 } : null,
   };
 }
@@ -386,7 +394,7 @@ export default function CulturalShowcase() {
   const capture = opts.capture;
   const [count, setCount] = useState(() => opts.fleet ?? defaultFleet());
   const [id, setId] = useState(() => opts.formation ?? "tiranga");
-  const [hues, setHues] = useState("auto");
+  const [hues, setHues] = useState(() => opts.hues ?? "auto");
   const [theme, setTheme] = useState("all");
   // Reduced motion: no auto-advance and the light effects start paused
   // (the visitor can still pick formations and press Play). Client-only
@@ -522,6 +530,7 @@ export default function CulturalShowcase() {
           <label htmlFor="theme" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Theme
           </label>
+          <span className="relative inline-flex">
           <select
             id="theme"
             value={theme}
@@ -529,7 +538,7 @@ export default function CulturalShowcase() {
               setTheme(e.target.value);
               setAuto(true);
             }}
-            className="min-h-11 rounded-full border border-line-2 bg-navy px-4 font-mono text-xs text-ink"
+            className={SELECT}
           >
             <option value="all">All · {all.length}</option>
             {THEMES.map((t) => {
@@ -541,14 +550,17 @@ export default function CulturalShowcase() {
               ) : null;
             })}
           </select>
+          <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
+          </span>
           <label htmlFor="fleet" className="ml-2 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Fleet
           </label>
+          <span className="relative inline-flex">
           <select
             id="fleet"
             value={count}
             onChange={(e) => setCount(Number(e.target.value))}
-            className="min-h-11 rounded-full border border-line-2 bg-navy px-4 font-mono text-xs text-ink"
+            className={SELECT}
           >
             {FLEETS.map((n) => (
               <option key={n} value={n}>
@@ -556,6 +568,8 @@ export default function CulturalShowcase() {
               </option>
             ))}
           </select>
+          <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
+          </span>
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
@@ -570,7 +584,7 @@ export default function CulturalShowcase() {
         <span className="mr-1 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">LED hues</span>
         {PALETTES.map((p) => {
           const selected = p.id === hues;
-          const swatch = p.colors.length ? p.colors : ["#ffb347", "#ff2d55", "#3d6dff"];
+          const swatch = (p.colors.length ? p.colors : ["#ffb347", "#ff2d55", "#3d6dff"]).slice(0, 4);
           return (
             <button
               key={p.id}

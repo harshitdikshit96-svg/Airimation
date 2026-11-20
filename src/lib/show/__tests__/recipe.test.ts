@@ -28,7 +28,7 @@ describe("share links", () => {
   });
 
   it("drops unknown palettes and formations instead of failing", () => {
-    const raw = encodeRaw({ v: 1, d: 50, s: ["ring", "nope", "globe", "spiral"], p: "neon" });
+    const raw = encodeRaw({ v: 1, d: 50, s: ["ring", "nope", "globe", "spiral"], p: "no-such-palette" });
     expect(decodeRecipe(raw)).toEqual({ v: 1, d: 50, s: ["ring", "globe", "spiral"] });
   });
 

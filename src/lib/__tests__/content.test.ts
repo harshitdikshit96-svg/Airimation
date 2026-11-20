@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 import { advisors, designTeaser, designYourShow, directors, team, teamConfig, visibleAdvisors } from "../content";
 import { CULTURAL } from "../cultural";
+import { PALETTES } from "../show/palettes";
 import * as content from "../content";
 import { contactInfo } from "../content";
 import { organizationJsonLd } from "../jsonld";
@@ -46,8 +47,9 @@ describe("Design a Show copy", () => {
       expect(f, item.id).toBeTruthy();
       expect(f!.label).toBe(item.label);
       expect(f!.minDrones).toBeLessThanOrEqual(fleet);
-      expect(existsSync(join(process.cwd(), "public/renders", `${item.id}.webp`)), item.id).toBe(true);
+      expect(existsSync(join(process.cwd(), "public/renders", `${item.id}-${item.hues}.webp`)), item.id).toBe(true);
       expect(item.alt.length).toBeGreaterThan(20);
+      expect(PALETTES.some((p) => p.id === item.hues), `${item.id} theme`).toBe(true);
     }
   });
 

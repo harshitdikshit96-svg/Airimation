@@ -193,13 +193,14 @@ export const designTeaser = {
   /** The home page's stills (public/renders/, scripts/compress-renders.mjs). */
   gallery: {
     fleet: 5000,
-    note: "Concept renders from Design a Show. Each figure is flown by 5,000 drones, shown at true scale over the same skyline.",
+    note: "Concept renders from Design a Show: 5,000 drones each, in different LED hues, at true scale over the same skyline.",
+    /** `hues`: an LED theme id from src/lib/show/palettes.ts ("auto" = the formation's own colours). */
     items: [
-      { id: "nandi", label: "Nandi", alt: "Nandi the bull, seated, drawn in gold drones over a dusk skyline" },
-      { id: "damru", label: "Damru", alt: "Shiva's damru drawn in gold, red and blue drones, its cord curling round it" },
-      { id: "auto-rickshaw", label: "Auto-rickshaw", alt: "An auto-rickshaw seen from the side, drawn in amber and green drones" },
-      { id: "sitar", label: "Sitar", alt: "A sitar drawn diagonally across the sky in orange drones" },
-      { id: "rose", label: "Rose", alt: "A single red rose on a green stem with leaves, drawn in drones" },
+      { id: "nandi", label: "Nandi", hues: "holi", alt: "Nandi the bull, seated, drawn in drones splashed with Holi colours over a dusk skyline" },
+      { id: "damru", label: "Damru", hues: "rainbow", alt: "Shiva's damru drawn in rainbow bands of drones, its cord curling round it" },
+      { id: "auto-rickshaw", label: "Auto-rickshaw", hues: "mehendi", alt: "An auto-rickshaw seen from the side, drawn in green, lime and orange drones" },
+      { id: "sitar", label: "Sitar", hues: "sunset", alt: "A sitar drawn diagonally across the sky in gold, coral, pink and violet drones" },
+      { id: "rose", label: "Rose", hues: "auto", alt: "A single red rose on a green stem with leaves, drawn in drones" },
     ],
   },
 };

@@ -9,7 +9,10 @@
 //   fleet    100, 500, 1500, 3000 or 5000 (default 500). Only the
 //            formations the site offers at that fleet are rendered, each
 //            with exactly that many drones — the Fleet menu's list.
-//   ids      comma-separated formation ids, or "all" (default)
+//   ids      comma-separated formation ids, or "all" (default); an id may
+//            carry an LED theme: nandi:peacock (see src/lib/show/palettes.ts),
+//            saved as nandi-peacock.png (the theme in the name, so a changed
+//            still never comes back from an image cache)
 //   t        seconds into the animation (default 0), for effects mid-move
 //   az       degrees to turn the camera round the figure (default 0: front)
 //   SCALE=2 in the environment renders at twice the pixels (for crops)
@@ -37,7 +40,9 @@ if (!FLEETS.includes(FLEET)) {
   process.exit(1);
 }
 const OUT = resolve(args[1] ?? "formation-renders", String(FLEET));
-const ONLY = args[3] && args[3] !== "all" ? args[3].split(",") : null;
+const SPEC = args[3] && args[3] !== "all" ? args[3].split(",").map((x) => x.split(":")) : null;
+const ONLY = SPEC ? SPEC.map(([id]) => id) : null;
+const THEME = new Map((SPEC ?? []).map(([id, theme]) => [id, theme ?? "auto"]));
 const T = Number(args[4] ?? 0);
 const AZ = Number(args[5] ?? 0);
 const SCALE = Number(process.env.SCALE ?? 1);
@@ -57,12 +62,12 @@ const failed: string[] = [];
 async function shoot(id: string) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: SCALE });
   try {
-    const url = `${SITE}/design-your-show?formation=${id}&fleet=${FLEET}&capture=1&t=${T}&az=${AZ}&quality=${QUALITY}`;
+    const url = `${SITE}/design-your-show?formation=${id}&fleet=${FLEET}&capture=1&t=${T}&az=${AZ}&hues=${THEME.get(id) ?? "auto"}&quality=${QUALITY}`;
     await page.goto(url, { waitUntil: "load" });
     const key = `${id}:${FLEET}`;
     await page.waitForFunction((k) => document.documentElement.dataset.showcaseFrame === k, key, { timeout: 90000 });
     await page.waitForTimeout(300);
-    await page.locator("main canvas").first().screenshot({ path: join(OUT, `${id}.png`) });
+    await page.locator("main canvas").first().screenshot({ path: join(OUT, THEME.has(id) ? `${id}-${THEME.get(id)}.png` : `${id}.png`) });
     console.log(`  ${id}`);
   } catch (err) {
     failed.push(id);

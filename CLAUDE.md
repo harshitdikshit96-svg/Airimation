@@ -18,7 +18,7 @@ node scripts/render-poster.mjs http://localhost:3000                 # poster fr
 node scripts/scan-colors.mjs <glb> <id>                              # a formation's real colours
 node scripts/scan-manifest.mjs                                       # after adding/re-converting a model
 npx vite-node scripts/preview-formations.ts -- 1500 <outDir> [ids]   # formation contact sheets
-SCALE=2 npx vite-node scripts/render-formations.ts -- <site> <dir> 5000 <ids> [t] [az]  # stills of the live page
+SCALE=2 npx vite-node scripts/render-formations.ts -- <site> <dir> 5000 <id:theme,...> [t] [az]  # stills of the live page
 node scripts/compress-renders.mjs <dir>/5000                         # → public/renders/ (home gallery)
 ```
 
@@ -118,8 +118,10 @@ drone keeps a minimum saturation (`vivid`/`MIN_SAT`; `paint.test.ts`). Each
 declares `minDrones`; a bigger fleet flies a bigger figure; a fleet change
 redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
 `__tests__/speed.test.ts`); the preview plays 1.8× (`PREVIEW_RATE`). Effects
-are light only and never add drones outside the model (tested). LED hues
-recolour by palette. The 3D sky is the page's full-width hero (controls
+are light only and never add drones outside the model (tested). LED hues:
+15 vivid themes (`src/lib/show/palettes.ts`), each laid on its own way
+(`applyHues` modes: gradient, bands, rings, sweep, Holi patches); ids
+travel in share links — never rename or remove one. The 3D sky is the page's full-width hero (controls
 below, heading after); **the camera moves only when the visitor moves it**
 (no auto-rotate); figures hold still; a plain wheel scrolls the page,
 Ctrl/⌘ + wheel zooms. Model points load on demand (`scans/manifest.ts`);
@@ -137,10 +139,11 @@ screen" note with a hello@airimation.in button. The site is hidden by CSS
 (`.site-shell`), not removed, so the HTML still carries every page.
 
 Home starts its live scene right after load (not on scroll). Its "Design a
-Show" section shows five stills of formations at 5,000 drones
-(`designTeaser.gallery` in `content.ts`, images in `public/renders/`), each
-linking to `/design-your-show?formation=<id>&fleet=5000`; re-render them
-when the formations' look changes.
+Show" section is a strip of stills (`DesignStrip.tsx`, inside the page
+column, prev/next arrows) of formations at 5,000 drones in LED themes
+(`designTeaser.gallery` in `content.ts`, `public/renders/<id>-<theme>.webp`),
+each linking to `/design-your-show?formation=<id>&fleet=5000&hues=<theme>`;
+re-render them when the formations' look changes.
 
 *Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
 1.5, no MSAA. The runtime monitor may lower DPR/bloom but never drone

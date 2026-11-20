@@ -12,7 +12,9 @@
 //   - hello@airimation.in is the only company email; /team also shows the team's own @airimation.in addresses
 //   - page headings line up with the header's left edge
 //   - every inner page has the steady dusk backdrop; home has its live scene
-//   - home: the 3D scene starts on load, before any scroll
+//   - home: the 3D scene starts on load, before any scroll; the Design a
+//     Show strip sits in the page column, its arrows scroll it, each still
+//     opens its formation (fleet and LED hues in the link)
 //   - Design a Show: one flat formation list (no group headings), the LED
 //     hues picker, a fleet change redraws the figure in place
 //   - masked registration numbers, the harshitcreates.in credit, the
@@ -204,6 +206,28 @@ await check("3D scene starts on load, before any scroll", async () => {
 await check("concept-render label shown", async () => {
   const { page } = await open("/");
   assert(/concept render/i.test(await page.textContent("body")), "label missing");
+  await page.close();
+});
+await check("Design a Show strip: inside the page column, arrows scroll it, stills open their formation", async () => {
+  const { page, errors } = await open("/");
+  const strip = page.locator('#design ul[aria-label="Formations from Design a Show"]');
+  await strip.scrollIntoViewIfNeeded();
+  const box = await strip.boundingBox();
+  const head = await page.locator("#design h2").boundingBox();
+  assert(Math.abs(box.x - head.x) < 2, `strip starts at ${box.x}, heading at ${head.x}`);
+  assert(box.x + box.width <= 1456 - (1456 - 1100) / 2 + 2, "strip wider than the page column");
+  const prev = page.locator('#design button[aria-label="Previous formation"]');
+  const next = page.locator('#design button[aria-label="Next formation"]');
+  assert(await prev.isDisabled(), "previous enabled at the start");
+  await next.click();
+  await page.waitForTimeout(900);
+  assert((await strip.evaluate((el) => el.scrollLeft)) > 100, "next did not scroll the strip");
+  assert(!(await prev.isDisabled()), "previous still disabled after scrolling");
+  const hrefs = await page.$$eval("#design ul a", (as) => as.map((a) => a.getAttribute("href")));
+  assert(hrefs.length >= 4 && hrefs.every((h) => /formation=[a-z-]+&fleet=5000&hues=[a-z]+/.test(h)), hrefs.join(" "));
+  const imgs = await page.$$eval("#design ul img", (els) => els.map((e) => e.alt.length));
+  assert(imgs.every((n) => n > 20), "a still has no alt text");
+  assert(errors.length === 0, errors.join("; "));
   await page.close();
 });
 

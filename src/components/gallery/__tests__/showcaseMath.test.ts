@@ -54,14 +54,19 @@ describe("LED hues", () => {
     expect(Array.from(col)).toEqual(before);
   });
 
-  test("a palette changes the hue but keeps each drone's brightness", () => {
+  test("a palette changes the hue, keeps light and shade in order, lifts dim drones", () => {
     const { pos, col } = make();
     const levels = [0.2, 1, 0.6];
     applyHues(pos, col, 3, ["#ff0000", "#00ff00", "#0000ff"]);
-    for (let i = 0; i < 3; i++) {
-      const peak = Math.max(col[i * 3], col[i * 3 + 1], col[i * 3 + 2]);
-      expect(peak).toBeCloseTo(levels[i], 5);
-    }
+    const peaks = [0, 1, 2].map((i) => Math.max(col[i * 3], col[i * 3 + 1], col[i * 3 + 2]));
+    expect(peaks[1]).toBeCloseTo(1, 5); // full stays full
+    expect(peaks[0]).toBeGreaterThan(levels[0]); // dim is lifted
+    expect(peaks[0]).toBeLessThan(peaks[2]); // order kept
+    expect(peaks[2]).toBeLessThan(peaks[1]);
+    // A dark drone (an effect switched off) stays dark.
+    const off = new Float32Array([0, 0, 0]);
+    applyHues(new Float32Array([0, 0, 0]), off, 1, ["#ff0000"]);
+    expect(Math.max(...off)).toBe(0);
     // Top drone takes the first (dominant) colour.
     expect(col[2 * 3]).toBeGreaterThan(col[2 * 3 + 1]);
     expect(col[2 * 3]).toBeGreaterThan(col[2 * 3 + 2]);
@@ -74,5 +79,47 @@ describe("LED hues", () => {
     applyHues(pos, col, 3, ["#ffd27a"]);
     for (const c of col) expect(Number.isFinite(c)).toBe(true);
     applyHues(new Float32Array(0), new Float32Array(0), 0, ["#ffffff"]);
+  });
+});
+
+describe("LED theme layouts", () => {
+  const n = 200;
+  const pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    pos[i * 3] = ((i * 37) % 100) - 50;
+    pos[i * 3 + 1] = (i / n) * 100;
+    pos[i * 3 + 2] = 0;
+  }
+  const run = (mode: Parameters<typeof applyHues>[4]) => {
+    const col = new Float32Array(n * 3).fill(1);
+    applyHues(pos, col, n, ["#ff0000", "#0000ff"], mode);
+    return col;
+  };
+  const isRed = (c: Float32Array, i: number) => c[i * 3] > 0.99 && c[i * 3 + 2] < 0.01;
+  const isBlue = (c: Float32Array, i: number) => c[i * 3 + 2] > 0.99 && c[i * 3] < 0.01;
+
+  test("bands and scatter use only the theme's own colours", () => {
+    for (const mode of ["bands", "scatter"] as const) {
+      const col = run(mode);
+      let red = 0;
+      for (let i = 0; i < n; i++) {
+        expect(isRed(col, i) || isBlue(col, i), `${mode} ${i}`).toBe(true);
+        if (isRed(col, i)) red++;
+      }
+      expect(red).toBeGreaterThan(n * 0.2);
+      expect(red).toBeLessThan(n * 0.8);
+    }
+  });
+
+  test("scatter (Holi patches) gives each drone the same colour every frame", () => {
+    expect(Array.from(run("scatter"))).toEqual(Array.from(run("scatter")));
+  });
+
+  test("blends go round the colour wheel, not through white", () => {
+    const col = new Float32Array(3 * 3).fill(1);
+    const p = new Float32Array([0, 0, 0, 0, 50, 0, 0, 100, 0]);
+    applyHues(p, col, 3, ["#2d5bff", "#ffd400"]); // blue over gold
+    const mid = [col[3], col[4], col[5]];
+    expect(Math.min(...mid) / Math.max(...mid)).toBeLessThan(0.3);
   });
 });
