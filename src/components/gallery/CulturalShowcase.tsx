@@ -19,6 +19,8 @@ import { assign } from "@/lib/show/assign";
 import type { Vec3 } from "@/lib/show/types";
 import { SHOW_ALT, THEMES, culturalById, formationsFor, isReady, loadFormation, type AnimatedFormation } from "@/lib/cultural";
 import { PALETTES, getPalette } from "@/lib/show/palettes";
+import ChipRail, { ROW_LABEL } from "./ChipRail";
+import { SKY_HEIGHT } from "./skyHeight";
 import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphSeconds, MORPH_MAX } from "./showcaseMath";
 
 /**
@@ -450,7 +452,7 @@ export default function CulturalShowcase() {
 
   if (failed) {
     return (
-      <div className="flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center bg-black p-6 text-center text-sm text-muted">
+      <div className={`flex ${SKY_HEIGHT} items-center justify-center bg-black p-6 text-center text-sm text-muted`}>
         This browser can&apos;t run the 3D preview. Ask us for a recording instead.
       </div>
     );
@@ -459,7 +461,7 @@ export default function CulturalShowcase() {
   return (
     <div>
       {/* The hero: the sky, full width, straight under the header. */}
-      <div className="relative h-[calc(100svh-64px)] min-h-[480px] w-full overflow-hidden bg-black">
+      <div className={`relative ${SKY_HEIGHT} w-full overflow-hidden bg-black`}>
         <SwarmCanvas
           className="absolute inset-0"
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
@@ -506,9 +508,62 @@ export default function CulturalShowcase() {
         )}
       </div>
 
-      <div className="mx-auto max-w-[1100px] px-6">
-      <div className="mt-6 flex flex-col gap-5">
-        <div className="order-2 flex flex-wrap gap-2" role="group" aria-label="Formation" data-formations>
+      {/* The dock: every control on the first screen, under the sky. */}
+      <div className="mx-auto flex max-w-[1100px] flex-col gap-3 px-6 py-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <label htmlFor="theme" className={ROW_LABEL}>
+            Theme
+          </label>
+          <span className="relative inline-flex">
+            <select
+              id="theme"
+              value={theme}
+              onChange={(e) => {
+                setTheme(e.target.value);
+                setAuto(true);
+              }}
+              className={SELECT}
+            >
+              <option value="all">All · {all.length}</option>
+              {THEMES.map((t) => {
+                const k = themeCounts.get(t.id) ?? 0;
+                return k ? (
+                  <option key={t.id} value={t.id}>
+                    {t.label} · {k}
+                  </option>
+                ) : null;
+              })}
+            </select>
+            <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
+          </span>
+          <label htmlFor="fleet" className="ml-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+            Fleet
+          </label>
+          <span className="relative inline-flex">
+            <select id="fleet" value={count} onChange={(e) => setCount(Number(e.target.value))} className={SELECT}>
+              {FLEETS.map((n) => (
+                <option key={n} value={n}>
+                  {n.toLocaleString("en-IN")} drones · {FLEET_COUNTS.get(n)} formations
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
+          </span>
+          <button
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            className="ml-auto min-h-11 rounded-full border border-line-2 px-5 font-mono text-xs text-muted transition-colors hover:border-amber hover:text-amber-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+          >
+            {playing ? "Pause" : "Play"}
+          </button>
+        </div>
+
+        <ChipRail
+          label="Formation"
+          count={list.length}
+          active={list.findIndex((f) => f.id === current.id)}
+          group={{ role: "group", "aria-label": "Formation", "data-formations": "" }}
+        >
           {list.map((item) => (
             <button
               key={item.id}
@@ -518,93 +573,45 @@ export default function CulturalShowcase() {
                 setId(item.id);
                 setAuto(false);
               }}
-              className={`min-h-11 rounded-full border px-4 font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
+              className={`min-h-11 shrink-0 whitespace-nowrap rounded-full border px-4 font-mono text-xs uppercase tracking-[0.12em] transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber ${
                 item.id === current.id ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
               }`}
             >
               {item.label}
             </button>
           ))}
-        </div>
-        <div className="order-1 flex flex-wrap items-center gap-2">
-          <label htmlFor="theme" className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
-            Theme
-          </label>
-          <span className="relative inline-flex">
-          <select
-            id="theme"
-            value={theme}
-            onChange={(e) => {
-              setTheme(e.target.value);
-              setAuto(true);
-            }}
-            className={SELECT}
-          >
-            <option value="all">All · {all.length}</option>
-            {THEMES.map((t) => {
-              const k = themeCounts.get(t.id) ?? 0;
-              return k ? (
-                <option key={t.id} value={t.id}>
-                  {t.label} · {k}
-                </option>
-              ) : null;
-            })}
-          </select>
-          <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
-          </span>
-          <label htmlFor="fleet" className="ml-2 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
-            Fleet
-          </label>
-          <span className="relative inline-flex">
-          <select
-            id="fleet"
-            value={count}
-            onChange={(e) => setCount(Number(e.target.value))}
-            className={SELECT}
-          >
-            {FLEETS.map((n) => (
-              <option key={n} value={n}>
-                {n.toLocaleString("en-IN")} drones · {FLEET_COUNTS.get(n)} formations
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
-          </span>
-          <button
-            type="button"
-            onClick={() => setPlaying((p) => !p)}
-            className="min-h-11 rounded-full border border-line-2 px-4 font-mono text-xs text-dim transition-colors hover:text-ink"
-          >
-            {playing ? "Pause" : "Play"}
-          </button>
-        </div>
-      </div>
+        </ChipRail>
 
-      <div className="mt-5 flex flex-wrap items-center gap-2" role="radiogroup" aria-label="LED hues">
-        <span className="mr-1 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">LED hues</span>
-        {PALETTES.map((p) => {
-          const selected = p.id === hues;
-          const swatch = (p.colors.length ? p.colors : ["#ffb347", "#ff2d55", "#3d6dff"]).slice(0, 4);
-          return (
-            <button
-              key={p.id}
-              role="radio"
-              aria-checked={selected}
-              onClick={() => setHues(p.id)}
-              className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 font-mono text-xs transition-colors ${
-                selected ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
-              }`}
-            >
-              <span className="flex" aria-hidden="true">
-                {swatch.map((c, k) => (
-                  <span key={c + k} className="-ml-1 h-3 w-3 rounded-full border border-black/40 first:ml-0" style={{ background: c }} />
-                ))}
-              </span>
-              {p.label}
-            </button>
-          );
-        })}
-      </div>
+        <ChipRail
+          label="LED hues"
+          count={PALETTES.length}
+          active={PALETTES.findIndex((p) => p.id === hues)}
+          group={{ role: "radiogroup", "aria-label": "LED hues" }}
+        >
+          {PALETTES.map((p) => {
+            const selected = p.id === hues;
+            const swatch = (p.colors.length ? p.colors : ["#ffb347", "#ff2d55", "#3d6dff"]).slice(0, 4);
+            return (
+              <button
+                key={p.id}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setHues(p.id)}
+                className={`inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-4 font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber ${
+                  selected ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
+                }`}
+              >
+                <span className="flex" aria-hidden="true">
+                  {swatch.map((c, k) => (
+                    <span key={c + k} className="-ml-1 h-3 w-3 rounded-full border border-black/40 first:ml-0" style={{ background: c }} />
+                  ))}
+                </span>
+                {p.label}
+              </button>
+            );
+          })}
+        </ChipRail>
       </div>
     </div>
   );

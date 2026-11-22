@@ -16,7 +16,9 @@
 //     Show strip sits in the page column, its arrows scroll it, each still
 //     opens its formation (fleet and LED hues in the link)
 //   - Design a Show: one flat formation list (no group headings), the LED
-//     hues picker, a fleet change redraws the figure in place
+//     hues picker, a fleet change redraws the figure in place; every
+//     control fits under the sky on the first screen, formations and hues
+//     slide on one row each and "View all" opens the full list
 //   - masked registration numbers, the harshitcreates.in credit, the
 //     concept-render label
 // Exits non-zero on any failure.
@@ -255,18 +257,40 @@ await check("flat formation list, LED hues, instant fleet change", async () => {
   await page.close();
 });
 
-await check("hero: full-width sky first, controls below, then the heading", async () => {
+await check("hero: full-width sky first, every control on the first screen, then the heading", async () => {
   const { page, errors } = await open("/design-your-show");
   await page.waitForSelector("canvas", { timeout: 30000 });
   const r = await page.evaluate(() => {
     const c = document.querySelector("main canvas").getBoundingClientRect();
     const tabs = document.querySelector('[data-formations]')?.getBoundingClientRect().top ?? -1;
     const h1 = document.querySelector("main h1").getBoundingClientRect().top;
-    return { w: c.width, vw: document.documentElement.clientWidth, top: c.top, h: c.height, vh: innerHeight, tabs, h1 };
+    const dock = document.querySelector('[aria-label="LED hues"]').getBoundingClientRect().bottom;
+    return { w: c.width, vw: document.documentElement.clientWidth, top: c.top, h: c.height, vh: innerHeight, tabs, h1, dock };
   });
   assert(Math.abs(r.w - r.vw) <= 1, `canvas ${r.w}px wide, viewport ${r.vw}px`);
-  assert(r.top < 90 && r.h > r.vh * 0.8, `canvas top ${r.top}px, height ${r.h}px`);
+  assert(r.top < 90 && r.h > r.vh * 0.55, `canvas top ${r.top}px, height ${r.h}px`);
+  assert(r.dock <= r.vh, `LED hues end at ${r.dock}px, below the ${r.vh}px first screen`);
   assert(r.tabs > r.top + r.h - 1 && r.h1 > r.tabs, "order should be sky, controls, heading");
+  assert(errors.length === 0, errors.join("; "));
+  await page.close();
+});
+
+await check("formation and LED hue rails: arrows slide them, View all opens the full list", async () => {
+  const { page, errors } = await open("/design-your-show");
+  await page.waitForSelector("[data-formations] button", { timeout: 30000 });
+  const rail = "[data-formations]";
+  const left = () => page.$eval(rail, (el) => el.scrollLeft);
+  assert((await page.$eval(rail, (el) => el.scrollWidth > el.clientWidth + 10)), "formations fit on one row: no rail");
+  await page.click('button[aria-label="Scroll Formation on"]');
+  await page.waitForTimeout(800);
+  assert((await left()) > 100, "next arrow did not slide the formations");
+  const all = page.locator("button", { hasText: /^View all \d+$/ }).first();
+  await all.click();
+  assert((await page.$eval(rail, (el) => el.scrollWidth <= el.clientWidth + 1)), "View all left the list scrolling");
+  assert((await page.$$('button[aria-expanded="true"]')).length === 1, "View all is not marked expanded");
+  await page.click("button:has-text('Show fewer')");
+  assert(await page.$('[role="radiogroup"][aria-label="LED hues"]'), "LED hues rail missing");
+  assert(await page.$('button[aria-label="Scroll LED hues on"]'), "LED hues rail has no arrows");
   assert(errors.length === 0, errors.join("; "));
   await page.close();
 });

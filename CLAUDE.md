@@ -121,8 +121,10 @@ redraws in place. **Choreography stays under 8 m/s** (`MAX_DRONE_SPEED`,
 are light only and never add drones outside the model (tested). LED hues:
 15 vivid themes (`src/lib/show/palettes.ts`), each laid on its own way
 (`applyHues` modes: gradient, bands, rings, sweep, Holi patches); ids
-travel in share links — never rename or remove one. The 3D sky is the page's full-width hero (controls
-below, heading after); **the camera moves only when the visitor moves it**
+travel in share links — never rename or remove one. The 3D sky is the page's full-width hero, shortened so the
+control dock (Theme / Fleet, then formation and LED hue sliders with
+"View all" — `ChipRail.tsx`, `skyHeight.ts`) fits on the first screen;
+heading after; **the camera moves only when the visitor moves it**
 (no auto-rotate); figures hold still; a plain wheel scrolls the page,
 Ctrl/⌘ + wheel zooms. Model points load on demand (`scans/manifest.ts`);
 Neutral tone mapping here, AgX on home. See README > Design a Show formations;

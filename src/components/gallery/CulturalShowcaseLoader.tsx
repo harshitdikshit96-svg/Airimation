@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { SKY_HEIGHT } from "./skyHeight";
 import { onLoadedAndNear } from "@/components/swarm/defer";
 
 function Placeholder() {
   return (
-    <div className="relative flex h-[calc(100svh-64px)] min-h-[480px] items-center justify-center overflow-hidden bg-black">
+    <div className={`relative flex ${SKY_HEIGHT} items-center justify-center overflow-hidden bg-black`}>
       {/* The same dusk sky as a still, so the first screen isn't a black box. */}
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative still, sized by CSS */}
       <img src="/posters/backdrop.jpg" alt="" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
