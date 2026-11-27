@@ -1,0 +1,361 @@
+{
+  "project": "airmation-website",
+  "scannedAt": "2026-11-27T19:08:17.611Z",
+  "stack": {
+    "next": "16.2.10",
+    "nextMajor": 16,
+    "router": "app",
+    "cacheComponents": false,
+    "dbLibs": [
+      "@neondatabase/serverless"
+    ],
+    "outputExport": false
+  },
+  "dbHosts": [
+    {
+      "file": ".env",
+      "key": "DATABASE_URL",
+      "host": "ep-still-violet-at3o1dfk-pooler.c-9.us-east-1.aws.neon.tech",
+      "neon": true,
+      "pooled": true,
+      "region": "us-east-1"
+    }
+  ],
+  "vercelRegions": [],
+  "buildTouchesDb": [],
+  "middleware": null,
+  "wakes": [],
+  "neonVerdict": "can sleep between real writes and admin use",
+  "build": {
+    "stale": false,
+    "noPrerender": false,
+    "builtAt": "2026-11-27T19:08:09.022Z",
+    "routes": [
+      {
+        "url": "/",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/page.tsx"
+      },
+      {
+        "url": "/about",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/about/page.tsx"
+      },
+      {
+        "url": "/api/contact",
+        "kind": "route",
+        "class": "dynamic",
+        "revalidate": null,
+        "prerendered": 0,
+        "readsDb": true,
+        "private": false,
+        "api": true,
+        "source": "src/app/api/contact/route.ts"
+      },
+      {
+        "url": "/apple-icon.png",
+        "kind": "route",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": null,
+        "private": false,
+        "api": false,
+        "source": null
+      },
+      {
+        "url": "/contact",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/contact/page.tsx"
+      },
+      {
+        "url": "/credits",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/credits/page.tsx"
+      },
+      {
+        "url": "/design-your-show",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/design-your-show/page.tsx"
+      },
+      {
+        "url": "/design-your-show/[formation]",
+        "kind": "page",
+        "class": "static-params",
+        "revalidate": false,
+        "prerendered": 56,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/design-your-show/[formation]/page.tsx"
+      },
+      {
+        "url": "/design-your-show/classic",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/design-your-show/classic/page.tsx"
+      },
+      {
+        "url": "/design-your-show/s/[code]",
+        "kind": "page",
+        "class": "static-params",
+        "revalidate": null,
+        "prerendered": 0,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/design-your-show/s/[code]/page.tsx"
+      },
+      {
+        "url": "/design-your-show/s/[code]/opengraph-image",
+        "kind": "route",
+        "class": "static-params",
+        "revalidate": null,
+        "prerendered": 0,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/design-your-show/s/[code]/opengraph-image.tsx"
+      },
+      {
+        "url": "/icon.png",
+        "kind": "route",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": null,
+        "private": false,
+        "api": false,
+        "source": null
+      },
+      {
+        "url": "/internal",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": true,
+        "api": false,
+        "source": "src/app/internal/page.tsx"
+      },
+      {
+        "url": "/internal/quiz",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": true,
+        "api": false,
+        "source": "src/app/internal/quiz/page.tsx"
+      },
+      {
+        "url": "/internal/show-lab",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": true,
+        "api": false,
+        "source": "src/app/internal/show-lab/page.tsx"
+      },
+      {
+        "url": "/internal/swarm-bench",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": true,
+        "api": false,
+        "source": "src/app/internal/swarm-bench/page.tsx"
+      },
+      {
+        "url": "/opengraph-image.jpg",
+        "kind": "route",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": null,
+        "private": false,
+        "api": false,
+        "source": null
+      },
+      {
+        "url": "/privacy",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/privacy/page.tsx"
+      },
+      {
+        "url": "/robots.txt",
+        "kind": "route",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/robots.ts"
+      },
+      {
+        "url": "/shows",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/shows/page.tsx"
+      },
+      {
+        "url": "/sitemap.xml",
+        "kind": "route",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/sitemap.ts"
+      },
+      {
+        "url": "/team",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/team/page.tsx"
+      },
+      {
+        "url": "/vision",
+        "kind": "page",
+        "class": "static",
+        "revalidate": false,
+        "prerendered": 1,
+        "readsDb": false,
+        "private": false,
+        "api": false,
+        "source": "src/app/vision/page.tsx"
+      }
+    ],
+    "middlewareMatchers": null
+  },
+  "writers": [
+    {
+      "file": "src/app/api/contact/route.ts",
+      "entry": true,
+      "via": null,
+      "invalidates": false,
+      "line": 38
+    },
+    {
+      "file": "src/components/home/homeStory.ts",
+      "entry": false,
+      "via": null,
+      "invalidates": false,
+      "line": 69
+    },
+    {
+      "file": "src/components/swarm/audio.ts",
+      "entry": false,
+      "via": null,
+      "invalidates": false,
+      "line": 101
+    },
+    {
+      "file": "src/lib/analytics.ts",
+      "entry": false,
+      "via": null,
+      "invalidates": false,
+      "line": 94
+    }
+  ],
+  "findings": [],
+  "diff": {
+    "fixed": [
+      {
+        "id": "params-no-static-params",
+        "severity": "medium",
+        "file": "src/app/design-your-show/s/[code]/page.tsx",
+        "line": 33,
+        "snippet": "export default async function SharedShowPage({ params }: Params) {",
+        "message": "/design-your-show/s/[code] has no generateStaticParams, so each path renders per request. Export generateStaticParams (top N paths, or [] to render each on first visit and cache it).",
+        "url": "/design-your-show/s/[code]",
+        "readsDb": false
+      },
+      {
+        "id": "public-dynamic-route",
+        "severity": "medium",
+        "file": "src/app/design-your-show/s/[code]/page.tsx",
+        "line": null,
+        "snippet": null,
+        "url": "/design-your-show/s/[code]",
+        "message": "Build output: public page /design-your-show/s/[code] is dynamic (rendered per request). Find what opts it out (request APIs, uncached fetch, searchParams, a dynamic layout)."
+      }
+    ],
+    "introduced": [],
+    "routeChanges": [
+      {
+        "url": "/design-your-show/s/[code]",
+        "before": "dynamic",
+        "after": "static-params"
+      },
+      {
+        "url": "/design-your-show/s/[code]/opengraph-image",
+        "before": "dynamic",
+        "after": "static-params"
+      }
+    ],
+    "verdict": {
+      "before": "wakes on public traffic (every visit or bot hit to a dynamic page queries it)",
+      "after": "can sleep between real writes and admin use"
+    }
+  }
+}

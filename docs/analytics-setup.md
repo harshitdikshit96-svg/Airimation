@@ -2,7 +2,7 @@
 
 Last updated 2026-11-28. **Status: plan approved 27 Nov 2026; code in place; GA4 property
 and GTM container created and configured 28 Nov 2026; container imported into a workspace but
-NOT published; `NEXT_PUBLIC_GTM_ID` not yet set in Vercel** (see §7). The GTM container will be generated from
+NOT published yet; `NEXT_PUBLIC_GTM_ID` set in Vercel and deployed** (see §7). The GTM container will be generated from
 `docs/analytics-plan.json`; change the plan, then rerun the generator. Never edit the
 container by hand.
 
@@ -209,7 +209,8 @@ stores leads without them (Postgres 42703 fallback), so no enquiry is ever lost.
 **Progress, 28 Nov 2026** (owner chose to put both inside the existing harshitcreates accounts,
 so no new Google terms were accepted):
 - ✅ 1 GA4 property + web stream (India time, INR, Arts & Entertainment, small); GTM web
-  container. ⏳ Vercel env var + redeploy — waiting on the owner.
+  container. ✅ Vercel `NEXT_PUBLIC_GTM_ID=GTM-5XBZ5K5M` (Production, Config type); `main`
+  fast-forwarded to `674c6a0` and deployed 28 Nov 2026 (live HTML carries the container ID).
 - ✅ 2 Container generated (16 tags, 15 triggers, 33 variables) and imported into workspace
   "Analytics plan import" (Merge → Rename; 67 added, 0 modified/deleted). Consent overview on.
   **Not published.**
@@ -221,7 +222,11 @@ so no new Google terms were accepted):
   registered — §4's 23 stand; the generator's checklist lists 25. GA4 also auto-starred
   `close_convert_lead` / `qualify_lead` (from the "Generate leads" objective); the site never
   sends them, so they are left as they are. BigQuery export: not set up (owner to decide).
-- ⏳ 3, 4, 6 Preview / DebugView / publish — after the deploy.
+- ✅ 3 GTM Preview on airimation.in, 28 Nov 2026: formation_view (ganesha, pick_method=link),
+  show_customise (control=fleet), share (method=copy), cta_click (shows_hero_book),
+  contact_click (method=email, no address), page_not_found — each `GA4 - <event>` tag once;
+  Google tag once per page; web_vitals as sampled. ✅ 4 DebugView receives them.
+  ⏳ generate_lead (needs a real test enquiry) and ⏳ 6 publish — waiting on the owner.
 
 ## 8. Verification (27 Nov 2026, production build)
 Lighthouse, mobile, median of 3 runs; before = the site before this change, after = with the

@@ -56,6 +56,11 @@ function thumbnailDots(targets: Float32Array, colors: Float32Array, n: number): 
   return dots;
 }
 
+// Same as the page: drawn once per code, then cached.
+export async function generateStaticParams() {
+  return [];
+}
+
 export default async function Image({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
   const recipe = decodeRecipe(code) ?? defaultRecipe();

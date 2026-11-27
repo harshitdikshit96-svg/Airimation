@@ -9,6 +9,12 @@ type Params = { params: Promise<{ code: string }> };
 // Everything is in the URL, so there is nothing to look up and nothing
 // that can expire. The preview image is ./opengraph-image.tsx.
 
+// Rendered on a code's first visit, then served from the cache: the page is a
+// pure function of the code, so no visit after the first runs a function.
+export async function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { code } = await params;
   const recipe = decodeRecipe(code);

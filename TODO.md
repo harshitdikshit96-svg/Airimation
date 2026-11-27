@@ -19,8 +19,13 @@ reach Chrome (the Claude extension wasn't connected), so the browser half is lef
   container `GTM-5XBZ5K5M`, both in the **harshitcreates** accounts (owner's choice). Container
   imported into workspace "Analytics plan import" (unpublished), consent overview on. GA4
   admin §7.5 done except BigQuery (owner to decide). Details: `docs/analytics-setup.md` §7.
-- **Left:** step 6 (Vercel env var + commit/push + deploy), 8 (Preview/DebugView), 9 (publish),
-  10 (delete this file).
+- **Done 28 Nov 2026:** step 6 (Vercel var, `main` → `674c6a0` deployed) and step 8 except
+  `generate_lead`.
+- **Done 28 Nov 2026:** generate_lead check passed (test enquiry); **GTM version 2 published**.
+- **Left (only this):** delete the test enquiry from the live `leads` table — Neon console →
+  SQL editor: `delete from leads where email = 'test@example.com' and name = 'TEST analytics check';`
+  (expect 1 row). Neon's hosts don't resolve from the dev machine's DNS, so it has to be the
+  console. Then delete this file and note it in DECISIONS.md.
 
 ## Decisions already made by the owner (don't re-ask)
 
