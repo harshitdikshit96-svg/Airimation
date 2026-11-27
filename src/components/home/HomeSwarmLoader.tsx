@@ -78,17 +78,17 @@ export default function HomeSwarmLoader() {
 
   const reduced = useSyncExternalStore(subscribeReducedMotion, readReducedMotion, () => false);
   const webgl = useSyncExternalStore(noopSubscribe, hasWebGL, () => true);
-  // Phones see only the PhoneGate (which runs its own copy of this scene);
-  // the page is hidden there, so never start a second WebGL context.
+  // Phones (< 768 px) run the same scene at the low tier (fewer drones, no
+  // skyline ring), as the old phone gate did.
   const phone = useSyncExternalStore(subscribePhone, isPhone, () => false);
 
   useEffect(() => {
-    if (!webgl || phone) return;
+    if (!webgl) return;
     // Start right after load (at the first idle moment), not on the first
     // scroll: waiting left a still poster on screen that "came alive" with a
     // shimmer when the visitor scrolled.
     return onEngageOrIdle(() => setMounted(true), 0);
-  }, [webgl, phone]);
+  }, [webgl]);
 
   // Scroll wiring loads with the scene, never on reduced motion.
   useEffect(() => {
@@ -125,6 +125,7 @@ export default function HomeSwarmLoader() {
         {live && (
           <div className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-100" : "opacity-0"}`}>
             <HomeSwarm
+              tier={phone ? "low" : undefined}
               story={story}
               caption={caption}
               active={active}

@@ -13,11 +13,12 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "@fontsource/ibm-plex-mono/600.css";
 import "./globals.css";
+import Script from "next/script";
 import Header from "@/components/layout/Header";
+import { ANALYTICS_STUB } from "@/lib/analytics";
 import Footer from "@/components/layout/Footer";
 import SiteBackdrop from "@/components/layout/SiteBackdrop";
-import { organizationJsonLd } from "@/lib/jsonld";
-import PhoneGate from "@/components/layout/PhoneGate";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: {
@@ -27,15 +28,6 @@ export const metadata: Metadata = {
   },
   description:
     "Airimation designs, builds and flies synchronised LED drone-swarm light shows for civic celebrations, festivals, weddings and corporate events across North India.",
-  keywords: [
-    "drone show India",
-    "drone light show Noida",
-    "drone light show Delhi NCR",
-    "Airimation",
-    "drone swarm Uttar Pradesh",
-    "wedding drone show",
-    "festival drone show",
-  ],
   metadataBase: new URL("https://airimation.in"),
   openGraph: {
     title: "Airimation | Drone-Swarm Light Shows",
@@ -65,15 +57,23 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        {/* The site itself. On phones (< 768 px) globals.css hides it — it
-            stays in the HTML for search engines — and shows the PhoneGate. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <div className="site-shell">
           <SiteBackdrop />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
-        <PhoneGate />
+        {/* Vercel Web Analytics (src/lib/analytics.ts): production only. */}
+        {process.env.NODE_ENV === "production" && (
+          <>
+            <Script id="va-stub" strategy="afterInteractive">{ANALYTICS_STUB}</Script>
+            <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
+          </>
+        )}
       </body>
     </html>
   );

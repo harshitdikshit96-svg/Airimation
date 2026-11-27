@@ -255,7 +255,7 @@ export default function HomeSwarm({
   reduced: boolean;
   onReady: () => void;
   onFail: () => void;
-  /** Fixed quality tier (the phone gate passes "low"); otherwise detected. */
+  /** Fixed quality tier (phones pass "low"); otherwise detected. */
   tier?: Tier;
 }) {
   return (

@@ -229,53 +229,12 @@ body {
 }
 
 /*
- * Phones (< 768 px, any orientation): the site is hidden and the phone gate
- * shown instead (src/components/layout/PhoneGate.tsx, DECISIONS.md §2).
- * The site stays in the HTML for search engines; only its display changes.
- * `.site-shell` is `display: contents` elsewhere, so it adds no box and the
- * body's flex layout (main grows to push the footer down) is unchanged.
+ * `.site-shell` wraps header, page and footer. It is `display: contents`,
+ * so it adds no box and the body's flex layout (main grows to push the
+ * footer down) is unchanged. (Until 25 Nov 2026 it hid the site on phones
+ * behind a "best seen on a bigger screen" gate; phones now get the site.)
  */
 .site-shell {
   display: contents;
 }
 
-.phone-gate {
-  display: none;
-}
-
-@media (width < 48rem) {
-  html,
-  body {
-    height: 100%;
-    overflow: hidden;
-    overscroll-behavior: none;
-  }
-
-  .site-shell {
-    display: none;
-  }
-
-  .phone-gate {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    background: #03040b;
-    color: var(--ink);
-  }
-
-  /* First paint and fallback: the home poster (beat 0), the same frame the
-     live scene starts on. A CSS background, so only phones fetch it. */
-  .phone-gate-poster {
-    background: #03040b url("/posters/home-portrait.jpg") center / cover no-repeat;
-  }
-}
-
-@media (width < 48rem) and (min-aspect-ratio: 4/5) {
-  .phone-gate-poster {
-    background-image: url("/posters/home.jpg");
-  }
-}

@@ -7,8 +7,8 @@
 //
 // What it guards (each rule is in DECISIONS.md):
 //   - every page loads (200) with no uncaught errors; old URLs redirect
-//   - phones (390 px) see only the phone gate (site hidden, not removed),
-//     no sideways scroll; laptops (1456 px) see the site, never the gate
+//   - phones (390 px) and laptops (1456 px) both see the site, no sideways
+//     scroll (the phone gate was retired on 25 Nov 2026)
 //   - hello@airimation.in is the only company email; /team also shows the team's own @airimation.in addresses
 //   - page headings line up with the header's left edge
 //   - every inner page has the steady dusk backdrop; home has its live scene
@@ -21,12 +21,17 @@
 //     slide on one row each and "View all" opens the full list
 //   - masked registration numbers, the harshitcreates.in credit, the
 //     concept-render label
+//   - formation pages (/design-your-show/<id>, docs/seo/PLAN.md): own H1,
+//     canonical, share image and breadcrumbs; picking another formation
+//     changes the address bar and the copy without loading a page (same
+//     canvas, no document request); the hub's URL is untouched until the
+//     visitor acts; Share (WhatsApp link, clip); unknown ids 404
 // Exits non-zero on any failure.
 
 import { chromium } from "playwright-core";
 
 const base = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "");
-const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show", "/credits"];
+const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show", "/design-your-show/ganesha", "/credits"];
 const failures = [];
 let passed = 0;
 
@@ -57,23 +62,24 @@ async function open(path, width = 1456, height = 900) {
   return { page, res, errors };
 }
 
-async function phoneGateCheck(path) {
-  const { page } = await open(path, 390, 844);
+async function phoneCheck(path) {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(base + path, { waitUntil: "load" });
   await page.waitForTimeout(800);
   const state = await page.evaluate(() => ({
     over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    bodyOverflow: getComputedStyle(document.body).overflowY,
-    mainInHtml: (document.querySelector("main")?.textContent ?? "").trim().length > 0,
-    mail: document.querySelector('.phone-gate a[href="mailto:hello@airimation.in"]')?.getBoundingClientRect().height ?? 0,
+    gate: !!document.querySelector(".phone-gate"),
+    menu: document.querySelector('header button[aria-label="Open menu"]')?.getBoundingClientRect().height ?? 0,
   }));
-  assert(await page.isVisible(".phone-gate"), "phone gate not visible");
-  assert(!(await page.isVisible("main")), "main content visible on a phone");
-  assert(!(await page.isVisible("header")) && !(await page.isVisible("footer")), "header/footer visible on a phone");
-  assert(state.mainInHtml, "main content missing from the HTML (should be hidden, not removed)");
+  assert(await page.isVisible("header"), "header hidden on a phone");
+  assert(await page.isVisible("main h1"), "page heading hidden on a phone");
+  assert(await page.isVisible("footer"), "footer hidden on a phone");
+  assert(!state.gate, "the retired phone gate is back");
   assert(state.over <= 1, `page is ${state.over}px wider than the screen`);
-  assert(state.bodyOverflow === "hidden", `body scrolls (overflow ${state.bodyOverflow})`);
-  assert(state.mail >= 44, `mail link is ${state.mail}px tall (< 44)`);
-  assert(/bigger screen/i.test(await page.textContent(".phone-gate")), "gate message missing");
+  assert(state.menu >= 44, `menu button is ${state.menu}px tall (< 44)`);
+  assert(errors.length === 0, errors.join("; "));
   await page.close();
 }
 
@@ -89,18 +95,17 @@ for (const path of PAGES) {
     await page.close();
   });
 
-  await check("no sideways scroll at 1456px, phone gate hidden", async () => {
+  await check("no sideways scroll at 1456px", async () => {
     const { page } = await open(path, 1456, 844);
     await page.waitForTimeout(800);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     assert(over <= 1, `page is ${over}px wider than the screen`);
-    assert(!(await page.isVisible(".phone-gate")), "phone gate visible on a laptop");
     assert(await page.isVisible("main"), "main content hidden on a laptop");
     await page.close();
   });
 
-  await check("at 390px: phone gate shown, site hidden but in the HTML, no sideways scroll", async () => {
-    await phoneGateCheck(path);
+  await check("at 390px: the site itself (header, heading, footer, menu), no sideways scroll", async () => {
+    await phoneCheck(path);
   });
 
   await check("hello@ is the only company email (team addresses on /team only)", async () => {
@@ -139,43 +144,50 @@ for (const path of PAGES) {
 }
 
 console.log("/internal");
-await check("at 390px: phone gate shown, site hidden", async () => {
-  await phoneGateCheck("/internal");
-});
-await check("at 1456px: light theme, no phone gate", async () => {
+await check("at 1456px: light theme", async () => {
   const { page } = await open("/internal");
-  assert(!(await page.isVisible(".phone-gate")), "phone gate visible on a laptop");
   const bg = await page.evaluate(() => getComputedStyle(document.querySelector("main > div")).backgroundColor);
   assert(bg === "rgb(255, 240, 246)", `internal background is ${bg}`);
   await page.close();
 });
 
 console.log("phones");
-await check("the gate plays the home scene; the hidden page starts no 3D of its own", async () => {
-  const { page } = await open("/", 390, 844);
-  await page.waitForSelector(".phone-gate canvas", { timeout: 15000 });
-  await page.waitForTimeout(1500);
+await check("home runs its live scene on a phone (one canvas)", async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await page.goto(base + "/", { waitUntil: "load" });
+  await page.waitForSelector("canvas", { timeout: 20000 });
+  await page.waitForTimeout(1000);
   const canvases = await page.evaluate(() => document.querySelectorAll("canvas").length);
-  assert(canvases === 1, `${canvases} canvases on a phone (expected only the gate's)`);
+  assert(canvases === 1, `${canvases} canvases on the home page`);
   await page.close();
 });
-await check("reduced motion: the gate keeps the still poster", async () => {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
-  await page.goto(base + "/shows", { waitUntil: "load" });
-  await page.waitForTimeout(3000);
-  assert(!(await page.$(".phone-gate canvas")), "live scene started on reduced motion");
-  const bg = await page.evaluate(() => getComputedStyle(document.querySelector(".phone-gate-poster")).backgroundImage);
-  assert(/home-portrait\.jpg/.test(bg), `poster is ${bg}`);
-  await page.close();
-});
-await check("laptops never load the gate's scene or poster", async () => {
-  const { page } = await open("/shows");
-  const requests = [];
-  page.on("request", (r) => requests.push(r.url()));
-  await page.waitForTimeout(4000);
-  assert(!(await page.$(".phone-gate canvas")), "gate scene mounted on a laptop");
-  const loaded = await page.evaluate(() => performance.getEntriesByType("resource").map((e) => e.name));
-  assert(![...loaded, ...requests].some((u) => /home-portrait\.jpg/.test(u)), "phone poster fetched on a laptop");
+await check("Design a Show works on a phone: sky, then the dock, Share reachable", async () => {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(base + "/design-your-show/diya", { waitUntil: "load" });
+  await page.waitForSelector("[data-formations] button", { timeout: 30000 });
+  assert(await page.isVisible("button:has-text('Share')"), "Share button hidden");
+  // Each rail shows its chips (they once shrank to 0 px beside the buttons),
+  // and every dock control sits fully inside the screen.
+  const rails = await page.$$eval('[data-formations], [role="radiogroup"][aria-label="LED hues"]', (els) =>
+    els.map((el) => ({ w: el.getBoundingClientRect().width, chip: el.querySelector("button")?.getBoundingClientRect().width ?? 0 })),
+  );
+  assert(rails.length === 2 && rails.every((r) => r.w > 200 && r.chip > 40), `rails too narrow: ${JSON.stringify(rails)}`);
+  // (Chips inside a rail may sit off-screen — the rail slides — so skip those.)
+  const outside = await page.$$eval("#theme, #fleet, main button", (els) =>
+    els
+      .filter((el) => el.offsetParent !== null && !el.closest('[data-formations], [aria-label="LED hues"]'))
+      .filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && (r.left < -1 || r.right > innerWidth + 1);
+      })
+      .map((el) => el.id || el.getAttribute("aria-label") || el.textContent?.trim()),
+  );
+  assert(outside.length === 0, `controls cut off: ${outside.join(", ")}`);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  assert(over <= 1, `page is ${over}px wider than the screen`);
+  assert(errors.length === 0, errors.join("; "));
   await page.close();
 });
 
@@ -226,7 +238,7 @@ await check("Design a Show strip: inside the page column, arrows scroll it, stil
   assert((await strip.evaluate((el) => el.scrollLeft)) > 100, "next did not scroll the strip");
   assert(!(await prev.isDisabled()), "previous still disabled after scrolling");
   const hrefs = await page.$$eval("#design ul a", (as) => as.map((a) => a.getAttribute("href")));
-  assert(hrefs.length >= 4 && hrefs.every((h) => /formation=[a-z-]+&fleet=5000&hues=[a-z]+/.test(h)), hrefs.join(" "));
+  assert(hrefs.length >= 4 && hrefs.every((h) => /^\/design-your-show\/[a-z-]+\?fleet=5000&hues=[a-z]+$/.test(h)), hrefs.join(" "));
   const imgs = await page.$$eval("#design ul img", (els) => els.map((e) => e.alt.length));
   assert(imgs.every((n) => n > 20), "a still has no alt text");
   assert(errors.length === 0, errors.join("; "));
@@ -311,6 +323,101 @@ await check("wheel over the sky scrolls the page; Ctrl+wheel zooms instead", asy
   await page.waitForTimeout(400);
   assert((await page.evaluate(() => scrollY)) === 0, "Ctrl+wheel scrolled the page");
   assert(await page.$('button[aria-label="Zoom in"]'), "zoom buttons missing");
+  assert(errors.length === 0, errors.join("; "));
+  await page.close();
+});
+
+console.log("formation pages");
+await check("own H1, canonical, share image, breadcrumbs, still; listed on the hub", async () => {
+  const { page, res } = await open("/design-your-show/ganesha");
+  assert(res.status() === 200, `status ${res.status()}`);
+  const meta = await page.evaluate(() => ({
+    h1: document.querySelector("main h1")?.textContent,
+    canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
+    og: document.querySelector('meta[property="og:image"]')?.getAttribute("content"),
+    title: document.title,
+    crumbs: [...document.querySelectorAll('script[type="application/ld+json"]')].some((s) => s.textContent.includes("BreadcrumbList")),
+    still: !!document.querySelector('img[src*="renders%2Ff%2Fganesha.webp"], img[src*="/renders/f/ganesha.webp"]'),
+  }));
+  assert(meta.h1 === "Ganesha drone light show", `h1 "${meta.h1}"`);
+  assert(meta.canonical === "https://airimation.in/design-your-show/ganesha", `canonical ${meta.canonical}`);
+  assert(/\/renders\/og\/ganesha\.jpg$/.test(meta.og ?? ""), `og:image ${meta.og}`);
+  assert(/^Ganesha drone light show/.test(meta.title), `title "${meta.title}"`);
+  assert(meta.crumbs, "no BreadcrumbList");
+  assert(meta.still, "no page still");
+  await page.close();
+  const hub = await open("/design-your-show");
+  const links = await hub.page.$$eval('a[href^="/design-your-show/"]', (as) => new Set(as.map((a) => a.getAttribute("href"))).size);
+  assert(links >= 50, `hub links to ${links} formation pages`);
+  await hub.page.close();
+});
+await check("unknown formation is a 404", async () => {
+  const { page, res } = await open("/design-your-show/not-a-formation");
+  assert(res.status() === 404, `status ${res.status()}`);
+  await page.close();
+});
+await check("picking a formation changes the URL and copy, never the page", async () => {
+  const { page, errors } = await open("/design-your-show/ganesha");
+  await page.waitForSelector("[data-formations] button", { timeout: 30000 });
+  await page.waitForSelector("main canvas", { timeout: 30000 });
+  await page.evaluate(() => (window.__sky = document.querySelector("main canvas")));
+  const docs = [];
+  page.on("request", (r) => r.resourceType() === "document" && docs.push(r.url()));
+  await page.click('[data-formations] button:text-is("Nandi")');
+  await page.waitForTimeout(800);
+  const after = await page.evaluate(() => ({
+    path: location.pathname,
+    search: location.search,
+    same: window.__sky === document.querySelector("main canvas"),
+    h1: document.querySelector("main h1")?.textContent,
+    title: document.title,
+  }));
+  assert(after.path === "/design-your-show/nandi", `path ${after.path}`);
+  assert(/fleet=\d+/.test(after.search) && /hues=/.test(after.search), `search ${after.search}`);
+  assert(after.same, "the sky was re-created");
+  assert(docs.length === 0, `loaded ${docs.join(", ")}`);
+  assert(after.h1 === "Nandi drone light show", `h1 "${after.h1}"`);
+  assert(/^Nandi drone light show/.test(after.title), `title "${after.title}"`);
+  await page.selectOption("#fleet", "5000");
+  await page.waitForTimeout(300);
+  assert((await page.evaluate(() => location.search)).includes("fleet=5000"), "fleet not in the URL");
+  assert(errors.length === 0, errors.join("; "));
+  await page.close();
+});
+await check("hub: URL untouched on load; old ?formation= links still open their figure", async () => {
+  const { page } = await open("/design-your-show");
+  await page.waitForSelector("[data-formations] button", { timeout: 30000 });
+  await page.waitForTimeout(500);
+  assert((await page.evaluate(() => location.pathname + location.search)) === "/design-your-show", "URL changed on load");
+  await page.close();
+  const old = await open("/design-your-show?formation=damru&fleet=500");
+  await old.page.waitForSelector("[data-formations] button[aria-pressed='true']", { timeout: 30000 });
+  const pressed = await old.page.textContent("[data-formations] button[aria-pressed='true']");
+  assert(/damru/i.test(pressed), `opened on ${pressed}`);
+  await old.page.close();
+});
+await check("a formation that needs a bigger fleet opens at a fleet that flies it", async () => {
+  const { page } = await open("/design-your-show/somaskanda?quality=low");
+  await page.waitForSelector("[data-formations] button[aria-pressed='true']", { timeout: 30000 });
+  assert(/somaskanda/i.test(await page.textContent("[data-formations] button[aria-pressed='true']")), "fell back to another figure");
+  assert(Number(await page.inputValue("#fleet")) >= 1500, "fleet too small for Somaskanda");
+  await page.close();
+});
+await check("Share: WhatsApp link to this show; a clip records and downloads", async () => {
+  const { page, errors } = await open("/design-your-show/diya");
+  await page.waitForSelector("main canvas", { timeout: 30000 });
+  await page.click("button:has-text('Share')");
+  const wa = await page.getAttribute('[data-share-menu] a[href^="https://wa.me/"]', "href");
+  assert(decodeURIComponent(wa).includes("/design-your-show/diya?fleet="), `WhatsApp link ${wa}`);
+  assert(/concept/i.test(decodeURIComponent(wa)), "share text doesn't say concept");
+  const save = page.locator("[data-share-menu] button", { hasText: /Save a \d+-second clip/ });
+  if (await save.count()) {
+    await save.click();
+    const link = page.locator('[data-share-menu] a[download]');
+    await link.waitFor({ timeout: 25000 });
+    const size = await page.evaluate(async () => (await (await fetch(document.querySelector("[data-share-menu] a[download]").href)).blob()).size);
+    assert(size > 20000, `clip is ${size} bytes`);
+  }
   assert(errors.length === 0, errors.join("; "));
   await page.close();
 });

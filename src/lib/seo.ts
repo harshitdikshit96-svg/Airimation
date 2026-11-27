@@ -19,7 +19,18 @@ const SHARE_IMAGE = {
   alt: "Concept render: the Taj Mahal drawn in rose-gold drone lights above a city skyline at dusk",
 };
 
-export function pageMeta({ title, description, path }: { title: string; description: string; path: string }): Metadata {
+export function pageMeta({
+  title,
+  description,
+  path,
+  image,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  /** A page's own share image (formation pages); default: the site's. */
+  image?: { url: string; alt: string };
+}): Metadata {
   return {
     title,
     description,
@@ -31,7 +42,7 @@ export function pageMeta({ title, description, path }: { title: string; descript
       siteName: "Airimation",
       locale: "en_IN",
       type: "website",
-      images: [SHARE_IMAGE],
+      images: [image ? { ...SHARE_IMAGE, ...image } : SHARE_IMAGE],
     },
     twitter: { card: "summary_large_image", title: `${title} | Airimation`, description },
   };

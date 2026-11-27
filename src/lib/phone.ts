@@ -1,8 +1,7 @@
 /**
  * Phones: viewport narrower than Tailwind's `md` (48rem = 768 px), in any
- * orientation. Below it the site shows only the phone gate — the dusk scene
- * with a note to open the site on a bigger screen (DECISIONS.md §2). The
- * CSS side of the same rule is `@media (width < 48rem)` in globals.css.
+ * orientation. Phones get the full site (since 25 Nov 2026); the home scene
+ * runs at the low quality tier there (HomeSwarmLoader).
  */
 export const PHONE_QUERY = "(width < 48rem)";
 

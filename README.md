@@ -49,14 +49,22 @@ npm run lint    # eslint
 | `/team` | Directors and advisors, bios and photos |
 | `/vision` | Build status, the two tracks (shows, then R&D), dated roadmap |
 | `/design-your-show` | 3D simulator: full-width sky hero, fleet 100–5,000 (100 / 500 / 1,500 / 3,000 / 5,000), 55 formations (`/gallery` redirects here) |
+| `/design-your-show/<id>` | One page per formation (56, prerendered): the same live sky opened on that figure, plus its own copy, still and share image. Picking another formation rewrites the URL, never reloads (`docs/seo/PLAN.md`) |
 | `/design-your-show/classic` | Archived formation-picker configurator (noindex; old share links) |
 | `/credits` | Credits for the CC BY 3D models |
 | `/contact` | Contact form (posts to `/api/contact`) |
 | `/internal` | Internal academy (own light theme) |
 
-**Phones** (< 768 px) see only the live drone animation and a note to open
-the site on a bigger screen, with a hello@airimation.in button
-(`src/components/layout/PhoneGate.tsx`). The pages stay in the HTML.
+**Phones** (< 768 px) get the full site; the home scene runs at the low
+quality tier there. (A "best seen on a bigger screen" gate was retired on
+25 Nov 2026.)
+
+**Formation pages.** Copy: `src/lib/cultural/pages.ts` (plain data, one
+entry per formation, tested). Images: render all formations at 5,000
+drones and crop them —
+`npx vite-node scripts/render-formations.ts -- <site> <dir> 5000 all 2.5`,
+then `node scripts/compress-formation-pages.mjs <dir>/5000`. Adding a
+formation means adding its copy entry and re-running both.
 
 ## Contact form → database
 

@@ -69,7 +69,7 @@ export default function DesignStrip({ items, fleet, children }: { items: Item[];
         {items.map((item, i) => (
           <li key={item.id} className="w-[46%] shrink-0 snap-start lg:w-[40%]">
             <Link
-              href={`/design-your-show?formation=${item.id}&fleet=${fleet}&hues=${item.hues}`}
+              href={`/design-your-show/${item.id}?fleet=${fleet}&hues=${item.hues}`}
               className="group block focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber"
             >
               <Image

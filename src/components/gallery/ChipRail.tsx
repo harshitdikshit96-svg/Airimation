@@ -70,12 +70,15 @@ export default function ChipRail({
   };
 
   return (
-    <div className="flex items-start gap-3">
+    // Phones: label and buttons on one line, the chips full width under them
+    // (side by side there is no room left for the chips). Arrows hide —
+    // a swipe slides the rail. sm and up: one row.
+    <div className="flex flex-wrap items-start gap-x-3 gap-y-2 sm:flex-nowrap">
       <span className={`${ROW_LABEL} pt-[15px]`}>{label}</span>
       <div
         ref={track}
         {...group}
-        className={`relative flex min-w-0 flex-1 gap-2 ${
+        className={`relative order-last flex min-w-0 basis-full gap-2 sm:order-none sm:basis-auto sm:flex-1 ${
           open ? "flex-wrap" : "overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         }`}
         style={
@@ -86,16 +89,16 @@ export default function ChipRail({
       >
         {children}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-2 sm:ml-0">
         {!open && (
-          <>
+          <span className="hidden items-center gap-2 sm:flex">
             <button type="button" aria-label={`Scroll ${label} back`} className={ARROW} disabled={edge.start} onClick={() => step(-1)}>
               <ChevronLeft size={16} aria-hidden="true" />
             </button>
             <button type="button" aria-label={`Scroll ${label} on`} className={ARROW} disabled={edge.end} onClick={() => step(1)}>
               <ChevronRight size={16} aria-hidden="true" />
             </button>
-          </>
+          </span>
         )}
         <button
           type="button"

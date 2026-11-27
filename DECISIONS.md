@@ -81,8 +81,18 @@ Rules: on the website, directors first, then advisors (9 Nov 2026). In **grant m
 - `/biscope` → `/shows` (permanent redirect in `next.config.ts`).
 - No full registration numbers or street address anywhere the browser receives (footer, contact page, JSON-LD).
 
-**Phones** (12 Nov 2026)
-- Below 768 px wide the site shows only the home scene's live drone animation (low quality tier, poster first) and a gentle note: "Airimation is best seen on a bigger screen", with a hello@airimation.in button (`PhoneGate.tsx`, `src/lib/phone.ts`). The pages stay in the server HTML (hidden by CSS) so search engines still read them; the gate's 3D loads only on phones.
+**Phones** (25 Nov 2026; replaces the 12 Nov phone gate)
+- Phones get the full site. The "best seen on a bigger screen" gate is retired: Google indexes from its phone crawler, and most Indian visitors and every WhatsApp link open on a phone (SEO audit, `docs/seo/PLAN.md` A1). Below 768 px (`src/lib/phone.ts`) the home scene runs at the low quality tier; Design a Show runs at the tier the device earns.
+- Design a Show's dock stacks on small screens rather than shrinking: below 640 px each rail is a label line (with "View all"; arrows hidden, a swipe slides it) over its full-width chips; below 768 px Theme, Fleet and Share/Pause each take a line. The sky's height follows the dock per breakpoint (`skyHeight.ts`) so every control stays on the first screen at any width.
+
+**SEO and growth** (25 Nov 2026, `docs/seo/PLAN.md`)
+- **One page per formation:** `/design-your-show/<id>`, prerendered (`generateStaticParams`, unknown ids 404), each with its own title, description, canonical, share image (`public/renders/og/<id>.jpg`), H1, copy (`src/lib/cultural/pages.ts`), still (`public/renders/f/<id>.webp`), breadcrumbs, related links; all listed in the sitemap and in the hub's "Every formation in the library" index.
+- **Picking a formation never loads a page.** The same sky as the hub, opened on the page's figure; a chip, fleet or hue change rewrites the address bar with `history.replaceState` (`/design-your-show/<id>?fleet=&hues=`) and swaps the copy and tab title in place. The URL is untouched until the visitor acts; the tour (auto-advance) keeps the hub URL. Old `?formation=` links and capture mode work as before. A linked formation opens at a fleet that flies it.
+- **Share** on the dock: phone share sheet, WhatsApp, copy link, and a 10-second watermarked clip of the live sky ("Concept render · n drones · airimation.in"), MP4 where the browser records it, else WebM. Nothing is uploaded.
+- **Model credits stay on `/credits`** (12 Nov rule); formation pages link there.
+- **Titles** are keyword-led (e.g. "Drone Light Shows for Weddings, Festivals & Events"); the `keywords` meta tag is gone (search engines ignore it).
+- **Structured data:** Organization (with `@id`), WebSite, Service on `/shows` (no price, no reviews, no claim of shows flown), BreadcrumbList on formation pages.
+- **Analytics:** Vercel Web Analytics via its first-party script (`src/lib/analytics.ts`, production only, cookieless). Share and clip events are tracked. Must be enabled in the Vercel dashboard. The npm package was not used: npm can't resolve its optional SvelteKit peer next to vitest (ERESOLVE).
 
 **Design**
 - Dark near-black base, IBM Plex fonts self-hosted, amber as the single highlight colour.
@@ -279,6 +289,20 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 ## 5. Change log
 
+### 25 Nov 2026 — round 18 (small screens; collapsible library)
+- **Fix: the formation and LED-hue chips vanished on phones.** The rail put label, arrows and "View all" beside the chips at fixed widths, leaving the chips 0 px. Below 640 px the chips now take their own full-width line (`ChipRail.tsx`); Theme / Fleet / Share stack below 768 px; sky height per breakpoint (`skyHeight.ts`). Checked at 320–1456 px: whole dock on the first screen, no sideways scroll.
+- Sky caption drops the "Ctrl/⌘ + scroll" hint on phones (touch; it wrapped into the zoom buttons at 320 px).
+- **"Every formation in the library" is collapsible**: one closed group per theme with its count (native `<details>`, links stay in the HTML for search).
+- e2e: on a phone both rails show chips and no dock control is cut off.
+
+### 25 Nov 2026 — round 17 (SEO and growth, `docs/seo/PLAN.md`)
+- **Phones see the site**: phone gate retired (`PhoneGate*.tsx`, `phoneGateStory.ts` and its test removed); home scene at the low tier on phones.
+- **56 formation pages** at `/design-your-show/<id>`, with copy, stills, share images, breadcrumbs; hub lists them all; sitemap 7 → 63 URLs. New: `src/lib/cultural/pages.ts` (copy, plain data), `facts.ts` (server join), `src/components/show/DesignStage.tsx`, route `src/app/design-your-show/[formation]/page.tsx`, `scripts/compress-formation-pages.mjs`.
+- **URL follows the pick** without a page load; **Share** menu + **clip recorder** (`ShareMenu.tsx`, `recordClip.ts`).
+- Home stills link to the formation pages.
+- Titles and descriptions rewritten; `keywords` meta removed; WebSite + Service JSON-LD; Organization `@id`.
+- Vercel Web Analytics script and `track()` events.
+
 ### 22 Nov 2026 — round 16
 - **Design a Show: controls on the first screen.** Visitors had to scroll down to change something and back up to see it. The sky is now the first screen less the control dock (188 px); formations and LED hues are one-row sliders with prev/next arrows (smooth, instant under reduced motion), an edge fade, and "View all N" / "Show fewer" to open the full list in place. The chosen chip is kept in view, including on auto-advance. Rows share one label column so the controls line up. Considered and declined: a vertical side panel (it would narrow the horizon).
 - Tests: new e2e check (rails slide, View all opens the list); the hero check now requires the LED hues row inside the first screen.
@@ -404,10 +428,10 @@ Industry guidance favours animation and story over still images, and 3D shapes n
 
 | Command | What it covers | Last run |
 |---|---|---|
-| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 22 Nov 2026 (round 16) |
-| `npm test` | 546 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; phone-gate story; manifest in sync with the model files; no drone near white (every formation but the Tiranga); the 3D shapes are solids; contact-form validation, honeypot and rate limit; SEO (pageMeta, sitemap); home stills are real formations with renders on disk; LED themes vivid, distinct, never white, layouts | ✅ 546/546, 22 Nov 2026 (round 16) |
-| `npm run build` | type check + production build | ✅ 22 Nov 2026 (round 16) |
-| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; phone gate at 390 px on every page (content hidden but in the HTML, no scroll, 44 px button; laptops never load it); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls (all on the first screen), then heading; formation and hue rails slide, View all opens them; wheel over the sky scrolls the page, Ctrl+wheel zooms; home Design a Show strip in the page column, arrows scroll it, links carry formation + fleet + hues | ✅ 71/71, 22 Nov 2026 (round 16, production build) |
+| `npm run lint` | ESLint + retired words ("Airmation", "Biscope", "government") | ✅ 25 Nov 2026 (round 18) |
+| `npm test` | 546 unit tests: share links; every formation exact-count, deterministic, in the show box, under 8 m/s; library rules (model-based only, removed formations stay out, credits, CC0/CC BY only, files intact); no drone outside its model; diya flame on the spout; Tiranga 24 spokes at 200–2,000; band colours; preview maths (bigger fleet = bigger figure, base above skyline, LED hues keep brightness); content (directors, visible advisors, removed members, copy names only existing formations and says "sped up") ; per-drone colour (palette indices valid, no figure one flat colour); hello@ the company email in content and JSON-LD, team addresses only on team members; manifest in sync with the model files; no drone near white (every formation but the Tiranga); the 3D shapes are solids; contact-form validation, honeypot and rate limit; SEO (pageMeta incl. a page's own share image, sitemap with every formation page); formation pages (one per formation and no strays, URL-safe ids clear of `s`/`classic`, unique and substantial copy, no claims of flown shows or clients, minimum fleet in the copy matches the library, still + share image on disk, copy module imports nothing); clip framing (16:9 / 4:5 crop, even sizes); home stills are real formations with renders on disk; LED themes vivid, distinct, never white, layouts | ✅ 553/553, 25 Nov 2026 (round 18) |
+| `npm run build` | type check + production build (56 formation pages prerendered) | ✅ 25 Nov 2026 (round 18) |
+| `npm run test:e2e -- <url>` | in Chrome, against a running site: every page 200 with no errors; no sideways scroll at 390 and 1456 px; h1 aligned with the header; backdrop on inner pages; masked numbers + harshitcreates.in credit; `/biscope` and `/gallery` redirects; home 3D starts before any scroll; concept-render label; Design a Show flat list, no credit line, LED hues, fleet change; /credits page + footer link; at 390 px every page shows the site itself (header, heading, footer, 44 px menu button, no gate, no sideways scroll); home runs one live canvas on a phone; Design a Show usable on a phone (both rails show chips, no dock control cut off); hello@ the only company email (team addresses only on /team); Design a Show hero full width, then controls (all on the first screen), then heading; formation and hue rails slide, View all opens them; wheel over the sky scrolls the page, Ctrl+wheel zooms; home Design a Show strip in the page column, arrows scroll it, links open the formation pages with fleet + hues; formation pages: own H1, canonical, share image, breadcrumbs, still, 56 linked from the hub, unknown id 404; a chip click changes URL, H1 and title with the same canvas and no document request; fleet in the URL; hub URL untouched on load; old `?formation=` links; a big-fleet formation opens at a fleet that flies it; Share: WhatsApp link to this show saying "concept", a clip records and downloads | ✅ 82/82, 25 Nov 2026 (round 18, production build) |
 
 When a rule in this file changes, change its test in the same commit. The round-3 manual checklist (9 Nov) is now covered by these suites.
 
@@ -418,7 +442,9 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [ ] Contact API: if `DATABASE_URL` is missing in production, leads only reach the server log while the visitor sees success. Decide: keep, or show an error in production. Consider a Vercel firewall rate-limit rule (the built-in limit is per instance).
 - [ ] The logo SVG is 69 KB (221 subpaths) on every page; simplify it (svgo) or ship a small WebP.
 - [ ] Hidden advisors' photos (rajeev, deepak, vishal) are still publicly reachable under /team/ — remove them from `public/` if they shouldn't be.
-- [ ] Push `feat/showcase-models`, check the Vercel preview on a real phone (the gate) and a MacBook, then merge to `main`.
+- [ ] Check the Vercel preview on a real phone (now the full site, not the gate) and a MacBook before pushing round 17.
+- [ ] SEO phase 2 (`docs/seo/PLAN.md` §3): Bing Webmaster Tools, Google Business Profile (service-area), one address form (Noida vs Greater Noida in JSON-LD), guides, outreach, festival calendar; enable Web Analytics in Vercel.
+- [ ] Clips are fragmented MP4/WebM straight from the browser recorder; spot-check that Instagram and WhatsApp accept one from a real phone.
 - [ ] Verify the CIN state code ("UW" vs "UP").
 - [ ] Iconography review of Ganesha, Om, and the **Ram Mandir** model before promoting them (Mahadev was removed).
 - [ ] Test-import one `*.skybrush.zip` in Skybrush Studio for Blender.
@@ -428,13 +454,13 @@ When a rule in this file changes, change its test in the same commit. The round-
 - [x] `Airimation_Context_Brief.md` updated from this file (12 Nov, round 9).
 - [ ] Choose a new flagship show name (or decide not to have one).
 - [x] One public email: hello@airimation.in everywhere (12 Nov, round 9).
-- [ ] **Make sure hello@airimation.in actually receives mail before launch** — on phones it is now the only way to reach us.
+- [ ] **Make sure hello@airimation.in actually receives mail before launch.**
 - [ ] `/internal` academy progress bar still uses `backdrop-blur` over its 2D hero canvas (internal page only; low priority).
 - [ ] Iconography review of the scanned Ganesha (it is a Javanese depiction) and the Natarajas before promoting them.
 - [x] Ram Mandir: modelled by Airimation in Blender (12 Nov, round 9); reads from 1,500 drones. (The Ram figure was made too, then removed in round 12.)
-- [ ] With 55 formations, consider a search box (phones now see the gate, so it's a desktop-only question).
+- [ ] With 56 formations, consider a search box on Design a Show.
 - [x] Clay diya: Sketchfab "Diya in Blender" (CC BY) replaced the Roman lamp (12 Nov).
 - [ ] Re-run `scripts/render-poster.mjs` after any change to the scene's look (posters and backdrop are stills of it).
-- [ ] Phones: watch analytics and Search Console after launch — a phone visitor sees only the gate, which may weigh on mobile ranking; revisit if most traffic is mobile.
+- [ ] Phones: watch analytics and Search Console after launch (sitemap submitted 25 Nov 2026); check Core Web Vitals on mobile now that phones get the full site and the home 3D.
 - [ ] Store the converter options with each formation (`scan-to-formation.mjs` doesn't record them; `scan-colors.mjs` had to re-find the alignment).
 

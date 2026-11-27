@@ -22,14 +22,20 @@ function Placeholder() {
 // only after load, once the showcase is near the viewport.
 const CulturalShowcase = dynamic(() => import("./CulturalShowcase"), { ssr: false, loading: Placeholder });
 
-export default function CulturalShowcaseLoader() {
+export default function CulturalShowcaseLoader({
+  initialFormation,
+  onPicked,
+}: {
+  initialFormation?: string;
+  onPicked?: (id: string | null) => void;
+}) {
   const anchor = useRef<HTMLDivElement | null>(null);
   const [start, setStart] = useState(false);
   useEffect(() => {
     if (!anchor.current) return;
     return onLoadedAndNear(anchor.current, () => setStart(true));
   }, []);
-  if (start) return <CulturalShowcase />;
+  if (start) return <CulturalShowcase initialFormation={initialFormation} onPicked={onPicked} />;
   return (
     <div ref={anchor}>
       <Placeholder />

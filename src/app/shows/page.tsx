@@ -13,11 +13,12 @@ import {
 import { ArrowRight, Feather, Radio, Satellite, Lightbulb } from "lucide-react";
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
+import { showServiceJsonLd } from "@/lib/jsonld";
 
 export const metadata: Metadata = pageMeta({
-  title: "Drone Light Shows",
+  title: "Drone Light Shows for Weddings, Festivals & Events",
   description:
-    "Airimation's drone-swarm light shows — synchronised LED drones choreographed for civic, festival, wedding and corporate events.",
+    "Synchronised LED drone light shows for weddings, festivals, civic celebrations and corporate events in Uttar Pradesh and Delhi NCR — designed, validated, permitted and flown by Airimation, Noida.",
   path: "/shows",
 });
 
@@ -26,6 +27,7 @@ const specIcons = [Feather, Satellite, Radio, Lightbulb];
 export default function ShowsPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(showServiceJsonLd) }} />
       {/* HERO */}
       {/* Same hero as the other inner pages: copy over the site backdrop. */}
       <section className="border-b border-line-2 px-6 py-16 sm:py-24">

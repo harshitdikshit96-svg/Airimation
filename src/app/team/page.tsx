@@ -8,11 +8,11 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "Team",
+  title: "Team — the People Behind Airimation",
   description:
     visibleAdvisors.length > 0
-      ? "The directors and advisors behind Airimation's drone-swarm light shows."
-      : "The directors behind Airimation's drone-swarm light shows.",
+      ? "Meet the directors and advisors building Airimation, a Noida drone-swarm light-show company — technology, research, operations and R&D."
+      : "Meet the directors building Airimation, a Noida drone-swarm light-show company — technology, hardware, research and strategy.",
   path: "/team",
 });
 

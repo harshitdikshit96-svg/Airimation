@@ -20,6 +20,7 @@ import type { Vec3 } from "@/lib/show/types";
 import { SHOW_ALT, THEMES, culturalById, formationsFor, isReady, loadFormation, type AnimatedFormation } from "@/lib/cultural";
 import { PALETTES, getPalette } from "@/lib/show/palettes";
 import ChipRail, { ROW_LABEL } from "./ChipRail";
+import ShareMenu from "./ShareMenu";
 import { SKY_HEIGHT } from "./skyHeight";
 import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphSeconds, MORPH_MAX } from "./showcaseMath";
 
@@ -43,7 +44,7 @@ const FLEET_COUNTS = new Map(FLEETS.map((n) => [n, formationsFor(n).length]));
 
 /** Pill selects: our own chevron, inset from the rounded edge (the native one sits on it). */
 const SELECT =
-  "min-h-11 cursor-pointer appearance-none rounded-full border border-line-2 bg-navy py-0 pl-4 pr-10 font-mono text-xs text-ink transition-colors hover:border-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber";
+  "min-h-11 w-full min-w-0 truncate cursor-pointer appearance-none rounded-full border border-line-2 bg-navy py-0 pl-4 pr-10 font-mono text-xs text-ink transition-colors hover:border-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber";
 const CHEVRON = "pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-dim";
 
 const STAGGER = 0.1;
@@ -376,13 +377,14 @@ function Scene({
 
 /**
  * URL options, read once (client-only component):
- *   ?formation=<id>[&fleet=<n>][&hues=<theme>]  open on that figure (the home gallery's links)
+ *   /design-your-show/<id> (the `initial` prop) or ?formation=<id>  open on that figure
+ *   [&fleet=<n>][&hues=<theme>]   fleet and LED hues
  *   &capture=1[&t=<s>][&az=<deg>] a clean still for scripts/render-formations.ts
  */
-function urlOptions() {
+function urlOptions(initial?: string) {
   const q = new URLSearchParams(window.location.search);
   const fleet = Number(q.get("fleet"));
-  const formation = q.get("formation");
+  const formation = initial && culturalById(initial) ? initial : q.get("formation");
   return {
     fleet: FLEETS.includes(fleet) ? fleet : null,
     formation: formation && culturalById(formation) ? formation : null,
@@ -391,10 +393,27 @@ function urlOptions() {
   };
 }
 
-export default function CulturalShowcase() {
-  const [opts] = useState(urlOptions);
+/** The smallest fleet on offer that flies formation `id` (a linked figure must be on screen). */
+function fleetFor(id: string | null, fleet: number): number {
+  const min = (id && culturalById(id)?.minDrones) || 0;
+  return fleet >= min ? fleet : (FLEETS.find((n) => n >= min) ?? fleet);
+}
+
+export default function CulturalShowcase({
+  initialFormation,
+  onPicked,
+}: {
+  /** The formation page's own figure (/design-your-show/<id>). */
+  initialFormation?: string;
+  /**
+   * The visitor's pick changed: a formation id, or null when the tour is
+   * running. Not called until the visitor touches a control.
+   */
+  onPicked?: (id: string | null) => void;
+} = {}) {
+  const [opts] = useState(() => urlOptions(initialFormation));
   const capture = opts.capture;
-  const [count, setCount] = useState(() => opts.fleet ?? defaultFleet());
+  const [count, setCount] = useState(() => opts.fleet ?? fleetFor(opts.formation, defaultFleet()));
   const [id, setId] = useState(() => opts.formation ?? "tiranga");
   const [hues, setHues] = useState(() => opts.hues ?? "auto");
   const [theme, setTheme] = useState("all");
@@ -438,6 +457,29 @@ export default function CulturalShowcase() {
   }, [current, list]);
   const loading = readyId !== current.id;
 
+  // The address bar follows the visitor's pick (docs/seo/PLAN.md §2):
+  // /design-your-show/<id>?fleet=&hues= for a picked figure, the hub while
+  // the tour runs. replaceState, not navigation: nothing reloads, and Back
+  // leaves the page instead of stepping through every chip. Untouched (and
+  // in capture mode) the URL is left exactly as it was opened.
+  const touched = useRef(false);
+  const touch = () => {
+    touched.current = true;
+  };
+  const picked = auto ? null : current.id;
+  const pickedRef = useRef(onPicked);
+  useEffect(() => {
+    pickedRef.current = onPicked;
+  }, [onPicked]);
+  useEffect(() => {
+    if (capture || !touched.current) return;
+    const path = picked ? `/design-your-show/${picked}` : "/design-your-show";
+    const next = `${path}?${new URLSearchParams({ fleet: String(count), hues })}`;
+    if (window.location.pathname + window.location.search !== next) window.history.replaceState(null, "", next);
+    pickedRef.current?.(picked);
+  }, [picked, count, hues, capture]);
+  const sky = useRef<HTMLDivElement>(null);
+
   // Auto-advance through the fleet's set until the visitor picks one.
   useEffect(() => {
     if (!auto) return;
@@ -461,7 +503,7 @@ export default function CulturalShowcase() {
   return (
     <div>
       {/* The hero: the sky, full width, straight under the header. */}
-      <div className={`relative ${SKY_HEIGHT} w-full overflow-hidden bg-black`}>
+      <div ref={sky} className={`relative ${SKY_HEIGHT} w-full overflow-hidden bg-black`}>
         <SwarmCanvas
           className="absolute inset-0"
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
@@ -485,7 +527,9 @@ export default function CulturalShowcase() {
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent">
           <p className="mx-auto max-w-[1100px] px-6 pb-4 pt-10 text-right font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-            Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360° · Ctrl/⌘ + scroll to zoom
+            Concept render · {count.toLocaleString("en-IN")} drones · drag to orbit 360°
+            {/* Phones are touch: no Ctrl/⌘, and a third line ran into the zoom buttons. */}
+            <span className="hidden sm:inline"> · Ctrl/⌘ + scroll to zoom</span>
           </p>
         </div>
         <div className="absolute bottom-12 right-4 flex flex-col gap-2 sm:right-6">
@@ -510,15 +554,18 @@ export default function CulturalShowcase() {
 
       {/* The dock: every control on the first screen, under the sky. */}
       <div className="mx-auto flex max-w-[1100px] flex-col gap-3 px-6 py-4">
-        <div className="flex flex-wrap items-center gap-3">
+        {/* Below md: Theme, Fleet and Share/Pause each take a line; md: Share/Pause wrap to a second; lg: one row. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
+          <span className="flex min-w-0 items-center gap-3 max-md:w-full">
           <label htmlFor="theme" className={ROW_LABEL}>
             Theme
           </label>
-          <span className="relative inline-flex">
+          <span className="relative inline-flex min-w-0 max-md:flex-1">
             <select
               id="theme"
               value={theme}
               onChange={(e) => {
+                touch();
                 setTheme(e.target.value);
                 setAuto(true);
               }}
@@ -536,11 +583,21 @@ export default function CulturalShowcase() {
             </select>
             <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
           </span>
-          <label htmlFor="fleet" className="ml-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+          </span>
+          <span className="flex min-w-0 items-center gap-3 max-md:w-full">
+          <label htmlFor="fleet" className={`${ROW_LABEL} md:ml-3 md:w-auto`}>
             Fleet
           </label>
-          <span className="relative inline-flex">
-            <select id="fleet" value={count} onChange={(e) => setCount(Number(e.target.value))} className={SELECT}>
+          <span className="relative inline-flex min-w-0 max-md:flex-1">
+            <select
+              id="fleet"
+              value={count}
+              onChange={(e) => {
+                touch();
+                setCount(Number(e.target.value));
+              }}
+              className={SELECT}
+            >
               {FLEETS.map((n) => (
                 <option key={n} value={n}>
                   {n.toLocaleString("en-IN")} drones · {FLEET_COUNTS.get(n)} formations
@@ -549,10 +606,20 @@ export default function CulturalShowcase() {
             </select>
             <ChevronDown size={14} aria-hidden="true" className={CHEVRON} />
           </span>
+          </span>
+          <span className="ml-auto">
+            <ShareMenu
+              id={current.id}
+              label={current.label}
+              count={count}
+              hues={hues}
+              canvas={() => sky.current?.querySelector("canvas") ?? null}
+            />
+          </span>
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
-            className="ml-auto min-h-11 rounded-full border border-line-2 px-5 font-mono text-xs text-muted transition-colors hover:border-amber hover:text-amber-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+            className="min-h-11 rounded-full border border-line-2 px-5 font-mono text-xs text-muted transition-colors hover:border-amber hover:text-amber-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
           >
             {playing ? "Pause" : "Play"}
           </button>
@@ -570,6 +637,7 @@ export default function CulturalShowcase() {
               type="button"
               aria-pressed={item.id === current.id}
               onClick={() => {
+                touch();
                 setId(item.id);
                 setAuto(false);
               }}
@@ -597,7 +665,10 @@ export default function CulturalShowcase() {
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                onClick={() => setHues(p.id)}
+                onClick={() => {
+                  touch();
+                  setHues(p.id);
+                }}
                 className={`inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-4 font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber ${
                   selected ? "border-amber bg-amber/10 text-amber-soft" : "border-line-2 text-muted hover:text-ink"
                 }`}

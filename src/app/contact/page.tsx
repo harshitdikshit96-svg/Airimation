@@ -7,9 +7,9 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "Contact",
+  title: "Contact — Ask for a Drone Show Quote",
   description:
-    "Get in touch with Airimation to book a drone-swarm light show, or to discuss a partnership.",
+    "Planning a wedding, festival, civic celebration or launch in Uttar Pradesh or Delhi NCR? Tell Airimation the date, venue and idea, and we'll come back with a drone light show plan.",
   path: "/contact",
 });
 

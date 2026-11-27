@@ -123,7 +123,9 @@ are light only and never add drones outside the model (tested). LED hues:
 (`applyHues` modes: gradient, bands, rings, sweep, Holi patches); ids
 travel in share links — never rename or remove one. The 3D sky is the page's full-width hero, shortened so the
 control dock (Theme / Fleet, then formation and LED hue sliders with
-"View all" — `ChipRail.tsx`, `skyHeight.ts`) fits on the first screen;
+"View all" — `ChipRail.tsx`, `skyHeight.ts`) fits on the first screen
+at every width (phones stack it: each rail is a label line over full-width
+chips — never put fixed-width buttons beside the chips there);
 heading after; **the camera moves only when the visitor moves it**
 (no auto-rotate); figures hold still; a plain wheel scrolls the page,
 Ctrl/⌘ + wheel zooms. Model points load on demand (`scans/manifest.ts`);
@@ -134,17 +136,25 @@ Neutral tone mapping here, AgX on home. See README > Design a Show formations;
 the home scene's dusk sky (`SiteBackdrop.tsx`, `public/posters/backdrop*.jpg`),
 under a 55% overlay (white copy still reads).
 
-*Phones* — below 768 px (`src/lib/phone.ts`) every route shows only
-`PhoneGate.tsx`: the home scene's drone animation at the low tier
-(`PhoneGateScene.tsx`, `phoneGateStory.ts`) and a "best seen on a bigger
-screen" note with a hello@airimation.in button. The site is hidden by CSS
-(`.site-shell`), not removed, so the HTML still carries every page.
+*Phones* — below 768 px (`src/lib/phone.ts`) phones get the full site
+(the old phone gate was retired on 25 Nov 2026 for SEO); the home scene
+runs at the low tier there.
+
+*Formation pages and SEO* — see `docs/seo/PLAN.md`. `/design-your-show/<id>`
+(prerendered, one per formation) is the same `DesignShowcaseView` as the hub,
+opened on that figure via `DesignStage.tsx`; copy in
+`src/lib/cultural/pages.ts` (plain data — it ships to the browser, never
+import the library there), joined server-side in `facts.ts`. A pick rewrites
+the URL with `history.replaceState` and swaps the copy — **never a page
+load**. Share + clip: `ShareMenu.tsx`, `recordClip.ts`. Adding a formation:
+add its `pages.ts` entry and render its still + share image
+(`scripts/compress-formation-pages.mjs`); tests fail otherwise.
 
 Home starts its live scene right after load (not on scroll). Its "Design a
 Show" section is a strip of stills (`DesignStrip.tsx`, inside the page
 column, prev/next arrows) of formations at 5,000 drones in LED themes
 (`designTeaser.gallery` in `content.ts`, `public/renders/<id>-<theme>.webp`),
-each linking to `/design-your-show?formation=<id>&fleet=5000&hues=<theme>`;
+each linking to `/design-your-show/<id>?fleet=5000&hues=<theme>`;
 re-render them when the formations' look changes.
 
 *Performance rules* — the swarm canvas caps at 60 fps (`MAX_FPS`), DPR at
@@ -199,4 +209,5 @@ if public, go in `PUBLIC_ROUTES` (sitemap).
 | `/contact` | Contact form (posts to `/api/contact`) |
 | `/credits` | Credits for the CC BY 3D models (noindex, footer link) |
 | `/design-your-show` | Full-width 3D sky hero (100 / 500 / 1,500 / 3,000 / 5,000 drones, 55 formations), controls below, then copy + quote CTA |
+| `/design-your-show/[formation]` | One page per formation (SEO): same sky, opened on that figure; URL follows the visitor's pick without reloading |
 | `/design-your-show/classic` | ARCHIVED formation-picker configurator (noindex); old share links `/design-your-show/s/[code]` still open it |

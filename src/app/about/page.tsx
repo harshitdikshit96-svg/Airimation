@@ -9,9 +9,9 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "About",
+  title: "About — a Noida Drone-Show Company",
   description:
-    "Airimation's mission, founding team and honest read on what the company is today versus where it is building toward.",
+    "Airimation is a Noida drone light-show company that builds its own drones. Our mission, founding team, and an honest read on what we are today and what we are building toward.",
   path: "/about",
 });
 
