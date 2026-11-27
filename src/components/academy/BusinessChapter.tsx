@@ -49,7 +49,7 @@ export default function BusinessChapter({
         Who else is flying
       </p>
       <div className="rounded-2xl border border-int-pink/30 bg-int-pink/[0.06] p-6">
-        <h4 className="mb-3 font-serif text-lg font-medium text-int-ink">
+        <h4 className="mb-3 font-display text-lg font-medium text-int-ink">
           {competitiveLandscape.headline}
         </h4>
         <p className="mb-4 text-[15px] font-light leading-relaxed text-int-ink/90">

@@ -25,7 +25,7 @@ export default function ChapterShell({
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <p className="mb-4 font-mono text-xs tracking-[0.28em] text-int-dim">{eyebrow}</p>
-      <h2 className="mb-4 font-serif text-[clamp(28px,3.6vw,44px)] font-light leading-[1.15] text-int-ink">
+      <h2 className="mb-4 font-display text-[clamp(28px,3.6vw,44px)] font-light leading-[1.15] text-int-ink">
         {title}
       </h2>
       {description && (

@@ -48,7 +48,7 @@ function FormationDetails({ f }: { f: FormationFacts }) {
       <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">DESIGN A SHOW · {f.themeLabel.toUpperCase()}</p>
       <div className="grid gap-10 md:grid-cols-[1fr_340px]">
         <div>
-          <h1 className="mb-6 font-serif text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">{f.heading}</h1>
+          <h1 className="mb-6 font-display text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">{f.heading}</h1>
           <p className="max-w-[62ch] text-base font-light leading-relaxed text-muted">{f.about}</p>
           <dl className="mt-8 grid max-w-[62ch] gap-x-8 gap-y-4 text-sm sm:grid-cols-[max-content_1fr]">
             <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">Fewest drones</dt>

@@ -10,7 +10,7 @@ export default function StatGrid({
       {stats.map((s, i) => (
         <Reveal key={s.label} delay={i * 0.08}>
           <div className="panel-border rounded-2xl bg-panel/60 p-6 h-full">
-            <div className="font-serif text-3xl font-semibold text-amber-soft sm:text-4xl">
+            <div className="font-display text-3xl font-semibold text-amber-soft sm:text-4xl">
               {s.value}
             </div>
             <div className="mt-2 text-sm text-muted">{s.label}</div>

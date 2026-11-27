@@ -14,6 +14,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { StoryState } from "./HomeSwarm";
+import { trackHomeStory } from "@/lib/analytics";
 
 export function setupStory(
   story: StoryState,
@@ -28,7 +29,10 @@ export function setupStory(
   const brand = { p: 0 };
   const dissolve = { p: 0 };
 
+  // home_story_progress: each beat once per page view, when its segment is nearly done.
+  const beats = [lift, loosen, bloom, brand];
   const sync = () => {
+    beats.forEach((b, i) => b.p > 0.9 && trackHomeStory(i + 1));
     story.lit = Math.min(1, lift.p * 1.8);
     story.beat = lift.p + loosen.p + bloom.p + brand.p;
     story.dissolve = dissolve.p;

@@ -54,7 +54,7 @@ export default function RevealCard({
               {eyebrow}
             </p>
           )}
-          <h4 className="font-serif text-lg font-medium text-int-ink">{title}</h4>
+          <h4 className="font-display text-lg font-medium text-int-ink">{title}</h4>
           {teaser && !open && (
             <p className="mt-1.5 text-sm font-light text-int-muted">{teaser}</p>
           )}

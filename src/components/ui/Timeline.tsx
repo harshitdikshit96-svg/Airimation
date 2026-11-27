@@ -17,7 +17,7 @@ export default function Timeline() {
               </div>
               <div className="flex-1 pb-2">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <h4 className="font-serif text-lg font-semibold text-ink">{item.heading}</h4>
+                  <h4 className="font-display text-lg font-semibold text-ink">{item.heading}</h4>
                   <span className="font-mono text-xs text-dim">{item.fleet}</span>
                 </div>
                 <p className="mt-1 text-sm text-muted">{item.detail}</p>

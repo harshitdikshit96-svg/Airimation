@@ -20,7 +20,7 @@ export default function ContactPage() {
         <div className="lg:col-span-2">
           <Reveal>
             <SectionLabel>Get in touch</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink">
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink">
               Let&apos;s talk about your event.
             </h1>
             <p className="mt-5 text-muted">

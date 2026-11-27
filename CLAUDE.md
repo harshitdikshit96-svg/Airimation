@@ -23,7 +23,9 @@ node scripts/compress-renders.mjs <dir>/5000                         # → publi
 ```
 
 Environment variables live in `.env` / `.env.local` (see `.env.example`).
-Only one is used: `DATABASE_URL`, the Neon Postgres pooled connection string.
+Two are used: `DATABASE_URL`, the Neon Postgres pooled connection string, and
+`NEXT_PUBLIC_GTM_ID`, the Google Tag Manager container (loads only when
+`VERCEL_ENV=production`; `ANALYTICS_FORCE_GTM=1` for a local test build).
 Next.js only reads env files at process start — after editing `.env`, fully
 stop and restart `npm run dev` (Fast Refresh does not reload env vars).
 
@@ -68,7 +70,11 @@ registered as `--color-*` theme variables. This palette intentionally
 matches Airimation's existing business-plan/blueprint documents for brand
 consistency — don't introduce new colors without a reason.
 
-Fonts (IBM Plex Sans/Serif/Mono) are self-hosted via `@fontsource/*` packages
+Headings and display numbers use **Clash Display** (`font-display`; Fontshare,
+ITF Free Font License), self-hosted as one variable file
+(`public/fonts/ClashDisplay-Variable.woff2`, `@font-face` in `globals.css`).
+The home swarm's drone wordmark and the clip title card use it too.
+Fonts (IBM Plex Sans/Mono) are self-hosted via `@fontsource/*` packages
 imported in `src/app/layout.tsx`, not `next/font/google`. This was a
 deliberate choice: the build sandbox this project was originally developed in
 has no network access to `fonts.googleapis.com`, and self-hosting is also
@@ -169,6 +175,19 @@ gallery cards were removed in Nov 2026.)
 All of it is presented honestly as "concept renders" (gallery copy, the
 footer note, the tag beside the home phase indicator, the configurator's
 Simulation badge) — don't remove that framing without real show footage.
+
+**Analytics** — GTM + GA4, planned in `docs/analytics-setup.md` (measurement
+plan; `docs/analytics-plan.json` generates the GTM container via the
+`gtm-ga4-analytics` skill). Code only pushes to the dataLayer through
+`src/lib/analytics.ts`; tags live in GTM. Rules: the only key event is
+`generate_lead`, fired after `/api/contact` succeeds — never on a click; no
+personal data in any push; GTM loads lazily from an inline script
+(`gtmBootstrap.ts`, never `next/script`), never on `/internal` or `/api`, only
+on production. Consent Mode v2 (`consent.ts`): EEA/UK/CH denied + banner
+(`ConsentBanner.tsx`, shown for European time zones), granted elsewhere; ads
+denied everywhere. Each lead stores where it came from (`attribution.ts`).
+`/privacy` discloses it. New tracked event → add it to the plan, regenerate
+the container, register its params in GA4.
 
 **Data flow for the contact form:** `ContactForm.tsx` (client component) →
 `POST /api/contact` (`src/app/api/contact/route.ts`; input checked by

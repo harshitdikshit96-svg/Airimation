@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import type { StoryState } from "./HomeSwarm";
+import { trackScene3d } from "@/lib/analytics";
 import { hasWebGL } from "@/components/swarm/quality";
 import { onEngageOrIdle } from "@/components/swarm/defer";
 import SoundToggle from "@/components/swarm/SoundToggle";
@@ -130,8 +131,14 @@ export default function HomeSwarmLoader() {
               caption={caption}
               active={active}
               reduced={reduced}
-              onReady={() => setReady(true)}
-              onFail={() => setFailed(true)}
+              onReady={(tier) => {
+                trackScene3d("home", { result: "live", quality_tier: tier });
+                setReady(true);
+              }}
+              onFail={() => {
+                trackScene3d("home", { result: "failed" });
+                setFailed(true);
+              }}
             />
           </div>
         )}

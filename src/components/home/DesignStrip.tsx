@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { trackSelectFormationStill } from "@/lib/analytics";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Item = { id: string; label: string; hues: string; alt: string; /** LED hues: label and swatch ([] = the formation's own colours). */ theme: { label: string; colors: string[] } };
@@ -70,6 +71,7 @@ export default function DesignStrip({ items, fleet, children }: { items: Item[];
           <li key={item.id} className="w-[46%] shrink-0 snap-start lg:w-[40%]">
             <Link
               href={`/design-your-show/${item.id}?fleet=${fleet}&hues=${item.hues}`}
+              onClick={() => trackSelectFormationStill(item.id)}
               className="group block focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber"
             >
               <Image
@@ -80,7 +82,7 @@ export default function DesignStrip({ items, fleet, children }: { items: Item[];
                 sizes="(min-width: 1100px) 420px, 46vw"
                 className={`block h-auto w-full transition-[filter] duration-300 group-hover:brightness-125 ${i ? "border-l border-black" : ""}`}
               />
-              <span className="block pt-3 font-serif text-[17px] font-light text-muted transition-colors group-hover:text-ink">
+              <span className="block pt-3 font-display text-[17px] font-light text-muted transition-colors group-hover:text-ink">
                 {item.label}
               </span>
               <span className="mt-1 flex items-center gap-2 text-[13px] font-light text-dim">

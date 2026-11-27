@@ -23,7 +23,7 @@ export default function VisionPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>Vision</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               Two tracks, in order.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
@@ -41,7 +41,7 @@ export default function VisionPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>Where we are</SectionLabel>
-            <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-3xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               {buildStatus.title}
             </h2>
             <p className="mt-4 max-w-3xl text-muted">{buildStatus.body}</p>
@@ -66,7 +66,7 @@ export default function VisionPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no={shows.no}>{shows.label}</SectionLabel>
-            <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-3xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               {shows.title}
             </h2>
             <p className="mt-4 max-w-3xl text-muted">{shows.body}</p>
@@ -99,7 +99,7 @@ export default function VisionPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no={research.no}>{research.label}</SectionLabel>
-            <h2 className="mt-3 max-w-3xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-3xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               {research.title}
             </h2>
             <p className="mt-4 max-w-3xl text-muted">{research.body}</p>
@@ -109,7 +109,7 @@ export default function VisionPage() {
             {rdDirections.map((item, i) => (
               <Reveal key={item.title} delay={i * 0.08}>
                 <div className="panel-border h-full rounded-2xl bg-panel/40 p-6">
-                  <h3 className="font-serif text-lg font-semibold text-ink">{item.title}</h3>
+                  <h3 className="font-display text-lg font-semibold text-ink">{item.title}</h3>
                   <p className="mt-2 text-sm text-muted">{item.detail}</p>
                 </div>
               </Reveal>
@@ -118,7 +118,7 @@ export default function VisionPage() {
 
           <Reveal delay={0.2}>
             <div className="mt-10 border-l-2 border-amber pl-5">
-              <h3 className="font-serif text-lg font-semibold text-ink">{pledge.title}</h3>
+              <h3 className="font-display text-lg font-semibold text-ink">{pledge.title}</h3>
               <p className="mt-2 max-w-3xl text-muted">{pledge.body}</p>
             </div>
           </Reveal>
@@ -134,7 +134,7 @@ export default function VisionPage() {
           <div className="mt-8 grid grid-cols-1 gap-10 sm:grid-cols-3">
             {principles.map((item, i) => (
               <Reveal key={item.title} delay={i * 0.07}>
-                <h3 className="font-serif text-lg font-semibold text-ink">{item.title}</h3>
+                <h3 className="font-display text-lg font-semibold text-ink">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
               </Reveal>
             ))}
@@ -145,11 +145,11 @@ export default function VisionPage() {
       <section className="border-t border-line-2 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
-            <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
               Building toward this with us — as a client, a partner or a future teammate?
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <Button href="/contact">
+              <Button cta="vision_contact" href="/contact">
                 Get in Touch <ArrowRight size={16} />
               </Button>
             </div>

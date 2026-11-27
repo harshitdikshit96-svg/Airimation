@@ -46,7 +46,7 @@ function MemberRow({ member }: { member: TeamMember }) {
             <p className="mb-1.5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-cyan-soft sm:text-xs">
               {member.role}
             </p>
-            <h3 className="font-serif text-xl font-semibold text-ink sm:text-3xl">
+            <h3 className="font-display text-xl font-semibold text-ink sm:text-3xl">
               {member.name}
             </h3>
           </div>
@@ -92,7 +92,7 @@ export default function TeamPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>The Team</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               The people building Airimation.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
@@ -138,14 +138,14 @@ export default function TeamPage() {
       <section className="border-t border-line-2 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
-            <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
               Want the fuller story — mission, roadmap and honest positioning?
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
               <Button href="/about">
                 About Airimation <ArrowRight size={16} />
               </Button>
-              <Button href="/contact" variant="ghost">
+              <Button cta="team_contact" href="/contact" variant="ghost">
                 Get in Touch
               </Button>
             </div>

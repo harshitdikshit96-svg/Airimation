@@ -66,7 +66,7 @@ export default function RoadmapExplorer({
           <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-int-pink">
             {active.year}
           </p>
-          <h3 className="mb-3 font-serif text-2xl font-medium text-int-ink">{active.heading}</h3>
+          <h3 className="mb-3 font-display text-2xl font-medium text-int-ink">{active.heading}</h3>
           <p className="mb-4 font-mono text-sm tracking-[0.04em] text-int-ink/80">
             {active.fleet}
           </p>
@@ -93,7 +93,7 @@ export default function RoadmapExplorer({
         <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-int-pink">
           That&apos;s the full tour
         </p>
-        <h3 className="mb-4 font-serif text-xl font-medium text-int-ink">
+        <h3 className="mb-4 font-display text-xl font-medium text-int-ink">
           Ready to prove it?
         </h3>
         <Link

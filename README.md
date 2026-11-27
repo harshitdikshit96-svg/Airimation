@@ -87,14 +87,35 @@ instead of erroring, so you can build and test without a database.
      phone text,
      organization_type text not null,
      event_date date,
-     message text not null
+     message text not null,
+     -- where the enquiry came from (src/lib/attribution.ts; docs/analytics-setup.md)
+     utm_source text, utm_medium text, utm_campaign text,
+     landing_path text, referrer text, ga_client_id text, source_formation text
    );
    ```
+
+   An existing `leads` table (created before 27 Nov 2026) needs the attribution
+   columns added once — additive and nullable, nothing else changes:
+
+   ```sql
+   alter table leads
+     add column if not exists utm_source text,
+     add column if not exists utm_medium text,
+     add column if not exists utm_campaign text,
+     add column if not exists landing_path text,
+     add column if not exists referrer text,
+     add column if not exists ga_client_id text,
+     add column if not exists source_formation text;
+   ```
+
+   Until it runs, `/api/contact` still stores every lead, just without its source.
 
 3. Copy `.env.example` to `.env.local` and fill in:
    - `DATABASE_URL` — Dashboard → Connection Details → **Pooled connection**
      string (keep this secret — it's only ever used server-side in
      `/api/contact`, never exposed to the browser)
+   - `NEXT_PUBLIC_GTM_ID` — the Google Tag Manager container (`GTM-…`). GTM
+     loads only on Vercel production deployments (docs/analytics-setup.md).
 
 The API route uses `@neondatabase/serverless`, Neon's HTTP-based driver —
 it works over fetch rather than a raw TCP connection, so it runs cleanly in

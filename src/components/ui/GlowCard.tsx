@@ -34,7 +34,7 @@ export default function GlowCard({
       )}
     >
       <span className={clsx("inline-block h-2 w-2 rounded-full", dotMap[color])} />
-      <h3 className="mt-4 font-serif text-xl font-semibold text-ink">{title}</h3>
+      <h3 className="mt-4 font-display text-xl font-semibold text-ink">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
       {children}
     </div>

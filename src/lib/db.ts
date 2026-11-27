@@ -21,4 +21,17 @@ export type LeadSubmission = {
   organization_type: string;
   event_date?: string;
   message: string;
+  /** Where the enquiry came from (src/lib/attribution.ts). All optional; never shown to the visitor. */
+  attribution?: LeadAttribution;
 };
+
+export const ATTRIBUTION_FIELDS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "landing_path",
+  "referrer",
+  "ga_client_id",
+  "source_formation",
+] as const;
+export type LeadAttribution = Partial<Record<(typeof ATTRIBUTION_FIELDS)[number], string>>;

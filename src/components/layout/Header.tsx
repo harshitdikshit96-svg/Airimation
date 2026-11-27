@@ -94,7 +94,7 @@ export default function Header() {
           />
           <span
             className={clsx(
-              "font-serif text-lg font-semibold tracking-tight",
+              "font-display text-lg font-semibold tracking-tight",
               isInternal ? "text-int-ink" : "text-ink"
             )}
           >

@@ -31,7 +31,7 @@
 import { chromium } from "playwright-core";
 
 const base = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "");
-const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show", "/design-your-show/ganesha", "/credits"];
+const PAGES = ["/", "/shows", "/about", "/vision", "/team", "/contact", "/design-your-show", "/design-your-show/ganesha", "/credits", "/privacy"];
 const failures = [];
 let passed = 0;
 
@@ -110,7 +110,9 @@ for (const path of PAGES) {
 
   await check("hello@ is the only company email (team addresses on /team only)", async () => {
     const { page } = await open(path);
-    const found = new Set((await page.content()).match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g) ?? []);
+    // Rejoin the streamed RSC chunks first: a chunk boundary can split an address ("h" | "ello@…").
+    const html = (await page.content()).replace(/"\]\)<\/script><script>self\.__next_f\.push\(\[1,"/g, "");
+    const found = new Set(html.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g) ?? []);
     found.delete("you@example.com"); // the contact form's placeholder
     const team = path === "/team" ? ["harshit@airimation.in", "madhuri@airimation.in", "gaurav@airimation.in"] : [];
     assert([...found].every((e) => e === "hello@airimation.in" || team.includes(e)), `found ${[...found].join(", ")}`);
@@ -419,6 +421,113 @@ await check("Share: WhatsApp link to this show; a clip records and downloads", a
     assert(size > 20000, `clip is ${size} bytes`);
   }
   assert(errors.length === 0, errors.join("; "));
+  await page.close();
+});
+
+console.log("analytics (docs/analytics-setup.md)");
+const events = (page, name) => page.evaluate((n) => (window.dataLayer || []).filter((e) => e && e.event === n), name);
+const PII = /asha@example\.com|Asha Test|98100 00000|secret message/;
+await check("no GA/GTM request without a production GTM id; Vercel Analytics gone", async () => {
+  const { page } = await open("/");
+  const reqs = [];
+  page.on("request", (r) => /googletagmanager|google-analytics|_vercel\/insights/.test(r.url()) && reqs.push(r.url()));
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(800);
+  assert(reqs.length === 0, `requests: ${reqs.join(", ")}`);
+  assert(!(await page.$("#gtm-bootstrap")) || process.env.ANALYTICS_FORCE_GTM === "1", "bootstrap rendered outside production");
+  await page.close();
+});
+await check("formation_view after 2 s on screen (link-opened), share, show_customise, scene_3d", async () => {
+  const { page } = await open("/design-your-show/diya");
+  await page.waitForSelector("main canvas", { timeout: 30000 });
+  await page.waitForFunction(() => (window.dataLayer || []).some((e) => e && e.event === "formation_view"), null, { timeout: 30000 });
+  const [v] = await events(page, "formation_view");
+  assert(v.formation_id === "diya" && v.pick_method === "link" && v.page_type === "formation", JSON.stringify(v));
+  await page.selectOption("#fleet", { index: 0 });
+  await page.waitForTimeout(400);
+  const [c] = await events(page, "show_customise");
+  assert(c && c.control === "fleet", `show_customise ${JSON.stringify(c)}`);
+  const s = await events(page, "scene_3d");
+  assert(s.some((e) => e.scene === "design" && e.result === "live" && e.quality_tier), `scene_3d ${JSON.stringify(s)}`);
+  await page.close();
+});
+await check("cta_click on a marked CTA; contact_click on a mailto, without the address", async () => {
+  const { page } = await open("/shows");
+  await page.click("[data-cta='shows_hero_book']");
+  await page.waitForTimeout(400);
+  const [c] = await events(page, "cta_click");
+  assert(c && c.cta_name === "shows_hero_book" && c.link_url === "/contact", JSON.stringify(c));
+  await page.evaluate(() => {
+    const a = document.querySelector("footer a[href^='mailto:']");
+    a.addEventListener("click", (e) => e.preventDefault(), { once: true });
+    a.click();
+  });
+  await page.waitForTimeout(300);
+  const [m] = await events(page, "contact_click");
+  assert(m && m.method === "email" && !JSON.stringify(m).includes("@"), JSON.stringify(m));
+  await page.close();
+});
+await check("contact form: form_start; generate_lead ONLY after the API succeeds; errors name the field; no PII", async () => {
+  // /api/contact is intercepted: the local .env may point at the live database.
+  const { page } = await open("/contact");
+  let reply = { status: 400, body: { error: "Please provide a valid email address.", field: "email" } };
+  let posted = null;
+  await page.route("**/api/contact", (r) => {
+    posted = r.request().postDataJSON();
+    r.fulfill({ status: reply.status, contentType: "application/json", body: JSON.stringify(reply.body) });
+  });
+  await page.fill("#cf-name", "Asha Test");
+  await page.fill("#cf-email", "asha@example.com");
+  await page.selectOption("select[name=organization_type]", { index: 1 });
+  await page.fill("textarea[name=message]", "secret message");
+  await page.click("form#contact button[type=submit]");
+  await page.waitForTimeout(500);
+  assert((await events(page, "form_start")).length === 1, "no form_start");
+  const [err] = await events(page, "form_submit_error");
+  assert(err && err.error_type === "validation" && err.error_field === "email", JSON.stringify(err));
+  assert((await events(page, "generate_lead")).length === 0, "generate_lead fired on a failed submit");
+  reply = { status: 200, body: { ok: true, stored: true } };
+  await page.click("form#contact button[type=submit]");
+  await page.waitForTimeout(600);
+  const leads = await events(page, "generate_lead");
+  assert(leads.length === 1 && /^[a-z_]+$/.test(leads[0].lead_type) && leads[0].lead_time, JSON.stringify(leads));
+  assert(posted && posted.attribution && posted.attribution.landing_path, `attribution not sent: ${JSON.stringify(posted && posted.attribution)}`);
+  const all = JSON.stringify(await page.evaluate(() => window.dataLayer));
+  assert(!PII.test(all), "personal data in the dataLayer");
+  await page.close();
+});
+await check("page_not_found on a 404", async () => {
+  const { page } = await open("/this-page-does-not-exist-404-check");
+  await page.waitForTimeout(500);
+  assert((await events(page, "page_not_found")).length === 1, "no page_not_found");
+  await page.close();
+});
+await check("consent banner: shown in Europe, not in India; Reject is remembered; footer reopens it", async () => {
+  const eu = await browser.newContext({ timezoneId: "Europe/Berlin", viewport: { width: 1280, height: 800 } });
+  const p = await eu.newPage();
+  await p.goto(base + "/about", { waitUntil: "load" });
+  await p.waitForSelector("[role=dialog][aria-label='Cookie choice']", { timeout: 5000 });
+  await p.click("[aria-label='Cookie choice'] button:has-text('Reject')");
+  assert((await p.evaluate(() => localStorage.getItem("consent_v1"))) === "denied", "choice not stored");
+  await p.reload({ waitUntil: "load" });
+  await p.waitForTimeout(500);
+  assert(!(await p.$("[aria-label='Cookie choice']")), "banner back after a choice");
+  await p.click("footer button:has-text('Cookie settings')");
+  await p.waitForSelector("[aria-label='Cookie choice']", { timeout: 3000 });
+  await eu.close();
+  const india = await browser.newContext({ timezoneId: "Asia/Kolkata", viewport: { width: 1280, height: 800 } });
+  const q = await india.newPage();
+  await q.goto(base + "/about", { waitUntil: "load" });
+  await q.waitForTimeout(800);
+  assert(!(await q.$("[aria-label='Cookie choice']")), "banner shown in India");
+  assert(await q.$("footer a[href='/privacy']"), "no privacy link in the footer");
+  await india.close();
+});
+await check("the team's own visits: /internal marks the browser as internal traffic", async () => {
+  const { page } = await open("/internal");
+  await page.waitForTimeout(300);
+  const cookies = await page.context().cookies();
+  assert(cookies.some((c) => c.name === "traffic_type" && c.value === "internal"), "no traffic_type cookie");
   await page.close();
 });
 

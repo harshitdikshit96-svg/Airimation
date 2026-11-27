@@ -98,7 +98,7 @@ export default function AcademyExperience() {
           <p className="mb-4 font-mono text-xs tracking-[0.28em] text-int-dim">
             {academyMeta.tagline}
           </p>
-          <h1 className="font-serif text-[clamp(32px,5.2vw,64px)] font-light leading-[1.1] text-int-ink">
+          <h1 className="font-display text-[clamp(32px,5.2vw,64px)] font-light leading-[1.1] text-int-ink">
             {academyMeta.title}
           </h1>
           <p className="mt-4 max-w-[48ch] text-base font-light text-int-muted">

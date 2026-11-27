@@ -7,8 +7,11 @@ export default function Button({
   children,
   variant = "primary",
   className,
+  cta,
 }: {
   href: string;
+  /** Name for the cta_click event (analytics), e.g. "shows_hero_book". Omit for plain links. */
+  cta?: string;
   children: ReactNode;
   variant?: "primary" | "ghost";
   className?: string;
@@ -21,7 +24,7 @@ export default function Button({
       : "border border-line text-ink hover:border-cyan-soft hover:text-cyan-soft";
 
   return (
-    <Link href={href} className={clsx(base, styles, className)}>
+    <Link href={href} className={clsx(base, styles, className)} {...(cta ? { "data-track": "cta", "data-cta": cta } : {})}>
       {children}
     </Link>
   );

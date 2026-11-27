@@ -21,6 +21,7 @@ import { SHOW_ALT, THEMES, culturalById, formationsFor, isReady, loadFormation, 
 import { PALETTES, getPalette } from "@/lib/show/palettes";
 import ChipRail, { ROW_LABEL } from "./ChipRail";
 import ShareMenu from "./ShareMenu";
+import { trackFormationView, trackScene3d, trackShowCustomise, type PickMethod } from "@/lib/analytics";
 import { SKY_HEIGHT } from "./skyHeight";
 import { fleetScale, PREVIEW_RATE, showAltitude, viewDistance, applyHues, morphSeconds, MORPH_MAX } from "./showcaseMath";
 
@@ -417,6 +418,8 @@ export default function CulturalShowcase({
   const [id, setId] = useState(() => opts.formation ?? "tiranga");
   const [hues, setHues] = useState(() => opts.hues ?? "auto");
   const [theme, setTheme] = useState("all");
+  // How the formation on screen was chosen, for the formation_view event.
+  const pickRef = useRef<PickMethod>(opts.formation ? "link" : "tour");
   // Reduced motion: no auto-advance and the light effects start paused
   // (the visitor can still pick formations and press Play). Client-only
   // component (ssr: false), so reading the media query here is safe.
@@ -457,6 +460,22 @@ export default function CulturalShowcase({
   }, [current, list]);
   const loading = readyId !== current.id;
 
+  // formation_view: a figure counts as seen after 2 s on screen, so the tour and fast clicking
+  // don't flood GA4. Fleet / hues are read at that moment; changing them alone isn't a new view.
+  const shownId = loading || capture ? null : current.id;
+  const viewRef = useRef({ theme: current.theme, count, hues });
+  useEffect(() => {
+    viewRef.current = { theme: current.theme, count, hues };
+  });
+  useEffect(() => {
+    if (!shownId) return;
+    const t = window.setTimeout(() => {
+      const v = viewRef.current;
+      trackFormationView({ id: shownId, theme: v.theme ?? "other", fleet: v.count, hues: v.hues, pick: pickRef.current });
+    }, 2000);
+    return () => window.clearTimeout(t);
+  }, [shownId]);
+
   // The address bar follows the visitor's pick (docs/seo/PLAN.md §2):
   // /design-your-show/<id>?fleet=&hues= for a picked figure, the hub while
   // the tour runs. replaceState, not navigation: nothing reloads, and Back
@@ -487,6 +506,7 @@ export default function CulturalShowcase({
     const ms = (MORPH_MAX + Math.min(Math.max((current.loop * LOOPS_PER_FIGURE) / PREVIEW_RATE, 12), 30)) * 1000;
     const timer = window.setTimeout(() => {
       const k = list.findIndex((f) => f.id === current.id);
+      pickRef.current = "tour";
       setId(list[(k + 1) % list.length].id);
     }, ms);
     return () => window.clearTimeout(timer);
@@ -503,7 +523,17 @@ export default function CulturalShowcase({
   return (
     <div>
       {/* The hero: the sky, full width, straight under the header. */}
-      <div ref={sky} className={`relative ${SKY_HEIGHT} w-full overflow-hidden bg-black`}>
+      <div
+        ref={sky}
+        className={`relative ${SKY_HEIGHT} w-full overflow-hidden bg-black`}
+        // First drag on the sky / Ctrl+wheel zoom: once per page view each (analytics).
+        onPointerDown={(e) => {
+          if (e.target instanceof HTMLCanvasElement) trackScene3d("design", { action: "orbit" });
+        }}
+        onWheel={(e) => {
+          if (e.ctrlKey || e.metaKey) trackScene3d("design", { action: "zoom" });
+        }}
+      >
         <SwarmCanvas
           className="absolute inset-0"
           camera={{ position: [0, 6, 230], fov: 48, near: 1, far: 6000 }}
@@ -511,7 +541,13 @@ export default function CulturalShowcase({
           toneMapping="neutral"
           // Half the home page's bloom: a glow, not a white flare.
           bloom={0.5}
-          onFail={() => setFailed(true)}
+          onFail={() => {
+            trackScene3d("design", { result: "failed" });
+            setFailed(true);
+          }}
+          onReady={(tier) => {
+            if (!capture) trackScene3d("design", { result: "live", quality_tier: tier });
+          }}
         >
           {(quality) => <Scene quality={quality} id={readyId} count={count} playing={playing} hues={hues} zoomRef={zoomRef} capture={capture} />}
         </SwarmCanvas>
@@ -520,7 +556,7 @@ export default function CulturalShowcase({
         <>
         <div className="pointer-events-none absolute inset-x-0 top-0">
           <div className="mx-auto max-w-[1100px] px-6 pt-6">
-            <p className="font-serif text-3xl text-ink drop-shadow sm:text-4xl">{current.label}</p>
+            <p className="font-display text-3xl text-ink drop-shadow sm:text-4xl">{current.label}</p>
             <p className="mt-1 max-w-[40ch] text-sm text-muted drop-shadow">{current.blurb}</p>
             {loading && <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-dim">Bringing the drones in…</p>}
           </div>
@@ -541,7 +577,10 @@ export default function CulturalShowcase({
               key={b.label}
               type="button"
               aria-label={b.label}
-              onClick={() => zoomRef.current?.(b.f)}
+              onClick={() => {
+                trackScene3d("design", { action: "zoom" });
+                zoomRef.current?.(b.f);
+              }}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-line-2 bg-black/60 font-mono text-lg text-ink transition-colors hover:border-amber hover:text-amber-soft"
             >
               {b.sign}
@@ -566,6 +605,8 @@ export default function CulturalShowcase({
               value={theme}
               onChange={(e) => {
                 touch();
+                pickRef.current = "theme_filter";
+                trackShowCustomise("theme_filter", e.target.value, current.id);
                 setTheme(e.target.value);
                 setAuto(true);
               }}
@@ -594,6 +635,7 @@ export default function CulturalShowcase({
               value={count}
               onChange={(e) => {
                 touch();
+                trackShowCustomise("fleet", e.target.value, current.id);
                 setCount(Number(e.target.value));
               }}
               className={SELECT}
@@ -618,7 +660,10 @@ export default function CulturalShowcase({
           </span>
           <button
             type="button"
-            onClick={() => setPlaying((p) => !p)}
+            onClick={() => {
+              trackShowCustomise(playing ? "pause" : "play", playing ? "pause" : "play", current.id);
+              setPlaying((p) => !p);
+            }}
             className="min-h-11 rounded-full border border-line-2 px-5 font-mono text-xs text-muted transition-colors hover:border-amber hover:text-amber-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
           >
             {playing ? "Pause" : "Play"}
@@ -630,6 +675,7 @@ export default function CulturalShowcase({
           count={list.length}
           active={list.findIndex((f) => f.id === current.id)}
           group={{ role: "group", "aria-label": "Formation", "data-formations": "" }}
+          onToggle={(o) => o && trackShowCustomise("view_all", "formation", current.id)}
         >
           {list.map((item) => (
             <button
@@ -638,6 +684,7 @@ export default function CulturalShowcase({
               aria-pressed={item.id === current.id}
               onClick={() => {
                 touch();
+                pickRef.current = "chip";
                 setId(item.id);
                 setAuto(false);
               }}
@@ -655,6 +702,7 @@ export default function CulturalShowcase({
           count={PALETTES.length}
           active={PALETTES.findIndex((p) => p.id === hues)}
           group={{ role: "radiogroup", "aria-label": "LED hues" }}
+          onToggle={(o) => o && trackShowCustomise("view_all", "led_hues", current.id)}
         >
           {PALETTES.map((p) => {
             const selected = p.id === hues;
@@ -667,6 +715,7 @@ export default function CulturalShowcase({
                 aria-checked={selected}
                 onClick={() => {
                   touch();
+                  trackShowCustomise("led_theme", p.id, current.id);
                   setHues(p.id);
                 }}
                 className={`inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-4 font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber ${

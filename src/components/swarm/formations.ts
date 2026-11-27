@@ -306,7 +306,7 @@ export function fromText(
   n: number,
   opts: RasterOptions & { font?: string; letterSpacing?: number } = { width: 150 }
 ): Float32Array {
-  const font = opts.font ?? `600 220px "IBM Plex Serif", Georgia, serif`;
+  const font = opts.font ?? `600 220px "Clash Display", "IBM Plex Sans", sans-serif`;
   return sampleRaster(
     (ctx, w, h) => {
       ctx.font = font;

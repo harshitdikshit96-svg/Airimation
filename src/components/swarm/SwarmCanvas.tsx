@@ -45,7 +45,8 @@ type Props = {
   /** Called when WebGL dies (context lost); the parent shows its fallback. */
   onFail?: () => void;
   /** Called after the first frame, so a poster can fade out. */
-  onReady?: () => void;
+  /** Called once the canvas is live, with the content tier it chose (for analytics). */
+  onReady?: (tier: Tier) => void;
   /** Fixed starting tier (the phone gate uses "low"); `?quality=` still wins. */
   tier?: Tier;
   /**
@@ -111,7 +112,7 @@ export default function SwarmCanvas({ children, className, camera, active = true
             event.preventDefault();
             onFail?.();
           });
-          requestAnimationFrame(() => onReady?.());
+          requestAnimationFrame(() => onReady?.(contentTier));
         }}
       >
         {!still && (

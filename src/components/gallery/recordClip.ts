@@ -70,7 +70,7 @@ export async function recordClip(
     ctx.fillRect(0, out.height * 0.7, out.width, out.height * 0.3);
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#f2f2f0";
-    ctx.font = `400 ${big}px "IBM Plex Serif", Georgia, serif`;
+    ctx.font = `500 ${big}px "Clash Display", "IBM Plex Sans", sans-serif`;
     ctx.fillText(title, pad, out.height - pad - small * 1.6);
     ctx.fillStyle = "#c9c9c4";
     ctx.font = `400 ${small}px "IBM Plex Mono", ui-monospace, monospace`;

@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useSyncExternalStore, FormEvent } from "react";
 import { orgTypes } from "@/lib/content";
+import { trackFormError, trackGenerateLead } from "@/lib/analytics";
+import { getAttribution } from "@/lib/attribution";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -53,6 +55,8 @@ export default function ContactForm() {
       event_date: data.get("event_date") || undefined,
       message: data.get("message"),
       website: data.get("website") || undefined,
+      // Where the visit came from, stored with the lead (never shown to anyone outside).
+      attribution: getAttribution(),
     };
 
     try {
@@ -65,20 +69,24 @@ export default function ContactForm() {
       if (!res.ok) {
         setErrorMsg(json.error ?? "Something went wrong. Please try again.");
         setStatus("error");
+        trackFormError("contact", res.status === 400 ? "validation" : "server", json.field);
         return;
       }
+      // The conversion: only now, after the server has stored the enquiry. Never on the click.
+      trackGenerateLead(String(payload.organization_type ?? ""), (payload.event_date as string | undefined) ?? undefined);
       setStatus("success");
       form.reset();
     } catch {
       setErrorMsg("Network error — please try again in a moment.");
       setStatus("error");
+      trackFormError("contact", "network");
     }
   }
 
   if (status === "success") {
     return (
       <div role="status" className="panel-border rounded-2xl bg-panel/50 p-8 text-center">
-        <h3 className="font-serif text-xl font-semibold text-green-soft">
+        <h3 className="font-display text-xl font-semibold text-green-soft">
           Message received
         </h3>
         <p className="mt-2 text-sm text-muted">
@@ -89,7 +97,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-5">
+    <form id="contact" onSubmit={handleSubmit} className="relative space-y-5">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="cf-name" className="mb-1.5 block font-mono text-xs uppercase tracking-[0.14em] text-dim">

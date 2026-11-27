@@ -23,7 +23,7 @@ export default function DesignShowcaseView({ formation }: { formation?: Formatio
     // Not <Reveal>: its opacity fade delays LCP until JS runs.
     <div className="hero-enter mt-16 border-t border-line pt-12">
       <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">{designYourShow.eyebrow}</p>
-      <h1 className="mb-6 font-serif text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">{designYourShow.title}</h1>
+      <h1 className="mb-6 font-display text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">{designYourShow.title}</h1>
       <p className="max-w-[62ch] text-base font-light leading-relaxed text-muted">{designYourShow.intro}</p>
     </div>
   );
@@ -36,7 +36,7 @@ export default function DesignShowcaseView({ formation }: { formation?: Formatio
       <div className="mx-auto max-w-[1100px] px-6">
         <Reveal>
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Button href="/contact">
+            <Button cta="design_request_quote" href="/contact">
               Request a quote <ArrowRight size={16} />
             </Button>
             <p className="max-w-[52ch] text-sm font-light text-muted">{designYourShow.quoteNote}</p>
@@ -66,7 +66,7 @@ function Related({ id }: { id: string }) {
   const related = relatedFormations(id, 6);
   return (
     <section className="mt-16 border-t border-line pt-12" aria-labelledby="related-title">
-      <h2 id="related-title" className="mb-6 font-serif text-2xl font-light text-ink">
+      <h2 id="related-title" className="mb-6 font-display text-2xl font-light text-ink">
         More formations like this
       </h2>
       <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,7 +90,7 @@ function Related({ id }: { id: string }) {
 function FormationIndex({ facts }: { facts: FormationFacts[] }) {
   return (
     <section className="mt-16 border-t border-line pt-12" aria-labelledby="library-title">
-      <h2 id="library-title" className="mb-2 font-serif text-2xl font-light text-ink">
+      <h2 id="library-title" className="mb-2 font-display text-2xl font-light text-ink">
         Every formation in the library
       </h2>
       <p className="mb-8 max-w-[62ch] text-sm font-light text-muted">

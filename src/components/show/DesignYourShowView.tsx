@@ -25,7 +25,7 @@ export default function DesignYourShowView({ code, archived = true }: { code?: s
         <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
           {designYourShow.eyebrow}
         </p>
-        <h1 className="mb-6 font-serif text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">
+        <h1 className="mb-6 font-display text-[clamp(32px,4.4vw,56px)] font-light leading-[1.1] text-ink">
           {designYourShow.title}
         </h1>
         <p className="max-w-[58ch] text-base font-light leading-relaxed text-muted">

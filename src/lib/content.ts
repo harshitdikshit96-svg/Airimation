@@ -571,3 +571,48 @@ export const contactInfo = {
   email: "hello@airimation.in",
   base: "Noida, Uttar Pradesh (Delhi NCR)",
 };
+
+/**
+ * Privacy policy (/privacy). Plain language; approved by the owner 27 Nov 2026.
+ * Must stay true to the code: GA4 via GTM with Consent Mode (src/lib/consent.ts), contact
+ * leads in Neon with where the visit came from (src/lib/attribution.ts), no ads, no selling.
+ */
+export const privacyPolicy = {
+  updated: "27 November 2026",
+  intro:
+    "This page explains what airimation.in collects, why, and the choices you have. We keep it short because we collect little.",
+  sections: [
+    {
+      title: "What you tell us",
+      body: [
+        "When you send an enquiry through the contact form we store your name, email, phone number (if you give it), the kind of organisation you represent, your event date (if you give it) and your message. We use them only to reply to you and to plan a show with you.",
+        "With each enquiry we also store where your visit came from — the campaign tags in the link you followed, the site that referred you, the first page you landed on, the last formation you viewed in Design a Show and an anonymous analytics ID — so we know which pages and channels bring enquiries.",
+      ],
+    },
+    {
+      title: "Analytics and cookies",
+      body: [
+        "We use Google Analytics 4, loaded through Google Tag Manager, to understand how the site is used: which pages and formations people look at, which buttons they use and whether pages load quickly. It sets first-party cookies (named _ga) with a random ID. We never send your name, email, phone number or message to Google Analytics.",
+        "Visitors in the European Economic Area, the United Kingdom and Switzerland are asked before analytics cookies are set. Anyone can change their choice at any time with \"Cookie settings\" at the bottom of every page. We run no advertising and use no advertising cookies.",
+      ],
+    },
+    {
+      title: "Who else handles the data",
+      body: [
+        "Google (analytics), Vercel (hosting) and Neon (the database that stores enquiries) process data on our behalf. We do not sell or rent personal data to anyone.",
+      ],
+    },
+    {
+      title: "How long we keep it",
+      body: [
+        "Analytics data is kept for 14 months. Enquiries are kept for as long as we are in touch about an event, and deleted on request.",
+      ],
+    },
+    {
+      title: "Your choices and rights",
+      body: [
+        "You can ask to see, correct or delete the personal data we hold about you, or withdraw consent, by writing to the address below. We reply within 30 days. These rights apply under India's Digital Personal Data Protection Act, 2023, and, for visitors in Europe and the UK, the GDPR.",
+      ],
+    },
+  ],
+} as const;

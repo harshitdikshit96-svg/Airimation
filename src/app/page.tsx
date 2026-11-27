@@ -35,7 +35,7 @@ export default function Home() {
             <p className="mb-7 font-mono text-xs tracking-[0.2em] text-dim">
               {homeHero.eyebrow}
             </p>
-            <h1 className="max-w-[15ch] font-serif text-[clamp(42px,6.4vw,84px)] font-light leading-[1.08] text-ink">
+            <h1 className="max-w-[15ch] font-display text-[clamp(42px,6.4vw,84px)] font-light leading-[1.08] text-ink">
               {homeHero.title}
             </h1>
             <p className="mt-8 max-w-[52ch] text-lg font-light text-muted">
@@ -64,7 +64,7 @@ export default function Home() {
                 <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
                   {chapter.index}
                 </p>
-                <h2 className="max-w-[20ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+                <h2 className="max-w-[20ch] font-display text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                   {chapter.title}
                 </h2>
                 <p className="mt-6 text-[17px] font-light text-muted">{chapter.body}</p>
@@ -81,7 +81,7 @@ export default function Home() {
         >
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">03 · THE SHOW</p>
-            <h2 className="mb-4 font-serif text-[clamp(34px,4.4vw,58px)] font-light leading-[1.12] text-ink">
+            <h2 className="mb-4 font-display text-[clamp(34px,4.4vw,58px)] font-light leading-[1.12] text-ink">
               Storyboard to sky.
             </h2>
             <p className="mb-14 max-w-[58ch] text-[17px] font-light text-muted">
@@ -133,7 +133,7 @@ export default function Home() {
               <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
                 {designTeaser.eyebrow}
               </p>
-              <h2 className="mb-5 max-w-[20ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+              <h2 className="mb-5 max-w-[20ch] font-display text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                 {designTeaser.title}
               </h2>
               <p className="max-w-[52ch] text-base font-light leading-relaxed text-muted">
@@ -146,6 +146,8 @@ export default function Home() {
             <p className="max-w-[60ch] text-[13px] font-light text-dim">{designTeaser.gallery.note}</p>
             <Link
               href="/design-your-show"
+              data-track="cta"
+              data-cta="home_open_design"
               className="group inline-flex items-center gap-2 border-b border-amber pb-1 font-mono text-sm text-amber transition hover:gap-3"
             >
               {designTeaser.cta}
@@ -160,7 +162,7 @@ export default function Home() {
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">
               05 · {buildStatus.eyebrow}
             </p>
-            <h2 className="mb-5 max-w-[24ch] font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+            <h2 className="mb-5 max-w-[24ch] font-display text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
               {buildStatus.title}
             </h2>
             <p className="mb-12 max-w-[60ch] text-base font-light leading-relaxed text-muted">
@@ -196,7 +198,7 @@ export default function Home() {
         >
           <Reveal>
             <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">06 · THE TEAM</p>
-            <h2 className="mb-12 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+            <h2 className="mb-12 font-display text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
               Built in Noida, from the airframe up.
             </h2>
           </Reveal>
@@ -280,7 +282,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
               <p className="mb-5 font-mono text-xs tracking-[0.2em] text-dim">07 · CONTACT</p>
-              <h2 className="mb-5 font-serif text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
+              <h2 className="mb-5 font-display text-[clamp(30px,3.6vw,46px)] font-light leading-[1.15] text-ink">
                 Put a show in your sky.
               </h2>
               <p className="mb-8 max-w-[44ch] text-base font-light text-muted">

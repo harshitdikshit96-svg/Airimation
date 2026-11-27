@@ -22,7 +22,7 @@ function MemberCard({ member, delay }: { member: TeamMember; delay: number }) {
         <div className="flex items-center gap-4">
           <FounderAvatar name={member.name} photo={member.photo} size="sm" />
           <div>
-            <h3 className="font-serif text-lg font-semibold text-ink">{member.name}</h3>
+            <h3 className="font-display text-lg font-semibold text-ink">{member.name}</h3>
             <div className="mt-1 font-mono text-xs uppercase tracking-[0.14em] text-cyan-soft">
               {member.role}
             </div>
@@ -41,7 +41,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>About Airimation</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               A drone-show company that builds its own drones.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
@@ -62,7 +62,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <div className="panel-border rounded-2xl bg-panel/40 p-8 sm:p-10">
-              <h2 className="font-serif text-2xl font-semibold text-amber-soft">
+              <h2 className="font-display text-2xl font-semibold text-amber-soft">
                 What we are — and what we are not
               </h2>
               <p className="mt-4 max-w-[68ch] leading-relaxed text-muted">
@@ -91,7 +91,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="01">Why Uttar Pradesh</SectionLabel>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
+            <h2 className="mt-3 font-display text-3xl font-semibold text-ink">
               The wedge no national player is rooted in
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
@@ -111,7 +111,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="02">The founding team</SectionLabel>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-ink">
+            <h2 className="mt-3 font-display text-3xl font-semibold text-ink">
               {visibleAdvisors.length > 0
                 ? "The directors, and the advisors beside them"
                 : "The directors building the company"}
@@ -155,14 +155,14 @@ export default function AboutPage() {
       <section className="border-t border-line-2 px-6 py-14 sm:py-20">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
-            <h2 className="font-serif text-2xl font-semibold text-ink sm:text-3xl">
+            <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
               Want the full picture — the roadmap and what&apos;s next?
             </h2>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
               <Button href="/vision">
                 Visit Vision <ArrowRight size={16} />
               </Button>
-              <Button href="/contact" variant="ghost">
+              <Button cta="about_contact" href="/contact" variant="ghost">
                 Get in Touch
               </Button>
             </div>

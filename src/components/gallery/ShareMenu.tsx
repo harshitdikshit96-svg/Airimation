@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Download, Link2, MessageCircle, Share2, Video } from "lucide-react";
 import { clipMime, recordClip, type Clip } from "./recordClip";
-import { track } from "@/lib/analytics";
+import { trackClip, trackShare } from "@/lib/analytics";
 
 /**
  * Share on Design a Show (docs/seo/PLAN.md, P3 + P5): the link to what is on
@@ -66,7 +66,7 @@ export default function ShareMenu({
     try {
       await navigator.clipboard.writeText(url());
       setCopiedKey(key);
-      track("share", { via: "copy", formation: id });
+      trackShare("copy", id);
     } catch {
       window.prompt("Copy this link:", url());
     }
@@ -75,7 +75,7 @@ export default function ShareMenu({
   const nativeShare = async () => {
     try {
       await navigator.share({ title: `${label} — Airimation Design a Show`, text, url: url() });
-      track("share", { via: "native", formation: id });
+      trackShare("native", id);
     } catch {
       /* dismissed */
     }
@@ -98,7 +98,7 @@ export default function ShareMenu({
         if (old) URL.revokeObjectURL(old.url);
         return { key, url: URL.createObjectURL(file), file };
       });
-      track("clip", { formation: id, fleet: count });
+      trackClip("record", id, count);
     } catch (err) {
       setError((err as Error).message || "Recording failed.");
     } finally {
@@ -110,6 +110,7 @@ export default function ShareMenu({
     if (!clip) return;
     try {
       await navigator.share({ files: [clip.file], title: label, text: `${text} ${url()}` });
+      trackClip("share", id, count);
     } catch {
       /* dismissed or unsupported */
     }
@@ -145,7 +146,7 @@ export default function ShareMenu({
             href={`https://wa.me/?text=${encodeURIComponent(`${text} ${typeof window === "undefined" ? "" : url()}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => track("share", { via: "whatsapp", formation: id })}
+            onClick={() => trackShare("whatsapp", id)}
           >
             <MessageCircle size={14} aria-hidden="true" /> WhatsApp
           </a>
@@ -162,7 +163,7 @@ export default function ShareMenu({
                 </button>
               ) : (
                 <>
-                  <a className={ITEM} href={clip.url} download={clip.file.name}>
+                  <a className={ITEM} href={clip.url} download={clip.file.name} onClick={() => trackClip("download", id, count)}>
                     <Download size={14} aria-hidden="true" /> Download clip
                   </a>
                   {canShareClip && (

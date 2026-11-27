@@ -126,19 +126,21 @@ function Scene({
   const tall = size.width / size.height < 0.8;
   const invalidate = useThree((s) => s.invalidate);
 
-  // The wordmark is sampled from the site's own serif, which must be
-  // loaded before the canvas can draw it.
+  // The wordmark is sampled from the site's display font (Clash Display),
+  // which must be loaded before the canvas can draw it.
   useEffect(() => {
     let cancelled = false;
     document.fonts
-      .load(`600 220px "IBM Plex Serif"`)
+      .load(`600 220px "Clash Display"`)
       .catch(() => undefined)
       .then(() => {
         // Narrower on portrait screens, or the outer letters fall off the edges.
         // Ten letters: a touch wider and tighter-spaced than the old
         // seven-letter wordmark so each glyph keeps enough drones to read.
-        const width = tall ? 112 : 214;
-        if (!cancelled) setWordmark(fromText("AIRIMATION", n, { width, bow: tall ? 6 : 12, letterSpacing: 6, seed: 7, altitude: tall ? 100 : 96 }));
+        // Clash Display's letters are wide, so the portrait wordmark is given more of the screen
+        // (about 85 % of a phone's width) to keep each stroke thick enough to hold drones.
+        const width = tall ? 150 : 214;
+        if (!cancelled) setWordmark(fromText("AIRIMATION", n, { width, bow: tall ? 6 : 12, letterSpacing: tall ? 4 : 6, seed: 7, altitude: tall ? 100 : 96 }));
       });
     return () => {
       cancelled = true;
@@ -253,7 +255,7 @@ export default function HomeSwarm({
   caption: React.RefObject<HTMLSpanElement | null>;
   active: boolean;
   reduced: boolean;
-  onReady: () => void;
+  onReady: (tier: Tier) => void;
   onFail: () => void;
   /** Fixed quality tier (phones pass "low"); otherwise detected. */
   tier?: Tier;

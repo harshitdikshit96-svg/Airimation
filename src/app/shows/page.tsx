@@ -34,7 +34,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel>The Show</SectionLabel>
-            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">
               A swarm of light, choreographed to the second.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-muted">
@@ -43,10 +43,10 @@ export default function ShowsPage() {
               fireworks, built for the moments that deserve one.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button href="/contact">
+              <Button cta="shows_hero_book" href="/contact">
                 Book a Show <ArrowRight size={16} />
               </Button>
-              <Button href="/design-your-show" variant="ghost">
+              <Button cta="shows_hero_formations" href="/design-your-show" variant="ghost">
                 See the Formations
               </Button>
             </div>
@@ -64,7 +64,7 @@ export default function ShowsPage() {
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {showPillars.map((pillar, i) => (
               <Reveal key={pillar.title} delay={i * 0.07}>
-                <h3 className="font-serif text-lg font-semibold text-ink">
+                <h3 className="font-display text-lg font-semibold text-ink">
                   {pillar.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -81,7 +81,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="01">On every drone</SectionLabel>
-            <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               What makes a formation hold together
             </h2>
           </Reveal>
@@ -93,7 +93,7 @@ export default function ShowsPage() {
                 <Reveal key={spec.title} delay={i * 0.08}>
                   <div className="panel-border h-full rounded-2xl bg-panel/40 p-7">
                     <Icon className="text-cyan-soft" size={22} />
-                    <h3 className="mt-4 font-serif text-lg font-semibold text-ink">
+                    <h3 className="mt-4 font-display text-lg font-semibold text-ink">
                       {spec.title}
                     </h3>
                     <p className="mt-2 text-sm text-muted">{spec.description}</p>
@@ -110,7 +110,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="02">The process</SectionLabel>
-            <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               A six-to-seven-day cycle, every time
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
@@ -125,7 +125,7 @@ export default function ShowsPage() {
               <Reveal key={step.step} delay={i * 0.08}>
                 <div className="panel-border h-full rounded-2xl bg-panel/50 p-6">
                   <span className="font-mono text-xs text-dim">{step.step}</span>
-                  <h3 className="mt-3 font-serif text-xl font-semibold text-ink">
+                  <h3 className="mt-3 font-display text-xl font-semibold text-ink">
                     {step.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -143,7 +143,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="03">Where we perform</SectionLabel>
-            <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               Built for four audiences
             </h2>
           </Reveal>
@@ -168,7 +168,7 @@ export default function ShowsPage() {
           <Reveal>
             <div className="panel-border rounded-3xl bg-panel/30 p-8 sm:p-12">
               <SectionLabel>{beyondShows.eyebrow}</SectionLabel>
-              <h2 className="mt-3 font-serif text-2xl font-semibold text-ink sm:text-3xl">
+              <h2 className="mt-3 font-display text-2xl font-semibold text-ink sm:text-3xl">
                 {beyondShows.title}
               </h2>
               <p className="mt-4 max-w-2xl text-muted">{beyondShows.body}</p>
@@ -187,7 +187,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-[1052px]">
           <Reveal>
             <SectionLabel no="04">Safety, named plainly</SectionLabel>
-            <h2 className="mt-3 max-w-2xl font-serif text-3xl font-semibold text-ink sm:text-4xl">
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-ink sm:text-4xl">
               Every show carries this discipline
             </h2>
           </Reveal>
@@ -210,7 +210,7 @@ export default function ShowsPage() {
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <div className="panel-border rounded-3xl bg-gradient-to-br from-panel to-panel-2 px-8 py-16">
-              <h2 className="font-serif text-3xl font-semibold text-ink sm:text-4xl">
+              <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">
                 Have a date and a venue in mind?
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-muted">
@@ -218,7 +218,7 @@ export default function ShowsPage() {
                 airspace and permissions — before anything else.
               </p>
               <div className="mt-8">
-                <Button href="/contact">
+                <Button cta="shows_closing_contact" href="/contact">
                   Start the Conversation <ArrowRight size={16} />
                 </Button>
               </div>

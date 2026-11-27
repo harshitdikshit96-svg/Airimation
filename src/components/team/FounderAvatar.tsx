@@ -58,7 +58,7 @@ export default function FounderAvatar({
     >
       <span
         className={clsx(
-          "font-serif font-medium text-amber-soft/80",
+          "font-display font-medium text-amber-soft/80",
           size === "lg" ? "text-5xl" : size === "sm" ? "text-lg" : "text-3xl"
         )}
       >

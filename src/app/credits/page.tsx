@@ -19,7 +19,7 @@ export default function CreditsPage() {
     <section className="border-b border-line-2 px-6 py-16 sm:py-24">
       <div className="mx-auto max-w-[1052px]">
         <p className="font-mono text-xs uppercase tracking-[0.2em] text-dim">Credits</p>
-        <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">3D model credits</h1>
+        <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink sm:text-5xl">3D model credits</h1>
         <p className="mt-6 max-w-2xl text-muted">
           The formations on Design a Show are built from real 3D models — museum scans released to the public
           domain, models shared under Creative Commons Attribution, and symbols we modelled ourselves. Our
@@ -28,7 +28,7 @@ export default function CreditsPage() {
         <ul className="mt-10 divide-y divide-line-2 border-y border-line-2">
           {credited.map((f) => (
             <li key={f.id} className="grid gap-1 py-4 sm:grid-cols-[180px_1fr] sm:gap-6">
-              <span className="font-serif text-lg text-ink">{f.label}</span>
+              <span className="font-display text-lg text-ink">{f.label}</span>
               <span className="text-sm text-muted">{f.credit}</span>
             </li>
           ))}

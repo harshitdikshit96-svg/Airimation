@@ -75,8 +75,18 @@
   --color-int-yellow: var(--int-yellow);
   --color-int-yellow-soft: var(--int-yellow-soft);
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
-  --font-serif: "IBM Plex Serif", Georgia, serif;
+  /* Headings and display numbers: Clash Display (Indian Type Foundry, Fontshare, ITF Free
+     Font License), self-hosted as one variable file (weights 200–700). Chosen 27 Nov 2026. */
+  --font-display: "Clash Display", "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/ClashDisplay-Variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 * {

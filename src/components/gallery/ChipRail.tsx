@@ -21,6 +21,7 @@ export default function ChipRail({
   count,
   active,
   group,
+  onToggle,
   children,
 }: {
   label: string;
@@ -30,6 +31,8 @@ export default function ChipRail({
   active: number;
   /** Attributes for the chip group itself (role, aria-label, data-*). */
   group: HTMLAttributes<HTMLDivElement> & { [k: `data-${string}`]: string };
+  /** "View all" opened or closed (analytics). */
+  onToggle?: (open: boolean) => void;
   children: ReactNode;
 }) {
   const track = useRef<HTMLDivElement>(null);
@@ -103,7 +106,10 @@ export default function ChipRail({
         <button
           type="button"
           aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => {
+            onToggle?.(!open);
+            setOpen(!open);
+          }}
           className="min-h-11 min-w-[124px] whitespace-nowrap rounded-full border border-line-2 px-4 font-mono text-xs text-muted transition-colors hover:border-amber hover:text-amber-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
         >
           {open ? "Show fewer" : `View all ${count}`}

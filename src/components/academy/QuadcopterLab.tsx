@@ -99,7 +99,7 @@ export default function QuadcopterLab({
                 <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-int-pink">
                   {active.nickname}
                 </p>
-                <h3 className="mb-3 font-serif text-xl font-medium text-int-ink">{active.name}</h3>
+                <h3 className="mb-3 font-display text-xl font-medium text-int-ink">{active.name}</h3>
                 <p className="mb-4 text-[15px] font-light leading-relaxed text-int-ink/90">
                   {active.simple}
                 </p>

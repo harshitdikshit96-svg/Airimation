@@ -64,7 +64,7 @@ export default function QuizPage() {
           <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-int-pink">
             Your badge
           </p>
-          <h1 className="mb-3 font-serif text-3xl font-medium text-int-ink">{tier.name}</h1>
+          <h1 className="mb-3 font-display text-3xl font-medium text-int-ink">{tier.name}</h1>
           <p className="mx-auto mb-6 max-w-[50ch] text-[15px] font-light text-int-muted">
             {tier.blurb}
           </p>
@@ -107,7 +107,7 @@ export default function QuizPage() {
       <p className="mb-4 font-mono text-xs tracking-[0.28em] text-int-dim">
         AIRIMATION ACADEMY · KNOWLEDGE CHECK
       </p>
-      <h1 className="mb-8 font-serif text-[clamp(28px,3.6vw,40px)] font-light leading-[1.15] text-int-ink">
+      <h1 className="mb-8 font-display text-[clamp(28px,3.6vw,40px)] font-light leading-[1.15] text-int-ink">
         Prove it.
       </h1>
 
@@ -134,7 +134,7 @@ export default function QuizPage() {
           transition={{ duration: 0.2 }}
           className="mt-8"
         >
-          <h2 className="mb-6 font-serif text-xl font-light leading-snug text-int-ink">
+          <h2 className="mb-6 font-display text-xl font-light leading-snug text-int-ink">
             {q.question}
           </h2>
 

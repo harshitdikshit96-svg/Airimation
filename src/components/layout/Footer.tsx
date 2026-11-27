@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { CookieSettingsButton } from "@/components/analytics/ConsentBanner";
 import { navLinks, contactInfo, credentials, company, site } from "@/lib/content";
 
 export default function Footer() {
@@ -29,7 +30,7 @@ export default function Footer() {
             />
             <span
               className={clsx(
-                "font-serif text-lg font-semibold",
+                "font-display text-lg font-semibold",
                 isInternal ? "text-int-ink" : "text-ink"
               )}
             >
@@ -154,6 +155,12 @@ export default function Footer() {
                 <Link href="/credits" className="underline transition-colors hover:text-ink">
                   3D model credits
                 </Link>
+                {" · "}
+                <Link href="/privacy" className="underline transition-colors hover:text-ink">
+                  Privacy
+                </Link>
+                {" · "}
+                <CookieSettingsButton className="underline transition-colors hover:text-ink" />
               </>
             )}
           </span>
